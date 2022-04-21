@@ -23,6 +23,8 @@
 #ifndef MONSTER_MONSTER_H
 #define MONSTER_MONSTER_H
 
+#include <stdarg.h>
+
 typedef unsigned char boolean;
 
 boolean alloc_block(int *n);
@@ -249,7 +251,7 @@ void log_quit(int room_, boolean dropped);
 void make_line(int *n, char *prompt, int limit);
 void maybe_drop(void);
 void move_asleep(void);
-void mprintf(char *format, long a1, long a2, long a3, long a4, long a5, long a6, long a7, long a8, long a9, long aa, long ab, long ac);
+void mprintf(char *fmt, ...);
 void nice_say(char *s);
 void nicedate(char *timestr, char *newstr);
 void niceprint(int *len, char *s);

@@ -50,6 +50,7 @@
 */
 
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -863,14 +864,18 @@ void putchars(char *s)
     fflush(stdout);
 }
 
-void mprintf(char *format, long a1, long a2, long a3, long a4, long a5, long a6, long a7, long a8, long a9, long aa, long ab, long ac)
+void mprintf(const char *fmt, ...)
 {
-char buf[256];
+    va_list arg_ptr;
+    char buf[256];
 
-sprintf(buf, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aa, ab, ac);
-putchars(buf);
+    va_start(arg_ptr, fmt);
+    vsnprintf(buf, 256, fmt, arg_ptr);
+    va_end(arg_ptr);
+    buf[255] = 0;
+
+    putchars(buf);
 }
-
 
 char keyget(void)
 {
