@@ -32,6 +32,19 @@
 void bzero(void *s, size_t n);
 
 
+// the BSD/Linux file lock utilities
+// Remove an existing lock held by this process.
+#define LOCK_UN 0
+// Place an exclusive lock.
+// Only one process may hold an exclusive lock for a given file at a given time.
+#define LOCK_EX 1
+// Place a shared lock.
+// More than one process may hold a shared lock for a given file at a given time.
+#define LOCK_SH 3
+
+int flock(int fd, int operation);
+
+
 // drandom returns the next value from the PRNG as a double in the range [0..1)
 double drandom(void);
 

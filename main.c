@@ -1023,22 +1023,20 @@ int strpos2(char *s, char *pat, int pos)
 
 int locked[256];
 
-void lock(int fdes)
-{
-    if (!locked[fdes])
+void lock(int fdes) {
+    if (!locked[fdes]) {
         flock(fdes, LOCK_EX);
+    }
     locked[fdes]++;
 }
 
-void unlock(int fdes)
-{
+void unlock(int fdes) {
     locked[fdes]--;
-    if (locked[fdes] == 0)
+    if (locked[fdes] == 0) {
         flock(fdes, LOCK_UN);
+    }
     assert(locked[fdes] >= 0);
 }
-
-
 
 
 /* necessary to prevent ZOMBIES in the world */

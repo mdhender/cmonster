@@ -35,6 +35,12 @@ void bzero(void *s, size_t n) {
 }
 
 
+// flock does nothing except allow the program to compile.
+int flock(int fd, int operation) {
+    return 0;
+}
+
+
 static prngContext _randomSeed;
 
 // drandom returns the next value from the PRNG as a double in the range [0..1)
