@@ -784,7 +784,8 @@ descrec heredsc;
 
 
 
-double mrandom() {
+double mrandom(void)
+{
     return random() / RAND_MAX;
 }
 
@@ -800,7 +801,8 @@ struct		sgttyb	raw_tty, original_tty;
 struct		termio raw_tty, original_tty;
 #endif
 
-void setup_guts() {
+void setup_guts(void)
+{
 
     ioctl(0, TCGETA, &original_tty);
     ioctl(0, TCGETA, &raw_tty);
@@ -819,7 +821,8 @@ void setup_guts() {
     ioctl(0, TCSETAW, &raw_tty);
 }
 
-void finish_guts() {
+void finish_guts(void)
+{
 
     ioctl(0, TCSETAW, &original_tty);
 }
@@ -830,8 +833,7 @@ extern void checkevents(boolean);
 #define SHORT_WAIT      0.1
 #define LONG_WAIT       0.2
 
-void doawait(t)
-        double t;
+void doawait(double t)
 {
     struct timespec ts = { 0, 100000000 };
 
@@ -843,15 +845,13 @@ void doawait(t)
 
 int in_grab_line = 0;
 
-void pchars(s)
-        char *s;
+void pchars(char *s)
 {
     printf("%s", s);
     fflush(stdout);
 }
 
-void putchars(s)
-        char *s;
+void putchars(char *s)
 {
     if (in_grab_line) {
         pchars("\n");
@@ -862,9 +862,7 @@ void putchars(s)
     fflush(stdout);
 }
 
-mprintf(format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aa, ab, ac)
-char *format;
-long a1, a2, a3, a4, a5, a6, a7, a8, a9, aa, ab, ac;
+void mprintf(char *format, long a1, long a2, long a3, long a4, long a5, long a6, long a7, long a8, long a9, long aa, long ab, long ac)
 {
 char buf[256];
 
@@ -873,7 +871,8 @@ putchars(buf);
 }
 
 
-char keyget() {
+char keyget(void)
+{
     fd_set ibits, obits, xbits;
     int hifd = 0;
     int ret;
@@ -909,9 +908,7 @@ char keyget() {
 }
 
 
-void grab_line(prompt, s, echo)
-        char *prompt, *s;
-        boolean echo;
+void grab_line(char *prompt, char *s, boolean echo)
 {
     char ch;
     long pos;
@@ -1004,7 +1001,7 @@ void grab_line(prompt, s, echo)
 
 
 /* returns a random # between 0-100 */
-int rnd100()
+int rnd100(void)
 {
     return random() % 101;
 }
@@ -1014,10 +1011,7 @@ int rnd100()
 /* Return the index of the first occurrence of "pat" as a substring of "s",
    starting at index "pos" (1-based).  Result is 1-based, 0 if not found. */
 
-int strpos2(s, pat, pos)
-        char *s;
-        register char *pat;
-        register int pos;
+int strpos2(char *s, char *pat, int pos)
 {
     register char *cp, ch;
     register int slen;
@@ -1039,13 +1033,15 @@ int strpos2(s, pat, pos)
 
 int locked[256];
 
-void lock(int fdes) {
+void lock(int fdes)
+{
     if (!locked[fdes])
         flock(fdes, LOCK_EX);
     locked[fdes]++;
 }
 
-void unlock(int fdes) {
+void unlock(int fdes)
+{
     locked[fdes]--;
     if (locked[fdes] == 0)
         flock(fdes, LOCK_UN);
@@ -1058,8 +1054,7 @@ void unlock(int fdes) {
 /* necessary to prevent ZOMBIES in the world */
 
 
-char *get_userid(Result)
-        char *Result;
+char *get_userid(char *Result)
 {
     struct passwd *myentry;
 
@@ -1072,26 +1067,26 @@ extern char *trim();
 
 /* Input routine.   Gets a line of text from user which checking
    for async events */
-extern void grab_line();
+extern void grab_line(void);
 
-extern void putchars();
+extern void putchars(void);
 
-void xpoof();
+void xpoof(void);
 
-void do_exit();
+void do_exit(void);
 
-boolean put_token();
+boolean put_token(void);
 
-void take_token();
+void take_token(void);
 
-void maybe_drop();
+void maybe_drop(void);
 
-void do_program();
+void do_program(void);
 
-boolean drop_everything();
+boolean drop_everything(void);
 
 
-void collision_wait()
+void collision_wait(void)
 {
     double wait_time;
 
@@ -1104,9 +1099,7 @@ void collision_wait()
 
 /* increment err; if err is too high, suspect deadlock */
 /* this is called by all getX procedures to ease deadlock checking */
-void deadcheck(err, s)
-        int *err;
-        char *s;
+void deadcheck(int *err, char *s)
 {
     (*err)++;
     if (*err <= maxerr)
@@ -1125,8 +1118,7 @@ void deadcheck(err, s)
    Locks record; use freeroom immediately after getroom if data is
    for read-only
 */
-void getroom(n)
-        int n;
+void getroom(int n)
 {
     int err = 0;
 
@@ -1147,7 +1139,7 @@ void getroom(n)
 }
 
 
-void putroom()
+void putroom(void )
 {
     lseek(roomfile, (here.valid - 1L) * sizeof(room), 0);
     memcpy(&roomfile_hat, &here, sizeof(room));
@@ -1156,14 +1148,13 @@ void putroom()
 }
 
 
-void freeroom()
+void freeroom(void)
 {
     unlock(roomfile);
 }
 
 
-void gethere(n)
-        int n;
+void gethere(int n)
 {
     if (n != 0 && n != location) {
         getroom(n);
@@ -1181,7 +1172,7 @@ void gethere(n)
 }
 
 
-void getown()
+void getown(void)
 {
     int err = 0;
 
@@ -1192,7 +1183,7 @@ void getown()
 }
 
 
-void getnam()
+void getnam(void)
 {
     lock(namfile);
     lseek(namfile, (1 - 1L) * sizeof(namrec), 0);
@@ -1201,19 +1192,19 @@ void getnam()
 }
 
 
-void freenam()
+void freenam(void)
 {
     unlock(namfile);
 }
 
 
-void freeown()
+void freeown(void)
 {
     unlock(namfile);
 }
 
 
-void putnam()
+void putnam(void)
 {
     lseek(namfile, 0L, 0);
     memcpy(&namfile_hat, &nam, sizeof(namrec));
@@ -1222,7 +1213,7 @@ void putnam()
 }
 
 
-void putown()
+void putown(void)
 {
     lseek(namfile, sizeof(namrec), 0);
     memcpy(&namfile_hat, &own, sizeof(namrec));
@@ -1231,8 +1222,7 @@ void putown()
 }
 
 
-void getobj(n)
-        int n;
+void getobj(int n)
 {
     lock(objfile);
     lseek(objfile, (n - 1L) * sizeof(objectrec), 0);
@@ -1240,7 +1230,7 @@ void getobj(n)
     memcpy(&obj, &objfile_hat, sizeof(objectrec));
 }
 
-void putobj()
+void putobj(void)
 {
     lseek(objfile, (obj.objnum - 1L) * sizeof(objectrec), 0);
     memcpy(&objfile_hat, &obj, sizeof(objectrec));
@@ -1249,15 +1239,14 @@ void putobj()
 }
 
 
-void freeobj()
+void freeobj(void)
 {
     unlock(objfile);
 }
 
 
 
-void getint(n)
-        int n;
+void getint(int n)
 {
     lock(intfile);
     lseek(intfile, (n - 1L) * sizeof(intrec), 0);
@@ -1266,13 +1255,13 @@ void getint(n)
 }
 
 
-void freeint()
+void freeint(void)
 {
     unlock(intfile);
 }
 
 
-void putint()
+void putint(void)
 {
     int n = anint.intnum;
 
@@ -1283,8 +1272,7 @@ void putint()
 }
 
 
-void getspell(n)
-        int n;
+void getspell(int n)
 {
     if (n == 0)
         n = mylog;
@@ -1296,13 +1284,13 @@ void getspell(n)
 }
 
 
-void freespell()
+void freespell(void)
 {
     unlock(spellfile);
 }
 
 
-void putspell()
+void putspell(void)
 {
     int n;
 
@@ -1314,7 +1302,7 @@ void putspell()
     unlock(spellfile);
 }
 
-void getuser()
+void getuser(void)
 {
 
     lock(namfile);
@@ -1323,13 +1311,13 @@ void getuser()
     memcpy(&user, &namfile_hat, sizeof(namrec));
 }
 
-void freeuser()
+void freeuser(void)
 {
     unlock(namfile);
 }
 
 
-void putuser()
+void putuser(void)
 {
     lseek(namfile, 3L * sizeof(namrec), 0);
     memcpy(&namfile_hat, &user, sizeof(namrec));
@@ -1339,7 +1327,7 @@ void putuser()
 
 
 
-void getdate()
+void getdate(void)
 {
     lock(namfile);
     lseek(namfile, (7 - 1L) * sizeof(namrec), 0);
@@ -1347,13 +1335,13 @@ void getdate()
     memcpy(&adate, &namfile_hat, sizeof(namrec));
 }
 
-void freedate()
+void freedate(void)
 {
     unlock(namfile);
 }
 
 
-void putdate()
+void putdate(void)
 {
     lseek(namfile, sizeof(namrec) * 6L, 0);
     memcpy(&namfile_hat, &adate, sizeof(namrec));
@@ -1362,7 +1350,7 @@ void putdate()
 }
 
 
-void gettime()
+void gettime(void)
 {
     lock(namfile);
     lseek(namfile, (8 - 1L) * sizeof(namrec), 0);
@@ -1371,12 +1359,12 @@ void gettime()
 }
 
 
-void freetime()
+void freetime(void)
 {
     unlock(namfile);
 }
 
-void puttime()
+void puttime(void)
 {
     lseek(namfile, sizeof(namrec) * 7L, 0);
     memcpy(&namfile_hat, &atime, sizeof(namrec));
@@ -1385,7 +1373,7 @@ void puttime()
 }
 
 
-void getobjnam()
+void getobjnam(void)
 {
     lock(namfile);
     lseek(namfile, (5 - 1L) * sizeof(namrec), 0);
@@ -1394,13 +1382,13 @@ void getobjnam()
 }
 
 
-void freeobjnam()
+void freeobjnam(void)
 {
     unlock(namfile);
 }
 
 
-void putobjnam()
+void putobjnam(void)
 {
     lseek(namfile, sizeof(namrec) * 4L, 0);
     memcpy(&namfile_hat, &objnam, sizeof(namrec));
@@ -1409,7 +1397,7 @@ void putobjnam()
 }
 
 
-void getobjown()
+void getobjown(void)
 {
     lock(namfile);
     lseek(namfile, (6 - 1L) * sizeof(namrec), 0);
@@ -1418,13 +1406,13 @@ void getobjown()
 }
 
 
-void freeobjown()
+void freeobjown(void)
 {
     unlock(namfile);
 }
 
 
-void putobjown()
+void putobjown(void)
 {
     lseek(namfile, sizeof(namrec) * 5L, 0);
     memcpy(&namfile_hat, &objown, sizeof(namrec));
@@ -1434,7 +1422,7 @@ void putobjown()
 
 
 
-void getpers()
+void getpers(void)
 {
     lock(namfile);
     lseek(namfile, (3 - 1L) * sizeof(namrec), 0);
@@ -1443,13 +1431,13 @@ void getpers()
 }
 
 
-void freepers()
+void freepers(void)
 {
     unlock(namfile);
 }
 
 
-void putpers()
+void putpers(void)
 {
     lseek(namfile, sizeof(namrec) * 2L, 0);
     memcpy(&namfile_hat, &pers, sizeof(namrec));
@@ -1459,8 +1447,7 @@ void putpers()
 
 
 
-void getevent(n)
-        int n;
+void getevent(int n)
 {
     int err = 0;
 
@@ -1476,13 +1463,13 @@ void getevent(n)
 }
 
 
-void freeevent()
+void freeevent(void)
 {
     unlock(eventfile);
 }
 
 
-void putevent()
+void putevent(void)
 {
     lseek(eventfile, (event.validat - 1L) * sizeof(eventrec), 0);
     memcpy(&eventfile_hat, &event, sizeof(eventrec));
@@ -1491,8 +1478,7 @@ void putevent()
 }
 
 
-void getblock(n)
-        int n;
+void getblock(int n)
 {
     lock(descfile);
     lseek(descfile, (n - 1L) * sizeof(descrec), 0);
@@ -1501,7 +1487,7 @@ void getblock(n)
 }
 
 
-void putblock()
+void putblock(void)
 {
     int n;
 
@@ -1518,14 +1504,13 @@ void putblock()
 }
 
 
-void freeblock()
+void freeblock(void)
 {
     unlock(descfile);
 }
 
 
-void getline(n)
-        int n;
+void getline(int n)
 {
 
     if (n == -1) {
@@ -1540,7 +1525,7 @@ void getline(n)
 }
 
 
-void putline()
+void putline(void)
 {
     if (oneliner.linenum <= 0)
         return;
@@ -1552,7 +1537,7 @@ void putline()
 }
 
 
-void freeline()
+void freeline(void)
 {
     unlock(linefile);
 }
@@ -1566,8 +1551,7 @@ Index record 2 -- One liners that are free
 */
 
 
-void getindex(n)
-        int n;
+void getindex(int n)
 {
     lock(indexfile);
     lseek(indexfile, (n - 1L) * sizeof(indexrec), 0);
@@ -1576,7 +1560,7 @@ void getindex(n)
 }
 
 
-void putindex()
+void putindex(void)
 {
     lseek(indexfile, (indx.indexnum - 1L) * sizeof(indexrec), 0);
     memcpy(&indexfile_hat, &indx, sizeof(indexrec));
@@ -1584,7 +1568,7 @@ void putindex()
     unlock(indexfile);
 }
 
-void freeindex()
+void freeindex(void)
 {
     unlock(indexfile);
 }
@@ -1598,8 +1582,7 @@ Allocates the oneliner resource using the indexrec bitmaps
 Return the number of a one liner if one is available
 and remove it from the free list
 */
-boolean alloc_line(n)
-        int *n;
+boolean alloc_line(int *n)
 {
     boolean Result, found;
 
@@ -1640,8 +1623,7 @@ boolean alloc_line(n)
 put the line specified by n back on the free list
 zeroes n also, for convenience
 */
-void delete_line(n)
-        int *n;
+void delete_line(int *n)
 {
     if (*n == DEFAULT_LINE)
         *n = 0;
@@ -1656,8 +1638,7 @@ void delete_line(n)
 
 
 
-boolean alloc_int(n)
-        int *n;
+boolean alloc_int(int *n)
 {
     boolean Result, found;
 
@@ -1694,8 +1675,7 @@ boolean alloc_int(n)
 }
 
 
-void delete_int(n)
-        int *n;
+void delete_int(int *n)
 {
     if (*n > 0) {
         getindex(I_INT);
@@ -1712,8 +1692,7 @@ void delete_int(n)
 Return the number of a description block if available and
 remove it from the free list
 */
-boolean alloc_block(n)
-        int *n;
+boolean alloc_block(int *n)
 {
     boolean Result, found;
 
@@ -1759,8 +1738,7 @@ boolean alloc_block(n)
 puts a description block back on the free list
 zeroes n for convenience
 */
-void delete_block(n)
-        int *n;
+void delete_block(int *n)
 {
     if (*n == DEFAULT_LINE) {
         *n = 0;   /* no line really exists in the file */
@@ -1786,8 +1764,7 @@ void delete_block(n)
 Return the number of a room if one is available
 and remove it from the free list
 */
-boolean alloc_room(n)
-        int *n;
+boolean alloc_room(int *n)
 {
     boolean Result, found;
 
@@ -1828,8 +1805,7 @@ Called by DEL_ROOM()
 put the room specified by n back on the free list
 zeroes n also, for convenience
 */
-void delete_room(n)
-        int *n;
+void delete_room(int *n)
 {
     if (*n == 0)
         return;
@@ -1842,8 +1818,7 @@ void delete_room(n)
 
 
 
-boolean alloc_log(n)
-        int *n;
+boolean alloc_log(int *n)
 {
     boolean Result, found;
 
@@ -1879,8 +1854,7 @@ boolean alloc_log(n)
 }
 
 
-void delete_log(n)
-        int *n;
+void delete_log(int *n)
 {
     if (*n == 0)
         return;
@@ -1892,8 +1866,7 @@ void delete_log(n)
 }
 
 
-char *lowcase(Result, s)
-        char *Result, *s;
+char *lowcase(char *Result, char *s)
 {
     string sprime;
     int i, FORLIM;
@@ -1914,9 +1887,7 @@ char *lowcase(Result, s)
 
 /* lookup a spell with disambiguation in the spell list */
 
-boolean lookup_spell(n, s_)
-        int *n;
-        char *s_;
+boolean lookup_spell(int *n, char *s_)
 {
     string s;
     int i = 1;
@@ -1949,9 +1920,7 @@ boolean lookup_spell(n, s_)
 }
 
 
-boolean lookup_user(pnum, s_)
-        int *pnum;
-        char *s_;
+boolean lookup_user(int *pnum, char *s_)
 {
     string s;
     int i = 1;
@@ -1994,8 +1963,7 @@ boolean lookup_user(pnum, s_)
 }
 
 
-boolean alloc_obj(n)
-        int *n;
+boolean alloc_obj(int *n)
 {
     boolean Result, found;
 
@@ -2031,8 +1999,7 @@ boolean alloc_obj(n)
 }
 
 
-void delete_obj(n)
-        int *n;
+void delete_obj(int *n)
 {
     if (*n == 0)
         return;
@@ -2046,9 +2013,7 @@ void delete_obj(n)
 
 
 
-boolean lookup_obj(pnum, s_)
-        int *pnum;
-        char *s_;
+boolean lookup_obj(int *pnum, char *s_)
 {
     string s;
     int i = 1;
@@ -2094,8 +2059,7 @@ boolean lookup_obj(pnum, s_)
 
 /* returns true if object N is in this room */
 
-boolean obj_here(n)
-        int n;
+boolean obj_here(int n)
 {
     int i = 1;
     boolean found = false;
@@ -2114,8 +2078,7 @@ boolean obj_here(n)
 
 /* returns true if object N is being held by the player */
 
-boolean obj_hold(n)
-        int n;
+boolean obj_hold(int n)
 {
     int i;
     boolean found;
@@ -2138,8 +2101,7 @@ boolean obj_hold(n)
 
 
 /* return the slot of an object that is HERE */
-int find_obj(objnum)
-        int objnum;
+int find_obj(int objnum)
 {
     int Result = 0, i = 1;
 
@@ -2156,10 +2118,7 @@ int find_obj(objnum)
 /* similar to lookup_obj, but only returns true if the object is in
    this room or is being held by the player */
 
-boolean parse_obj(n, s, override)
-        int *n;
-        char *s;
-        boolean override;
+boolean parse_obj(int *n, char *s, boolean override)
 {
     if (!lookup_obj(n, s))
         return false;
@@ -2175,9 +2134,7 @@ boolean parse_obj(n, s, override)
 
 
 
-boolean lookup_pers(pnum, s_)
-        int *pnum;
-        char *s_;
+boolean lookup_pers(int *pnum, char *s_)
 {
     string s;
     int i = 1;
@@ -2223,9 +2180,7 @@ boolean lookup_pers(pnum, s_)
 
 
 
-boolean parse_pers(pnum, s_)
-        int *pnum;
-        char *s_;
+boolean parse_pers(int *pnum, char * s_)
 {
     boolean Result;
     string s;
@@ -2282,9 +2237,7 @@ boolean parse_pers(pnum, s_)
 Returns TRUE if player is owner of room n
 If no n is given default will be this room (location)
 */
-boolean is_owner(n, surpress)
-        int n;
-        boolean surpress;
+boolean is_owner(int n, boolean surpress)
 {
     boolean Result = false;
 
@@ -2297,9 +2250,7 @@ boolean is_owner(n, surpress)
 }
 
 
-char *room_owner(Result, n)
-        char *Result;
-        int n;
+char *room_owner(char *Result, int n)
 {
     if (n == 0)
         return strcpy(Result, "no room");
@@ -2315,8 +2266,7 @@ Returns TRUE if player is allowed to alter the exit
 TRUE if either this room or if target room is owned by player
 */
 
-boolean can_alter(dir, room_)
-        int dir, room_;
+boolean can_alter(int dir, int room_)
 {
     string STR1;
 
@@ -2335,8 +2285,7 @@ boolean can_alter(dir, room_)
 }
 
 
-boolean can_make(dir, room_)
-        int dir, room_;
+boolean can_make(int dir, int room_)
 {
     boolean Result = false;
 
@@ -2360,8 +2309,7 @@ boolean can_make(dir, room_)
 /*
 print a one liner
 */
-void print_line(n)
-        int n;
+void print_line(int n)
 {
     if (n == DEFAULT_LINE) {
         mprintf("<default line>\n");
@@ -2376,9 +2324,7 @@ void print_line(n)
 
 
 
-void print_desc(dsc, default_)
-        int dsc;
-        char *default_;
+void print_desc(int dsc, char *default_)
 {
     int i = 1;
 
@@ -2402,10 +2348,7 @@ void print_desc(dsc, default_)
 
 
 
-void make_line(n, prompt, limit)
-        int *n;
-        char *prompt;
-        int limit;
+void make_line(int *n, char *prompt, int limit)
 {
     string s;
     boolean ok;
@@ -2458,9 +2401,7 @@ void make_line(n, prompt, limit)
 
 /* translate a direction s [north, south, etc...] into the integer code */
 
-boolean lookup_dir(dir, s_)
-        int *dir;
-        char *s_;
+boolean lookup_dir(int *dir, char *s_)
 {
     string s;
     int i = 1;
@@ -2494,9 +2435,7 @@ boolean lookup_dir(dir, s_)
 }
 
 
-boolean lookup_show(n, s_)
-        int *n;
-        char *s_;
+boolean lookup_show(int *n, char *s_)
 {
     string s;
     int i = 1;
@@ -2532,9 +2471,7 @@ boolean lookup_show(n, s_)
 }
 
 
-boolean lookup_set(n, s_)
-        int *n;
-        char *s_;
+boolean lookup_set(int *n, char *s_)
 {
     string s;
     int i = 1;
@@ -2567,9 +2504,7 @@ boolean lookup_set(n, s_)
 }
 
 
-boolean lookup_room(n, s_)
-        int *n;
-        char *s_;
+boolean lookup_room(int *n, char *s_)
 {
     boolean Result;
     string s;
@@ -2619,9 +2554,7 @@ boolean lookup_room(n, s_)
 }
 
 
-boolean exact_room(n, s)
-        int *n;
-        char *s;
+boolean exact_room(int *n,  char *s)
 {
     string STR2;
 
@@ -2637,9 +2570,7 @@ boolean exact_room(n, s)
 }
 
 
-boolean exact_pers(n, s)
-        int *n;
-        char *s;
+boolean exact_pers(int *n, char *s)
 {
     string STR1, STR2;
 
@@ -2653,9 +2584,7 @@ boolean exact_pers(n, s)
 }
 
 
-boolean exact_user(n, s)
-        int *n;
-        char *s;
+boolean exact_user(int *n, char *s)
 {
     string STR1, STR2;
 
@@ -2669,9 +2598,7 @@ boolean exact_user(n, s)
 }
 
 
-boolean exact_obj(n, s)
-        int *n;
-        char *s;
+boolean exact_obj(int *n, char *s)
 {
     string STR1;
 
@@ -2689,9 +2616,7 @@ boolean exact_obj(n, s)
 /*
 Return n as the direction number if s is a valid alias for an exit
 */
-boolean lookup_alias(n, s_)
-        int *n;
-        char *s_;
+boolean lookup_alias(int *n, char *s_)
 {
     string s;
     int i = 1;
@@ -2723,8 +2648,7 @@ boolean lookup_alias(n, s_)
 }
 
 
-void exit_default(dir, kind)
-        int dir, kind;
+void exit_default(int dir, int kind)
 {
     switch (kind) {
 
@@ -2767,7 +2691,7 @@ void exit_default(dir, kind)
 /*
 Prints out the exits here for DO_LOOK()
 */
-void show_exits()
+void show_exits(void)
 {
     int i;
     boolean one = false;
@@ -2808,7 +2732,7 @@ void show_exits()
 }
 
 
-void setevent()
+void setevent(void)
 {
     getevent(0);
     freeevent();
@@ -2817,8 +2741,7 @@ void setevent()
 
 
 
-boolean isnum(s)
-        char *s;
+boolean isnum(char *s)
 {
     boolean Result = true;
     int i = 1;
@@ -2834,8 +2757,7 @@ boolean isnum(s)
 }
 
 
-int number(s)
-        char *s;
+int number(char *s)
 {
     int i;
 
@@ -2849,10 +2771,7 @@ int number(s)
 
 
 
-void log_event(send, act, targ, p, s, room_)
-        int send, act, targ, p;
-        char *s;
-        int room_;
+void log_event(int send, int act, int targ, int p, char *s, int room_)
 {
     /* slot of sender */
     /* what event occurred */
@@ -2881,8 +2800,7 @@ void log_event(send, act, targ, p, s, room_)
 }
 
 
-void log_action(theaction, thetarget)
-        int theaction, thetarget;
+void log_action(int theaction, int thetarget)
 {
     if (debug)
         mprintf("?log_action(%d,%d)\n", theaction, thetarget);
@@ -2896,9 +2814,7 @@ void log_action(theaction, thetarget)
 }
 
 
-char *desc_action(Result, theaction, thetarget)
-        char *Result;
-        int theaction, thetarget;
+char *desc_action(char *Result, int theaction, int thetarget)
 {
     string s;
 
@@ -2956,8 +2872,7 @@ char *desc_action(Result, theaction, thetarget)
 }
 
 
-boolean protected_(n)
-        int n;
+boolean protected_(int n)
 {
     if (n == 0)
         n = myslot;
@@ -2975,8 +2890,7 @@ boolean protected_(n)
 /*
 user procedure to designate an exit for acceptance of links
 */
-void do_accept(s)
-        char *s;
+void do_accept(char *s)
 {
     int dir;
 
@@ -2999,8 +2913,7 @@ void do_accept(s)
 User procedure to refuse an exit for links
 Note: may be unlink
 */
-void do_refuse(s)
-        char *s;
+void do_refuse(char *s)
 {
     int dir;
     boolean ok;
@@ -3029,8 +2942,7 @@ void do_refuse(s)
 }
 
 
-nicedate(timestr, newstr)
-char *timestr, *newstr;
+void nicedate(char *timestr, char *newstr)
 {
 
 /* Thu Dec 20 00:06:14 2001 --> 20-Dec-2001 */
@@ -3049,8 +2961,7 @@ char *timestr, *newstr;
 *newstr++ = '\0';
 }
 
-nicetime(timestr, newstr)
-char *timestr, *newstr;
+void nicetime(char *timestr, char *newstr)
 {
 int hours;
 char dayornite[3];
@@ -3071,7 +2982,8 @@ sprintf(newstr, "%d:%c%c%s", hours, timestr[14],
 timestr[15], dayornite);
 }
 
-char *nice_time() {
+char *nice_time(void)
+{
     char *timestr;
     char the_date[17];
     char the_time[8];
@@ -3089,8 +3001,7 @@ char *nice_time() {
 
 
 
-char *sysdate(Result)
-        char *Result;
+char *sysdate(char *Result)
 {
     char *timestr;
     time_t time_now;
@@ -3102,8 +3013,7 @@ char *sysdate(Result)
 }
 
 
-char *systime(Result)
-        char *Result;
+char *systime(char *Result)
 {
     char *timestr;
     time_t time_now;
@@ -3117,8 +3027,7 @@ char *systime(Result)
 
 
 /* substitute a parameter string for the # sign in the source string */
-char *subs_parm(Result, s, parm)
-        char *Result, *s, *parm;
+char *subs_parm(char *Result, char *s, char *parm)
 {
     string right, left;
     int i;   /* i is point to break at */
@@ -3150,7 +3059,7 @@ char *subs_parm(Result, s, parm)
 }
 
 
-void time_health()
+void time_health(void)
 {
     char STR2[162];
 
@@ -3224,7 +3133,7 @@ void time_health()
 }
 
 
-void time_noises()
+void time_noises(void)
 {
     int n;
 
@@ -3238,8 +3147,7 @@ void time_noises()
 }
 
 
-void time_trapdoor(silent)
-        boolean silent;
+void time_trapdoor(boolean silent)
 {
     boolean fall;
     char STR2[162];
@@ -3272,7 +3180,7 @@ void time_trapdoor(silent)
 }
 
 
-void time_midnight()
+void time_midnight(void)
 {
     string STR1;
 
@@ -3283,8 +3191,7 @@ void time_midnight()
 
 /* cause random events to occurr (ha ha ha) */
 
-void rnd_event(silent)
-        boolean silent;
+void rnd_event(boolean silent)
 {
     if (rndcycle != 200) {  /* inside here 3 times/min */
         rndcycle++;
@@ -3300,7 +3207,7 @@ void rnd_event(silent)
 }
 
 
-void do_die()
+void do_die(void)
 {
     boolean some;
 
@@ -3325,8 +3232,7 @@ void do_die()
 }
 
 
-void poor_health(p)
-        int p;
+void poor_health(int p)
 {
     if (myhealth <= p) {
         do_die();
@@ -3393,7 +3299,7 @@ void poor_health(p)
 
 /* count objects here */
 
-int find_numobjs()
+int find_numobjs(void)
 {
     int sum = 0;
     int i;
@@ -3409,8 +3315,7 @@ int find_numobjs()
 
 /* optional parameter is slot of player's objects to count */
 
-int find_numhold(player)
-        int player;
+int find_numhold(int player)
 {
     int sum = 0;
     int i;
@@ -3428,8 +3333,7 @@ int find_numhold(player)
 
 
 
-void take_hit(p)
-        int p;
+void take_hit(int p)
 {
     int i;
 
@@ -3446,8 +3350,7 @@ void take_hit(p)
 }
 
 
-int punch_force(sock)
-        int sock;
+int punch_force(int sock)
 {
     int p;
 
@@ -3467,9 +3370,7 @@ int punch_force(sock)
 }
 
 
-void put_punch(sock, s)
-        int sock;
-        char *s;
+void put_punch(int sock, char *s)
 {
     switch (sock) {
 
@@ -3536,9 +3437,7 @@ void put_punch(sock, s)
 }
 
 
-void get_punch(sock, s)
-        int sock;
-        char *s;
+void get_punch(int sock, char *s)
 {
     switch (sock) {
 
@@ -3605,9 +3504,7 @@ void get_punch(sock, s)
 }
 
 
-void view_punch(a, b, p)
-        char *a, *b;
-        int p;
+void view_punch(char *a, char *b, int p)
 {
     switch (p) {
 
@@ -3676,9 +3573,7 @@ void view_punch(a, b, p)
 
 
 
-void desc_health(n, header)
-        int n;
-        char *header;
+void desc_health(int n, char *header)
 {
     if (*header == '\0')
         mprintf("%s ", here.people[n-1].name);
@@ -3734,10 +3629,7 @@ void desc_health(n, header)
 }
 
 
-char *obj_part(Result, objnum, doread)
-        char *Result;
-        int objnum;
-        boolean doread;
+char *obj_part(char *Result, int objnum, boolean doread)
 {
     string s;
     char STR1[84];
@@ -3774,9 +3666,7 @@ char *obj_part(Result, objnum, doread)
 }
 
 
-void print_subs(n, s)
-        int n;
-        char *s;
+void print_subs(int n, char *s)
 {
     string STR1;
 
@@ -3795,9 +3685,7 @@ void print_subs(n, s)
 /* print out a (up to) 10 line description block, substituting string s for
    up to one occurance of # per line */
 
-void block_subs(n, s)
-        int n;
-        char *s;
+void block_subs(int n, char *s)
 {
     int p;
     int i = 1;
@@ -3822,8 +3710,7 @@ void block_subs(n, s)
 }
 
 
-void show_noises(n)
-        int n;
+void show_noises(int n)
 {
     if (n < 33) {
         mprintf("There are strange noises coming from behind you.\n");
@@ -3836,8 +3723,7 @@ void show_noises(n)
 }
 
 
-void show_altnoise(n)
-        int n;
+void show_altnoise(int n)
 {
     if (n < 33) {
         mprintf("A chill wind blows, ruffling your clothes and chilling your bones.\n");
@@ -3850,9 +3736,7 @@ void show_altnoise(n)
 }
 
 
-void show_midnight(n, printed)
-        int n;
-        boolean *printed;
+void show_midnight(int n, boolean *printed)
 {
     if (!midnight_notyet) {
         *printed = false;
@@ -3871,8 +3755,7 @@ void show_midnight(n, printed)
 
 
 
-void handle_event(printed)
-        boolean *printed;
+void handle_event(boolean *printed)
 {
     int send, act, targ, p;
     string s, sendname, STR3;
@@ -4352,8 +4235,7 @@ void handle_event(printed)
 /* p2c: mon.pas, line 3429: Warning: Type attribute GLOBAL ignored [128] */
 
 
-void checkevents(silent)
-        boolean silent;
+void checkevents(boolean silent)
 {
     boolean gotone = false;
     boolean tmp;
@@ -4407,7 +4289,7 @@ void checkevents(silent)
 
 /* count the number of people in this room; assumes a gethere has been done */
 
-int find_numpeople()
+int find_numpeople(void)
 {
     int sum = 0;
     int i;
@@ -4426,8 +4308,7 @@ int find_numpeople()
 /* don't give them away, but make noise--maybe
    percent is percentage chance that they WON'T make any noise */
 
-void noisehide(percent)
-        int percent;
+void noisehide(int percent)
 {
     /* assumed gethere;  */
     if (hiding && find_numpeople() > 1) {
@@ -4439,7 +4320,7 @@ void noisehide(percent)
 
 
 
-boolean checkhide()
+boolean checkhide(void)
 {
     boolean Result = false;
 
@@ -4452,7 +4333,7 @@ boolean checkhide()
 
 
 
-void clear_command()
+void clear_command(void)
 {
     if (!logged_act)
         return;
@@ -4464,8 +4345,7 @@ void clear_command()
 
 
 /* forward procedure take_token(aslot, roomno: integer); */
-void take_token(aslot, roomno)
-        int aslot, roomno;
+void take_token(int aslot, int roomno)
 {
     /* remove self from a room's people list */
     peoplerec *WITH;
@@ -4483,8 +4363,7 @@ void take_token(aslot, roomno)
         hidelev:integer := 0):boolean;
                          put a person in a room's people list
                          returns myslot */
-boolean put_token(room_, aslot, hidelev)
-        int room_, *aslot, hidelev;
+boolean put_token(int room_, int *aslot, int hidelev)
 {
     boolean Result;
     int i, j;
@@ -4545,30 +4424,26 @@ boolean put_token(room_, aslot, hidelev)
 }
 
 
-void log_exit(direction, room_, sender_slot)
-        int direction, room_, sender_slot;
+void log_exit(int direction, int room_, int sender_slot)
 {
     log_event(sender_slot, E_EXIT, direction, 0, myname, room_);
 }
 
 
-void log_entry(direction, room_, sender_slot)
-        int direction, room_, sender_slot;
+void log_entry(int direction, int room_, int sender_slot)
 {
     log_event(sender_slot, E_ENTER, direction, 0, myname, room_);
 }
 
 
-void log_begin(room_)
+void log_begin(int room_)
         int room_;
 {
     log_event(0, E_BEGIN, 0, 0, myname, room_);
 }
 
 
-void log_quit(room_, dropped)
-        int room_;
-        boolean dropped;
+void log_quit(int room_, boolean dropped)
 {
     log_event(0, E_QUIT, 0, 0, myname, room_);
     if (dropped)
@@ -4580,7 +4455,7 @@ void log_quit(room_, dropped)
 
 /* return the number of people you can see here */
 
-int n_can_see()
+int n_can_see(void)
 {
     int Result;
     int sum = 0;
@@ -4605,9 +4480,7 @@ int n_can_see()
 
 
 
-char *next_can_see(Result, point)
-        char *Result;
-        int *point;
+char *next_can_see(char *Result, int *point)
 {
     boolean found = false;
     int selfslot;
@@ -4635,9 +4508,7 @@ char *next_can_see(Result, point)
 }
 
 
-void niceprint(len, s)
-        int *len;
-        char *s;
+void niceprint(int *len, char *s)
 {
     if (*len + strlen(s) > 78) {
         *len = 0;
@@ -4648,8 +4519,7 @@ void niceprint(len, s)
 }
 
 
-void people_header(where)
-        char *where;
+void people_header(char *where)
 {
     int point = 1;
     string tmp;
@@ -4692,8 +4562,7 @@ void people_header(where)
 }
 
 
-void desc_person(i)
-        int i;
+void desc_person(int i)
 {
     shortstring pname;
     string STR3;
@@ -4716,7 +4585,7 @@ void desc_person(i)
 }
 
 
-void show_people()
+void show_people(void)
 {
     int i;
 
@@ -4729,7 +4598,7 @@ void show_people()
 }
 
 
-void show_group()
+void show_group(void)
 {
     int gloc1, gloc2;
     shortstring gnam1, gnam2;
@@ -4751,8 +4620,7 @@ void show_group()
 }
 
 
-void desc_obj(n)
-        int n;
+void desc_obj(int n)
 {
     string STR2;
 
@@ -4770,7 +4638,7 @@ void desc_obj(n)
 }
 
 
-void show_objects()
+void show_objects(void)
 {
     int i;
 
@@ -4781,9 +4649,7 @@ void show_objects()
 }
 
 
-boolean lookup_detail(n, s_)
-        int *n;
-        char *s_;
+boolean lookup_detail(int *n, char *s_)
 {
     string s;
     int i = 1;
@@ -4815,8 +4681,7 @@ boolean lookup_detail(n, s_)
 }
 
 
-boolean look_detail(s)
-        char *s;
+boolean look_detail(char *s)
 {
     int n;
 
@@ -4833,8 +4698,7 @@ boolean look_detail(s)
 }
 
 
-boolean look_person(s)
-        char *s;
+boolean look_person(char *s)
 {
     int objnum, i, n;
     boolean first;
@@ -4876,9 +4740,7 @@ boolean look_person(s)
 
 
 
-void do_examine(s, three, silent)
-        char *s;
-        boolean *three, silent;
+void do_examine(char *s, boolean *three, boolean silent)
 {
     int n;
     string msg, STR2;
@@ -4908,7 +4770,7 @@ void do_examine(s, three, silent)
 
 
 
-void print_room()
+void print_room(void)
 {
     switch (here.nameprint) {
 
@@ -4965,8 +4827,7 @@ void print_room()
 
 
 
-void do_look(s)
-        char *s;
+void do_look(char *s)
 {
     boolean one, two, three;
 
@@ -4997,8 +4858,7 @@ void do_look(s)
 }
 
 
-void init_exit(dir)
-        int dir;
+void init_exit(int dir)
 {
     exit_ *WITH;
 
@@ -5022,8 +4882,7 @@ void init_exit(dir)
 
 
 
-void remove_exit(dir)
-        int dir;
+void remove_exit(int dir)
 {
     int targroom, targslot;
     boolean hereacc, targacc;
@@ -5074,8 +4933,7 @@ void remove_exit(dir)
 /*
 User procedure to unlink a room
 */
-void do_unlink(s)
-        char *s;
+void do_unlink(char *s)
 {
     int dir;
 
@@ -5098,7 +4956,7 @@ void do_unlink(s)
 
 
 
-boolean desc_allowed()
+boolean desc_allowed(void)
 {
     if (!strcmp(here.owner, userid) || privd)
         return true;
@@ -5110,8 +4968,7 @@ boolean desc_allowed()
 
 
 
-char *slead(Result, s)
-        char *Result, *s;
+char *slead(char *Result, char *s)
 {
     int i;
     boolean going;
@@ -5142,8 +4999,7 @@ char *slead(Result, s)
 }
 
 
-char *bite(Result, s)
-        char *Result, *s;
+char *bite(char *Result, char *s)
 {
     int i, orig_i;
     string STR1;
@@ -5175,7 +5031,7 @@ char *bite(Result, s)
 }
 
 
-void edit_help()
+void edit_help(void)
 {
     mprintf("\nA\tAppend text to end\n");
     mprintf("C\tCheck text for correct length with parameter substitution (#)\n");
@@ -5191,8 +5047,7 @@ void edit_help()
 }
 
 
-void edit_replace(n)
-        int n;
+void edit_replace(int n)
 {
     string prompt, s;
 
@@ -5207,8 +5062,7 @@ void edit_replace(n)
 }
 
 
-void edit_insert(n)
-        int n;
+void edit_insert(int n)
 {
     int i;
 
@@ -5229,8 +5083,7 @@ void edit_insert(n)
 }
 
 
-void edit_doinsert(n)
-        int n;
+void edit_doinsert(int n)
 {
     string s, prompt;
 
@@ -5256,7 +5109,7 @@ void edit_doinsert(n)
 }
 
 
-void edit_show()
+void edit_show(void)
 {
     int i = 1;
 
@@ -5272,7 +5125,7 @@ void edit_show()
 }
 
 
-void edit_append()
+void edit_append(void)
 {
     string prompt, s;
     boolean stilladding = true;
@@ -5296,8 +5149,7 @@ void edit_append()
 }
 
 
-void edit_delete(n)
-        int n;
+void edit_delete(int n)
 {
     int i, FORLIM;
 
@@ -5320,7 +5172,7 @@ void edit_delete(n)
 }
 
 
-void check_subst()
+void check_subst(void)
 {
     int i, FORLIM;
 
@@ -5336,8 +5188,7 @@ void check_subst()
 }
 
 
-boolean edit_desc(dsc)
-        int *dsc;
+boolean edit_desc(int *dsc)
 {
     boolean Result = true;
     char cmd;
@@ -5516,9 +5367,7 @@ boolean edit_desc(dsc)
 
 
 
-boolean alloc_detail(n, s)
-        int *n;
-        char *s;
+boolean alloc_detail(int *n, char *s)
 {
     boolean Result;
     boolean found = false;
@@ -5550,8 +5399,7 @@ Known problem: if two people edit the description to the same room one of their
 This is unlikely to happen unless the Monster Manager tries to edit a
 description while the room's owner is also editing it.
 */
-void do_describe(s)
-        char *s;
+void do_describe(char *s)
 {
     int i, newdsc;
 
@@ -5604,8 +5452,7 @@ void do_describe(s)
 
 
 
-void del_room(n)
-        int n;
+void del_room(int n)
 {
     int i;
     exit_ *WITH;
@@ -5635,8 +5482,7 @@ void del_room(n)
 
 
 
-void createroom(s)
-        char *s;
+void createroom(char *s)
 {
     /* create a room with name s */
     int roomno, dummy, i, rand_accept;
@@ -5751,7 +5597,7 @@ void createroom(s)
 
 
 
-void show_help()
+void show_help(void)
 {
     string s;
 
@@ -5800,8 +5646,7 @@ void show_help()
 }
 
 
-int lookup_cmd(s_)
-        char *s_;
+int lookup_cmd(char *s_)
 {
     string s;
     int i = 1;   /* index for loop */
@@ -5836,8 +5681,7 @@ int lookup_cmd(s_)
 }
 
 
-void addrooms(n)
-        int n;
+void addrooms(int n)
 {
     int i, FORLIM;
 
@@ -5859,8 +5703,7 @@ void addrooms(n)
 
 
 
-void addints(n)
-        int n;
+void addints(int n)
 {
     int i, FORLIM;
 
@@ -5878,8 +5721,7 @@ void addints(n)
 
 
 
-void addlines(n)
-        int n;
+void addlines(int n)
 {
     int i, FORLIM;
 
@@ -5896,8 +5738,7 @@ void addlines(n)
 }
 
 
-void addblocks(n)
-        int n;
+void addblocks(int n)
 {
     int i, FORLIM;
 
@@ -5914,8 +5755,7 @@ void addblocks(n)
 }
 
 
-void addobjects(n)
-        int n;
+void addobjects(int n)
 {
     int i, FORLIM;
 
@@ -5932,7 +5772,7 @@ void addobjects(n)
 }
 
 
-void dist_list()
+void dist_list(void)
 {
     int i, j;
     FILE *f;
@@ -5992,7 +5832,7 @@ void dist_list()
 }
 
 
-void system_view()
+void system_view(void)
 {
     int used, free, total;
 
@@ -6039,8 +5879,7 @@ void system_view()
 
 /* remove a user from the log records (does not handle ownership) */
 
-void kill_user(s)
-        char *s;
+void kill_user(char *s)
 {
     int n;
 
@@ -6064,8 +5903,7 @@ void kill_user(s)
 
 /* disown everything a player owns */
 
-void disown_user(s)
-        char *s;
+void disown_user(char *s)
 {
     int n, i;
     string tmp, theuser;
@@ -6118,7 +5956,7 @@ void disown_user(s)
 }
 
 
-void move_asleep()
+void move_asleep(void)
 {
     string pname, rname;   /* player & room names */
     int newroom, n;   /* room number & player slot number */
@@ -6146,7 +5984,7 @@ void move_asleep()
 }
 
 
-void system_help()
+void system_help(void)
 {
     mprintf("\nB\tAdd description blocks\n");
     mprintf("D\tDisown <user>\n");
@@ -6166,13 +6004,12 @@ void system_help()
 
 /* *************** FIX_STUFF ******************** */
 
-void fix_stuff()
+void fix_stuff(void)
 {
 }
 
 
-void do_system(s_)
-        char *s_;
+void do_system(char *s_)
 {
     string s, prompt;
     boolean done = false;
@@ -6297,8 +6134,7 @@ void do_system(s_)
 }
 
 
-void do_version(s)
-        char *s;
+void do_version(char *s)
 {
     mprintf("Monster, a multiplayer adventure game where the players create the world\n");
     mprintf("and make the rules.\n\n");
@@ -6306,7 +6142,7 @@ void do_version(s)
 }
 
 
-void rebuild_system()
+void rebuild_system(void)
 {
     int i, j;
 
@@ -6411,7 +6247,7 @@ void rebuild_system()
 }
 
 
-void tests() {
+void tests(void) {
     string s;
 
     mprintf("Running tests...\n");
@@ -6426,8 +6262,7 @@ void tests() {
 }
 
 
-void special(s_)
-        char *s_;
+void special(char *s_)
 {
     string s, STR1;
     char STR2[256];
@@ -6468,9 +6303,7 @@ void special(s_)
    in other words, the room is too cluttered, and cannot hold any
    more objects
 */
-boolean place_obj(n, silent)
-        int n;
-        boolean silent;
+boolean place_obj(int n, boolean silent)
 {
     boolean Result;
     boolean found = false;
@@ -6516,8 +6349,7 @@ boolean place_obj(n, silent)
 
 
 /* remove an object from this room */
-boolean take_obj(objnum, slot)
-        int objnum, slot;
+boolean take_obj(int objnum, int slot)
 {
     boolean Result;
 
@@ -6533,7 +6365,7 @@ boolean take_obj(objnum, slot)
 }
 
 
-boolean can_hold()
+boolean can_hold(void)
 {
     if (find_numhold(0) < maxhold)
         return true;
@@ -6542,7 +6374,7 @@ boolean can_hold()
 }
 
 
-boolean can_drop()
+boolean can_drop(void)
 {
     if (find_numobjs() < maxobjs)
         return true;
@@ -6551,8 +6383,7 @@ boolean can_drop()
 }
 
 
-int find_hold(objnum, slot)
-        int objnum, slot;
+int find_hold(int objnum, int slot)
 {
     int Result = 0, i = 1;
 
@@ -6571,8 +6402,7 @@ int find_hold(objnum, slot)
 /* put object number n into the player's inventory; returns false if
    he's holding too many things to carry another */
 
-boolean hold_obj(n)
-        int n;
+boolean hold_obj(int n)
 {
     boolean Result;
     boolean found = false;
@@ -6604,8 +6434,7 @@ boolean hold_obj(n)
 /* remove an object (hold) from the player record, given the slot that
    the object is being held in */
 
-void drop_obj(slot, pslot)
-        int slot, pslot;
+void drop_obj(int slot, int pslot)
 {
     if (pslot == 0)
         pslot = myslot;
@@ -6620,7 +6449,7 @@ void drop_obj(slot, pslot)
 
 /* maybe drop something I'm holding if I'm hit */
 
-void maybe_drop()
+void maybe_drop(void)
 {
     int i, objnum;
     string s;
@@ -6655,9 +6484,7 @@ void maybe_drop()
    if checkpub is true then obj_owner will return true if the object in
    question is public */
 
-boolean obj_owner(n, checkpub)
-        int n;
-        boolean checkpub;
+boolean obj_owner(int n, boolean checkpub)
 {
     getobjown();
     freeobjown();
@@ -6670,8 +6497,7 @@ boolean obj_owner(n, checkpub)
 }
 
 
-void do_duplicate(s)
-        char *s;
+void do_duplicate(char *s)
 {
     int objnum;
     char STR1[50];
@@ -6711,8 +6537,7 @@ void do_duplicate(s)
 
 
 /* make an object */
-void do_makeobj(s)
-        char *s;
+void do_makeobj(char *s)
 {
     int objnum;
     char STR1[50];
@@ -6822,8 +6647,7 @@ void do_makeobj(s)
 /* remove the type block for an object; all instances of the object must
    be destroyed first */
 
-void do_unmake(s)
-        char *s;
+void do_unmake(char *s)
 {
     int n;
     string tmp;
@@ -6852,8 +6676,7 @@ void do_unmake(s)
 
 /* destroy a copy of an object */
 
-void do_destroy(s)
-        char *s;
+void do_destroy(char *s)
 {
     int slot, n;
     string STR1;
@@ -6910,7 +6733,7 @@ void do_destroy(s)
 }
 
 
-boolean links_possible()
+boolean links_possible(void)
 {
     boolean Result = false;
     int i;
@@ -6928,8 +6751,7 @@ boolean links_possible()
 
 
 /* make a room */
-void do_form(s_)
-        char *s_;
+void do_form(char *s_)
 {
     string s, STR1;
 
@@ -6951,8 +6773,7 @@ void do_form(s_)
 }
 
 
-void xpoof(loc)
-        int loc;
+void xpoof(int loc)
 {
     /* loc: integer; forward */
     int targslot;
@@ -6977,8 +6798,7 @@ void xpoof(loc)
 }
 
 
-void do_poof(s_)
-        char *s_;
+void do_poof(char *s_)
 {
     string s;
     int n, loc;
@@ -7009,8 +6829,7 @@ void do_poof(s_)
 }
 
 
-void link_room(origdir, targdir, targroom)
-        int origdir, targdir, targroom;
+void link_room(int origdir, int targdir, int targroom)
 {
     exit_ *WITH, *WITH1;
 
@@ -7052,8 +6871,7 @@ void link_room(origdir, targdir, targroom)
 /*
 User procedure to link a room
 */
-void do_link(s_)
-        char *s_;
+void do_link(char *s_)
 {
     string s;
     boolean ok;
@@ -7127,8 +6945,7 @@ void do_link(s_)
 }
 
 
-void relink_room(origdir, targdir, targroom)
-        int origdir, targdir, targroom;
+void relink_room(int origdir, int targdir, int targroom)
 {
     exit_ tmp;
     int copyslot, copyloc;
@@ -7154,8 +6971,7 @@ void relink_room(origdir, targdir, targroom)
 }
 
 
-void do_relink(s_)
-        char *s_;
+void do_relink(char *s_)
 {
     string s;
     boolean ok;
@@ -7226,7 +7042,7 @@ void do_relink(s_)
 /* print the room default no-go message if there is one;
    otherwise supply the generic "you can't go that way" */
 
-void default_fail()
+void default_fail(void)
 {
     if (here.exitfail != 0 && here.exitfail != DEFAULT_LINE)
         print_desc(here.exitfail, "<no default supplied>");
@@ -7235,8 +7051,7 @@ void default_fail()
 }
 
 
-void exit_fail(dir)
-        int dir;
+void exit_fail(int dir)
 {
     if (dir < 1 || dir > maxexit)
         default_fail();
@@ -7288,8 +7103,7 @@ cases:
 
 
 
-void do_exit(exit_slot)
-        int exit_slot;
+void do_exit(int exit_slot)
 {
     /* (exit_slot: integer)-- declared forward */
     int orig_slot, targ_slot, orig_room, enter_slot, targ_room;
@@ -7350,7 +7164,7 @@ void do_exit(exit_slot)
 
 
 
-boolean cycle_open()
+boolean cycle_open(void)
 {
     char ch;
     string s;
@@ -7364,9 +7178,7 @@ boolean cycle_open()
 }
 
 
-boolean which_dir(dir, s_)
-        int *dir;
-        char *s_;
+boolean which_dir(int *dir, char *s_)
 {
     boolean Result = true;
     string s;
@@ -7430,8 +7242,7 @@ boolean which_dir(dir, s_)
 }
 
 
-void exit_case(dir)
-        int dir;
+void exit_case(int dir)
 {
     switch (here.exits[dir-1].kind) {
 
@@ -7489,9 +7300,7 @@ Check that he can go to s
 Put him through the exit( in do_exit )
 Do a look for him( in do_exit )
 */
-void do_go(s, verb)
-        char *s;
-        boolean verb;
+void do_go(char *s, boolean verb)
 {
     int dir;
 
@@ -7517,8 +7326,7 @@ void do_go(s, verb)
 }
 
 
-void nice_say(s)
-        char *s;
+void nice_say(char *s)
 {
     /* capitalize the first letter of their sentence */
 
@@ -7533,8 +7341,7 @@ void nice_say(s)
 }
 
 
-void do_say(s_)
-        char *s_;
+void do_say(char *s_)
 {
     string s;
 
@@ -7558,8 +7365,7 @@ void do_say(s_)
 }
 
 
-void do_setname(s)
-        char *s;
+void do_setname(char *s)
 {
     string notice;
     boolean ok;
@@ -7627,7 +7433,7 @@ example display for alignment:
 
 */
 
-void do_who()
+void do_who(void)
 {
     int i, j;
     boolean ok, metaok;
@@ -7708,8 +7514,7 @@ void do_who()
 }
 
 
-char *own_trans(Result, s)
-        char *Result, *s;
+char *own_trans(char *Result, char *s)
 {
     if (*s == '\0')
         return strcpy(Result, "<public>");
@@ -7720,8 +7525,7 @@ char *own_trans(Result, s)
 }
 
 
-void list_rooms(s)
-        char *s;
+void list_rooms(char *s)
 {
     boolean first = true;
     int i, j;
@@ -7755,7 +7559,7 @@ void list_rooms(s)
 }
 
 
-static void list_all_rooms()
+static void list_all_rooms(void)
 {
     int i, j;
     boolean tmp[maxroom];
@@ -7778,8 +7582,7 @@ static void list_all_rooms()
     }
 }
 
-void do_rooms(s_)
-        char *s_;
+void do_rooms(char *s_)
 {
     string s, cmd;
     veryshortstring id;
@@ -7828,7 +7631,7 @@ void do_rooms(s_)
 
 
 
-void do_objects()
+void do_objects(void)
 {
     int i;
     int total = 0, public_ = 0, disowned = 0, private_ = 0;
@@ -7871,8 +7674,7 @@ void do_objects()
 }
 
 
-void do_claim(s)
-        char *s;
+void do_claim(char *s)
 {
     int n;
     boolean ok;
@@ -7935,8 +7737,7 @@ void do_claim(s)
 }
 
 
-void do_disown(s)
-        char *s;
+void do_disown(char *s)
 {
     int n;
     string tmp;
@@ -7980,8 +7781,7 @@ void do_disown(s)
 }
 
 
-void do_public(s)
-        char *s;
+void do_public(char *s)
 {
     boolean ok;
     string tmp;
@@ -8038,7 +7838,7 @@ void do_public(s)
 
 /* sum up the number of real exits in this room */
 
-int find_numexits()
+int find_numexits(void)
 {
     int i;
     int sum = 0;
@@ -8056,8 +7856,7 @@ int find_numexits()
    out of the room so that when they start up again they won't be here,
    because we are destroying this room */
 
-void clear_people(loc)
-        int loc;
+void clear_people(int loc)
 {
     int i;
 
@@ -8070,8 +7869,7 @@ void clear_people(loc)
 }
 
 
-void do_zap(s)
-        char *s;
+void do_zap(char *s)
 {
     int loc;
 
@@ -8104,9 +7902,7 @@ void do_zap(s)
 }
 
 
-boolean room_nameinuse(num, newname)
-        int num;
-        char *newname;
+boolean room_nameinuse(int num, char *newname)
 {
     int dummy;
 
@@ -8121,7 +7917,7 @@ boolean room_nameinuse(num, newname)
 
 
 
-void do_rename()
+void do_rename(void)
 {
     string newname;
 
@@ -8151,9 +7947,7 @@ void do_rename()
 }
 
 
-boolean obj_nameinuse(objnum, newname)
-        int objnum;
-        char *newname;
+boolean obj_nameinuse(int objnum, char *newname)
 {
     int dummy;
 
@@ -8167,8 +7961,7 @@ boolean obj_nameinuse(objnum, newname)
 }
 
 
-void do_objrename(objnum)
-        int objnum;
+void do_objrename(int objnum)
 {
     string newname;
 
@@ -8202,7 +7995,7 @@ void do_objrename(objnum)
 
 
 
-void view_room()
+void view_room(void)
 {
     int i;
 
@@ -8321,7 +8114,7 @@ void view_room()
 }
 
 
-void room_help()
+void room_help(void)
 {
     mprintf("\nD\tAlter the way the room description prints\n");
     mprintf("N\tChange how the room Name prints\n");
@@ -8343,7 +8136,7 @@ void room_help()
 
 
 
-void custom_room()
+void custom_room(void)
 {
     boolean done = false;
     string prompt;
@@ -8589,8 +8382,7 @@ void custom_room()
 }
 
 
-void analyze_exit(dir)
-        int dir;
+void analyze_exit(int dir)
 {
     string s;
     char STR1[90];
@@ -8701,7 +8493,7 @@ void analyze_exit(dir)
 }
 
 
-void custom_help()
+void custom_help(void)
 {
     mprintf("\nA\tSet an Alias for the exit\n");
     mprintf("C\tConceal an exit\n");
@@ -8722,8 +8514,7 @@ void custom_help()
 }
 
 
-void get_key(dir)
-        int dir;
+void get_key(int dir)
 {
     string s;
     int n;
@@ -8760,8 +8551,7 @@ void get_key(dir)
 }
 
 
-void do_custom(dirnam)
-        char *dirnam;
+void do_custom(char *dirnam)
 {
     string prompt;
     boolean done;
@@ -9001,8 +8791,7 @@ void do_custom(dirnam)
 
 
 
-void reveal_people(three)
-        boolean *three;
+void reveal_people(boolean *three)
 {
     int retry = 1;
     int i;
@@ -9027,8 +8816,7 @@ void reveal_people(three)
 
 
 
-void reveal_objects(two)
-        boolean *two;
+void reveal_objects(boolean *two)
 {
     int i;
     string STR1;
@@ -9053,8 +8841,7 @@ void reveal_objects(two)
 }
 
 
-void reveal_exits(one)
-        boolean *one;
+void reveal_exits(boolean *one)
 {
     int retry = 1;
     int i;
@@ -9084,8 +8871,7 @@ void reveal_exits(one)
 }
 
 
-void do_search(s)
-        char *s;
+void do_search(char *s)
 {
     int chance;
     boolean found = false, dummy = false;
@@ -9112,8 +8898,7 @@ void do_search(s)
 }
 
 
-void do_unhide(s)
-        char *s;
+void do_unhide(char *s)
 {
     if (*s != '\0')
         return;
@@ -9130,8 +8915,7 @@ void do_unhide(s)
 }
 
 
-void do_hide(s)
-        char *s;
+void do_hide(char *s)
 {
     int slot, n, founddsc;
     string tmp;
@@ -9210,8 +8994,7 @@ void do_hide(s)
 }
 
 
-void do_punch(s)
-        char *s;
+void do_punch(char *s)
 {
     int sock, n;
 
@@ -9261,8 +9044,7 @@ void do_punch(s)
    Give the player a list of kinds of object he's allowed to make his object
    and update it */
 
-void prog_kind(objnum)
-        int objnum;
+void prog_kind(int objnum)
 {
     int n;
     string s;
@@ -9306,14 +9088,12 @@ void prog_kind(objnum)
    user to set the various parameters for the effects associated with that
    kind */
 
-void prog_obj(objnum)
-        int objnum;
+void prog_obj(int objnum)
 {
 }
 
 
-void show_kind(p)
-        int p;
+void show_kind(int p)
 {
     switch (p) {
 
@@ -9352,8 +9132,7 @@ void show_kind(p)
 }
 
 
-void obj_view(objnum)
-        int objnum;
+void obj_view(int objnum)
 {
     putchar('\n');
     getobj(objnum);
@@ -9380,7 +9159,7 @@ void obj_view(objnum)
 }
 
 
-void program_help()
+void program_help(void)
 {
     mprintf("\nA\t\"a\", \"an\", \"some\", etc.\n");
     mprintf("D\tEdit a Description of the object\n");
@@ -9405,8 +9184,7 @@ void program_help()
 }
 
 
-void do_program(objnam)
-        char *objnam;
+void do_program(char *objnam)
 {
     /* (objnam: string);  declared forward */
     string prompt;
@@ -9651,8 +9429,7 @@ void do_program(objnam)
 
 
 /* returns TRUE if anything was actually dropped */
-boolean drop_everything(pslot)
-        int pslot;
+boolean drop_everything(int pslot)
 {
     /* forward function drop_everything(pslot: integer := 0): boolean; */
     int i, slot;
@@ -9690,9 +9467,7 @@ boolean drop_everything(pslot)
 }
 
 
-void do_endplay(lognum, ping)
-        int lognum;
-        boolean ping;
+void do_endplay(int lognum, boolean ping)
 {
 
     /* If update is true do_endplay will update the "last play" date & time
@@ -9716,9 +9491,7 @@ void do_endplay(lognum, ping)
 }
 
 
-boolean check_person(n, id)
-        int n;
-        char *id;
+boolean check_person(int n, char *id)
 {
     inmem = false;
     gethere(0);
@@ -9729,9 +9502,7 @@ boolean check_person(n, id)
 }
 
 
-boolean nuke_person(n, id)
-        int n;
-        char *id;
+boolean nuke_person(int n, char *id)
 {
     int lognum;
     string tmp;
@@ -9775,9 +9546,7 @@ boolean nuke_person(n, id)
 }
 
 
-boolean ping_player(n, silent)
-        int n;
-        boolean silent;
+boolean ping_player(int n, boolean silent)
 {
     boolean Result = false;
     int retry = 0;
@@ -9838,8 +9607,7 @@ boolean ping_player(n, silent)
 }
 
 
-void do_ping(s)
-        char *s;
+void do_ping(char *s)
 {
     int n;
     boolean dummy;
@@ -9859,7 +9627,7 @@ void do_ping(s)
 }
 
 
-void list_get()
+void list_get(void)
 {
     boolean first = true;
     int i;
@@ -9882,8 +9650,7 @@ void list_get()
 
 /* print the get success message for object number n */
 
-void p_getsucc(n)
-        int n;
+void p_getsucc(int n)
 {
     /* we assume getobj has already been done */
     if (obj.getsuccess == 0 || obj.getsuccess == DEFAULT_LINE)
@@ -9893,8 +9660,7 @@ void p_getsucc(n)
 }
 
 
-void do_meta_get(n)
-        int n;
+void do_meta_get(int n)
 {
     int slot;
     char STR1[118];
@@ -9925,8 +9691,7 @@ void do_meta_get(n)
 }
 
 
-void do_get(s)
-        char *s;
+void do_get(char *s)
 {
     int n;
     boolean ok;
@@ -9974,8 +9739,7 @@ void do_get(s)
 }
 
 
-void do_drop(s)
-        char *s;
+void do_drop(char *s)
 {
     int slot, n;
     string STR1;
@@ -10029,8 +9793,7 @@ void do_drop(s)
 }
 
 
-void do_inv(s)
-        char *s;
+void do_inv(char *s)
 {
     boolean first;
     int i, n, objnum;
@@ -10078,8 +9841,7 @@ void do_inv(s)
 
 /* translate a personal name into a real userid on request */
 
-void do_whois(s)
-        char *s;
+void do_whois(char *s)
 {
     int n;
 
@@ -10096,8 +9858,7 @@ void do_whois(s)
 }
 
 
-void do_players(s)
-        char *s;
+void do_players(char *s)
 {
     int i, j;
     indexrec tmpasleep;
@@ -10165,8 +9926,7 @@ void do_players(s)
 }
 
 
-void do_self(s)
-        char *s;
+void do_self(char *s)
 {
     int n;
 
@@ -10199,8 +9959,7 @@ void do_self(s)
 }
 
 
-void do_health(s)
-        char *s;
+void do_health(char *s)
 {
     mprintf("You ");
     switch (myhealth) {
@@ -10252,8 +10011,7 @@ void do_health(s)
 }
 
 
-void crystal_look(chill_msg)
-        int chill_msg;
+void crystal_look(int chill_msg)
 {
     int numobj, numppl, numsee, i;
     boolean yes;
@@ -10316,8 +10074,7 @@ void crystal_look(chill_msg)
 }
 
 
-void use_crystal(objnum)
-        int objnum;
+void use_crystal(int objnum)
 {
     boolean done;
     string s;
@@ -10375,8 +10132,7 @@ void use_crystal(objnum)
 
 
 
-void p_usefail(n)
-        int n;
+void p_usefail(int n)
 {
     /* we assume getobj has already been done */
     if (obj.usefail == 0 || obj.usefail == DEFAULT_LINE)
@@ -10386,8 +10142,7 @@ void p_usefail(n)
 }
 
 
-void p_usesucc(n)
-        int n;
+void p_usesucc(int n)
 {
     /* we assume getobj has already been done */
     if (obj.usesuccess == 0 || obj.usesuccess == DEFAULT_LINE)
@@ -10397,8 +10152,7 @@ void p_usesucc(n)
 }
 
 
-void do_use(s)
-        char *s;
+void do_use(char *s)
 {
     int n;
 
@@ -10437,8 +10191,7 @@ void do_use(s)
 }
 
 
-void do_whisper(s_)
-        char *s_;
+void do_whisper(char *s_)
 {
     string s;
     int n;
@@ -10465,8 +10218,7 @@ void do_whisper(s_)
 }
 
 
-void do_wield(s)
-        char *s;
+void do_wield(char *s)
 {
     string tmp;
     int n;
@@ -10518,8 +10270,7 @@ void do_wield(s)
 }
 
 
-void do_wear(s)
-        char *s;
+void do_wear(char *s)
 {
     string tmp;
     int n;
@@ -10566,7 +10317,7 @@ void do_wear(s)
 }
 
 
-void do_brief()
+void do_brief(void)
 {
     brief = !brief;
     if (brief)
@@ -10576,9 +10327,7 @@ void do_brief()
 }
 
 
-char *p_door_key(Result, n)
-        char *Result;
-        int n;
+char *p_door_key(char *Result, int n)
 {
     if (n == 0)
         return strcpy(Result, "<none>");
@@ -10588,8 +10337,7 @@ char *p_door_key(Result, n)
 
 
 
-void anal_exit(dir)
-        int dir;
+void anal_exit(int dir)
 {
     exit_ *WITH;
     string STR2;
@@ -10663,7 +10411,7 @@ void anal_exit(dir)
 }
 
 
-void do_s_exits()
+void do_s_exits(void)
 {
     int i;
     boolean accept;
@@ -10698,8 +10446,7 @@ void do_s_exits()
 }
 
 
-void do_s_object(s_)
-        char *s_;
+void do_s_object(char *s_)
 {
     string s;
     int n;
@@ -10743,7 +10490,7 @@ void do_s_object(s_)
 }
 
 
-void do_s_details()
+void do_s_details(void)
 {
     int i;
     boolean one = false;
@@ -10763,7 +10510,7 @@ void do_s_details()
 }
 
 
-void do_s_help()
+void do_s_help(void)
 {
     mprintf("\nExits             Lists exits you can inspect here\n");
     mprintf("Object            Show internals of an object\n");
@@ -10771,9 +10518,7 @@ void do_s_help()
 }
 
 
-void s_show(n, s)
-        int n;
-        char *s;
+void s_show(int n, char *s)
 {
     switch (n) {
 
@@ -10796,7 +10541,7 @@ void s_show(n, s)
 }
 
 
-void do_y_altmsg()
+void do_y_altmsg(void)
 {
     int newdsc;
 
@@ -10813,13 +10558,13 @@ void do_y_altmsg()
 }
 
 
-void do_y_help()
+void do_y_help(void)
 {
     mprintf("\nAltmsg        Set the alternate mystery message block\n\n");
 }
 
 
-void do_group1()
+void do_group1(void)
 {
     string grpnam;
     int loc;
@@ -10870,7 +10615,7 @@ void do_group1()
 
 
 
-void do_group2()
+void do_group2(void)
 {
     string grpnam;
     int loc;
@@ -10920,9 +10665,7 @@ void do_group2()
 }
 
 
-void s_set(n, s)
-        int n;
-        char *s;
+void s_set(int n, char *s)
 {
     switch (n) {
 
@@ -10945,8 +10688,7 @@ void s_set(n, s)
 }
 
 
-void do_show(s_)
-        char *s_;
+void do_show(char *s_)
 {
     string s;
     int n;
@@ -10966,8 +10708,7 @@ void do_show(s_)
 }
 
 
-void do_set(s_)
-        char *s_;
+void do_set(char *s_)
 {
     string s;
     int n;
@@ -10987,7 +10728,7 @@ void do_set(s_)
 }
 
 
-void parser()
+void parser(void)
 {
     string s, cmd;
     int n;
@@ -11243,7 +10984,7 @@ void parser()
 
 
 
-void init()
+void init(void)
 {
     char STR1[40];
     string STR2;
@@ -11361,7 +11102,7 @@ void init()
 }
 
 
-void prestart()
+void prestart(void)
 {
     string s, STR1;
     char *TEMP;
@@ -11377,8 +11118,7 @@ void prestart()
 }
 
 
-void welcome_back(mylog)
-        int *mylog;
+void welcome_back(int *mylog)
 {
     string tmp;
     shortstring sdate, stime;
@@ -11421,7 +11161,7 @@ void welcome_back(mylog)
 }
 
 
-boolean loc_ping()
+boolean loc_ping(void)
 {
     int i = 1;
     boolean found = false;
@@ -11456,7 +11196,7 @@ boolean loc_ping()
 /* attempt to fix the player using loc_ping if the database incorrectly
    shows someone playing who isn' playing */
 
-boolean fix_player()
+boolean fix_player(void)
 {
     mprintf("There may have been some trouble the last time you played.\n");
     mprintf("Trying to fix it . . .\n");
@@ -11472,8 +11212,7 @@ boolean fix_player()
 }
 
 
-boolean revive_player(mylog)
-        int *mylog;
+boolean revive_player(int *mylog)
 {
     boolean ok;
     int i;
@@ -11580,7 +11319,7 @@ boolean revive_player(mylog)
 }
 
 
-boolean enter_universe()
+boolean enter_universe(void)
 {
     boolean Result = true;
     string orignam;
@@ -11632,7 +11371,7 @@ boolean enter_universe()
 }
 
 
-void leave_universe()
+void leave_universe(void)
 {
     boolean diddrop;
 
@@ -11647,9 +11386,7 @@ void leave_universe()
 }
 
 
-main(argc, argv)
-int argc;
-char *argv[];
+main(int argc, char *argv[])
 {
 
 setbuf(stdout, 0);
