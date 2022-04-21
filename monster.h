@@ -347,6 +347,7 @@ extern void grab_line(char *prompt, char *s, boolean echo);
 # define FALSE   0
 #endif
 
+//extern char *ctime();
 
 
 #endif //MONSTER_MONSTER_H

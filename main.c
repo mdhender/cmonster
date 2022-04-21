@@ -576,7 +576,6 @@ typedef struct intrec {
 } intrec;
 
 
-extern string old_prompt, line;
 string oldcmd;   /* string for '.' command to do last command */
 
 boolean inmem;
@@ -2952,7 +2951,6 @@ char *nice_time(void)
     char *timestr;
     char the_date[17];
     char the_time[8];
-    extern char *ctime();
     long time_now;
     static char buf[25];
 
