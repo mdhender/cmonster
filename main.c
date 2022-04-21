@@ -4403,7 +4403,6 @@ void log_entry(int direction, int room_, int sender_slot)
 
 
 void log_begin(int room_)
-        int room_;
 {
     log_event(0, E_BEGIN, 0, 0, myname, room_);
 }
