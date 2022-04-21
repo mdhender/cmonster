@@ -76,7 +76,7 @@
 #define MVM_userid      "gary"   /* Monster Vice Manager*/
 #define FAUST_userid    "skrenta"   /* Dr. Faustus*/
 
-#define MONSTER_FILE	0666
+#define MONSTER_FILE    0666
 
 #define REBUILD_OK      true
 /* if this is TRUE, the MM can blow away
@@ -616,15 +616,15 @@ int intfile;
 int objfile;
 int spellfile;
 
-room      roomfile_hat;
-eventrec  eventfile_hat;
-namrec    namfile_hat;
-descrec   descfile_hat;
-linerec	  linefile_hat;
-indexrec  indexfile_hat;
-intrec    intfile_hat;
+room roomfile_hat;
+eventrec eventfile_hat;
+namrec namfile_hat;
+descrec descfile_hat;
+linerec linefile_hat;
+indexrec indexfile_hat;
+intrec intfile_hat;
 objectrec objfile_hat;
-spellrec  spellfile_hat;
+spellrec spellfile_hat;
 
 shortstring cmds[maxcmds] = {
         "name", "help", "?", "quit", "look", "go", "form", "link", "unlink",
@@ -786,26 +786,23 @@ void finish_guts(void) {
 #define SHORT_WAIT      0.1
 #define LONG_WAIT       0.2
 
-void doawait(double t)
-{
-    struct timespec ts = { 0, 100000000 };
+void doawait(double t) {
+    struct timespec ts = {0, 100000000};
 
     ts.tv_sec = t;
-    ts.tv_nsec = 1000000000 * (t - (double)((int)t));
+    ts.tv_nsec = 1000000000 * (t - (double) ((int) t));
 
     nanosleep(&ts, 0);
 }
 
 int in_grab_line = 0;
 
-void pchars(char *s)
-{
+void pchars(char *s) {
     printf("%s", s);
     fflush(stdout);
 }
 
-void putchars(char *s)
-{
+void putchars(char *s) {
     if (in_grab_line) {
         pchars("\n");
         in_grab_line = 0;
@@ -815,8 +812,7 @@ void putchars(char *s)
     fflush(stdout);
 }
 
-void mprintf(const char *fmt, ...)
-{
+void mprintf(const char *fmt, ...) {
     va_list arg_ptr;
     char buf[256];
 
@@ -856,8 +852,7 @@ char keyget(void) {
 }
 
 
-void grab_line(char *prompt, char *s, boolean echo)
-{
+void grab_line(char *prompt, char *s, boolean echo) {
     char ch;
     long pos;
     char STR1[82];
@@ -880,24 +875,27 @@ void grab_line(char *prompt, char *s, boolean echo)
 
                 case 1:
                     *line = '\0';
-                    if (echo)
+                    if (echo) {
                         pchars("\b \b");
+                    }
                     ch = keyget();
                     break;
 
                 case 2:
                     sprintf(STR2, "%c", line[0]);
                     strcpy(line, STR2);
-                    if (echo)
+                    if (echo) {
                         pchars("\b \b");
+                    }
                     ch = keyget();
                     break;
 
                 default:
-                    sprintf(STR2, "%.*s", (int)(strlen(line) - 1L), line);
+                    sprintf(STR2, "%.*s", (int) (strlen(line) - 1L), line);
                     strcpy(line, STR2);
-                    if (echo)
+                    if (echo) {
                         pchars("\b \b");
+                    }
                     ch = keyget();
                     break;
             }
@@ -930,8 +928,9 @@ void grab_line(char *prompt, char *s, boolean echo)
                 pchars(STR2);
             }
             ch = keyget();
-        } else
+        } else {
             ch = keyget();
+        }
     }
     /* ***           ch := nextkey;           *** */
     pos = strlen(prompt) + strlen(line);
@@ -949,32 +948,32 @@ void grab_line(char *prompt, char *s, boolean echo)
 
 
 /* returns a random # between 0-100 */
-int rnd100(void)
-{
+int rnd100(void) {
     return random() % 101;
 }
-
 
 
 /* Return the index of the first occurrence of "pat" as a substring of "s",
    starting at index "pos" (1-based).  Result is 1-based, 0 if not found. */
 
-int strpos2(char *s, char *pat, int pos)
-{
+int strpos2(char *s, char *pat, int pos) {
     register char *cp, ch;
     register int slen;
 
-    if (--pos < 0)
+    if (--pos < 0) {
         return 0;
+    }
     slen = strlen(s) - pos;
     cp = s + pos;
-    if (!(ch = *pat++))
+    if (!(ch = *pat++)) {
         return 0;
+    }
     pos = strlen(pat);
     slen -= pos;
     while (--slen >= 0) {
-        if (*cp++ == ch && !strncmp(cp, pat, pos))
+        if (*cp++ == ch && !strncmp(cp, pat, pos)) {
             return cp - s;
+        }
     }
     return 0;
 }
@@ -1011,30 +1010,29 @@ char *get_userid(char *Result) {
 }
 
 
-void collision_wait(void)
-{
+void collision_wait(void) {
     double wait_time;
 
     wait_time = mrandom();
-    if (wait_time < 0.001)
+    if (wait_time < 0.001) {
         wait_time = 0.001;
+    }
     doawait(wait_time);
 }
 
 
 /* increment err; if err is too high, suspect deadlock */
 /* this is called by all getX procedures to ease deadlock checking */
-void deadcheck(int *err, char *s)
-{
+void deadcheck(int *err, char *s) {
     (*err)++;
-    if (*err <= maxerr)
+    if (*err <= maxerr) {
         return;
+    }
     mprintf("?warning- %s seems to be deadlocked; notify the Monster Manager\n",
             s);
     finish_guts();
     exit(0);
 }
-
 
 
 /* first procedure of form getX
@@ -1043,12 +1041,12 @@ void deadcheck(int *err, char *s)
    Locks record; use freeroom immediately after getroom if data is
    for read-only
 */
-void getroom(int n)
-{
+void getroom(int n) {
     int err = 0;
 
-    if (n == 0)
+    if (n == 0) {
         n = location;
+    }
 
     lock(roomfile);
     lseek(roomfile, (n - 1L) * sizeof(room), 0);
@@ -1064,8 +1062,7 @@ void getroom(int n)
 }
 
 
-void putroom(void )
-{
+void putroom(void) {
     lseek(roomfile, (here.valid - 1L) * sizeof(room), 0);
     memcpy(&roomfile_hat, &here, sizeof(room));
     write(roomfile, &roomfile_hat, sizeof(room));
@@ -1073,22 +1070,21 @@ void putroom(void )
 }
 
 
-void freeroom(void)
-{
+void freeroom(void) {
     unlock(roomfile);
 }
 
 
-void gethere(int n)
-{
+void gethere(int n) {
     if (n != 0 && n != location) {
         getroom(n);
         freeroom();
         return;
     }
     if (inmem) {
-        if (debug)
+        if (debug) {
             mprintf("?gethere - here already in memory\n");
+        }
         return;
     }
     getroom(0);   /* getroom(n) okay here also */
@@ -1097,8 +1093,7 @@ void gethere(int n)
 }
 
 
-void getown(void)
-{
+void getown(void) {
     int err = 0;
 
     lock(namfile);
@@ -1108,8 +1103,7 @@ void getown(void)
 }
 
 
-void getnam(void)
-{
+void getnam(void) {
     lock(namfile);
     lseek(namfile, (1 - 1L) * sizeof(namrec), 0);
     read(namfile, &namfile_hat, sizeof(namrec));
@@ -1117,20 +1111,17 @@ void getnam(void)
 }
 
 
-void freenam(void)
-{
+void freenam(void) {
     unlock(namfile);
 }
 
 
-void freeown(void)
-{
+void freeown(void) {
     unlock(namfile);
 }
 
 
-void putnam(void)
-{
+void putnam(void) {
     lseek(namfile, 0L, 0);
     memcpy(&namfile_hat, &nam, sizeof(namrec));
     write(namfile, &namfile_hat, sizeof(namrec));
@@ -1138,8 +1129,7 @@ void putnam(void)
 }
 
 
-void putown(void)
-{
+void putown(void) {
     lseek(namfile, sizeof(namrec), 0);
     memcpy(&namfile_hat, &own, sizeof(namrec));
     write(namfile, &namfile_hat, sizeof(namrec));
@@ -1147,16 +1137,14 @@ void putown(void)
 }
 
 
-void getobj(int n)
-{
+void getobj(int n) {
     lock(objfile);
     lseek(objfile, (n - 1L) * sizeof(objectrec), 0);
     read(objfile, &objfile_hat, sizeof(objectrec));
     memcpy(&obj, &objfile_hat, sizeof(objectrec));
 }
 
-void putobj(void)
-{
+void putobj(void) {
     lseek(objfile, (obj.objnum - 1L) * sizeof(objectrec), 0);
     memcpy(&objfile_hat, &obj, sizeof(objectrec));
     write(objfile, &objfile_hat, sizeof(objectrec));
@@ -1164,15 +1152,12 @@ void putobj(void)
 }
 
 
-void freeobj(void)
-{
+void freeobj(void) {
     unlock(objfile);
 }
 
 
-
-void getint(int n)
-{
+void getint(int n) {
     lock(intfile);
     lseek(intfile, (n - 1L) * sizeof(intrec), 0);
     read(intfile, &intfile_hat, sizeof(intrec));
@@ -1180,14 +1165,12 @@ void getint(int n)
 }
 
 
-void freeint(void)
-{
+void freeint(void) {
     unlock(intfile);
 }
 
 
-void putint(void)
-{
+void putint(void) {
     int n = anint.intnum;
 
     lseek(intfile, (n - 1L) * sizeof(intrec), 0);
@@ -1197,10 +1180,10 @@ void putint(void)
 }
 
 
-void getspell(int n)
-{
-    if (n == 0)
+void getspell(int n) {
+    if (n == 0) {
         n = mylog;
+    }
 
     lock(spellfile);
     lseek(spellfile, (n - 1L) * sizeof(spellrec), 0);
@@ -1209,14 +1192,12 @@ void getspell(int n)
 }
 
 
-void freespell(void)
-{
+void freespell(void) {
     unlock(spellfile);
 }
 
 
-void putspell(void)
-{
+void putspell(void) {
     int n;
 
     n = spell.recnum;
@@ -1227,8 +1208,7 @@ void putspell(void)
     unlock(spellfile);
 }
 
-void getuser(void)
-{
+void getuser(void) {
 
     lock(namfile);
     lseek(namfile, (4 - 1L) * sizeof(namrec), 0);
@@ -1236,14 +1216,12 @@ void getuser(void)
     memcpy(&user, &namfile_hat, sizeof(namrec));
 }
 
-void freeuser(void)
-{
+void freeuser(void) {
     unlock(namfile);
 }
 
 
-void putuser(void)
-{
+void putuser(void) {
     lseek(namfile, 3L * sizeof(namrec), 0);
     memcpy(&namfile_hat, &user, sizeof(namrec));
     write(namfile, &namfile_hat, sizeof(namrec));
@@ -1251,23 +1229,19 @@ void putuser(void)
 }
 
 
-
-void getdate(void)
-{
+void getdate(void) {
     lock(namfile);
     lseek(namfile, (7 - 1L) * sizeof(namrec), 0);
     read(namfile, &namfile_hat, sizeof(namrec));
     memcpy(&adate, &namfile_hat, sizeof(namrec));
 }
 
-void freedate(void)
-{
+void freedate(void) {
     unlock(namfile);
 }
 
 
-void putdate(void)
-{
+void putdate(void) {
     lseek(namfile, sizeof(namrec) * 6L, 0);
     memcpy(&namfile_hat, &adate, sizeof(namrec));
     write(namfile, &namfile_hat, sizeof(namrec));
@@ -1275,8 +1249,7 @@ void putdate(void)
 }
 
 
-void gettime(void)
-{
+void gettime(void) {
     lock(namfile);
     lseek(namfile, (8 - 1L) * sizeof(namrec), 0);
     read(namfile, &namfile_hat, sizeof(namrec));
@@ -1284,13 +1257,11 @@ void gettime(void)
 }
 
 
-void freetime(void)
-{
+void freetime(void) {
     unlock(namfile);
 }
 
-void puttime(void)
-{
+void puttime(void) {
     lseek(namfile, sizeof(namrec) * 7L, 0);
     memcpy(&namfile_hat, &atime, sizeof(namrec));
     write(namfile, &namfile_hat, sizeof(namrec));
@@ -1298,8 +1269,7 @@ void puttime(void)
 }
 
 
-void getobjnam(void)
-{
+void getobjnam(void) {
     lock(namfile);
     lseek(namfile, (5 - 1L) * sizeof(namrec), 0);
     read(namfile, &namfile_hat, sizeof(namrec));
@@ -1307,14 +1277,12 @@ void getobjnam(void)
 }
 
 
-void freeobjnam(void)
-{
+void freeobjnam(void) {
     unlock(namfile);
 }
 
 
-void putobjnam(void)
-{
+void putobjnam(void) {
     lseek(namfile, sizeof(namrec) * 4L, 0);
     memcpy(&namfile_hat, &objnam, sizeof(namrec));
     write(namfile, &namfile_hat, sizeof(namrec));
@@ -1322,8 +1290,7 @@ void putobjnam(void)
 }
 
 
-void getobjown(void)
-{
+void getobjown(void) {
     lock(namfile);
     lseek(namfile, (6 - 1L) * sizeof(namrec), 0);
     read(namfile, &namfile_hat, sizeof(namrec));
@@ -1331,14 +1298,12 @@ void getobjown(void)
 }
 
 
-void freeobjown(void)
-{
+void freeobjown(void) {
     unlock(namfile);
 }
 
 
-void putobjown(void)
-{
+void putobjown(void) {
     lseek(namfile, sizeof(namrec) * 5L, 0);
     memcpy(&namfile_hat, &objown, sizeof(namrec));
     write(namfile, &namfile_hat, sizeof(namrec));
@@ -1346,9 +1311,7 @@ void putobjown(void)
 }
 
 
-
-void getpers(void)
-{
+void getpers(void) {
     lock(namfile);
     lseek(namfile, (3 - 1L) * sizeof(namrec), 0);
     read(namfile, &namfile_hat, sizeof(namrec));
@@ -1356,14 +1319,12 @@ void getpers(void)
 }
 
 
-void freepers(void)
-{
+void freepers(void) {
     unlock(namfile);
 }
 
 
-void putpers(void)
-{
+void putpers(void) {
     lseek(namfile, sizeof(namrec) * 2L, 0);
     memcpy(&namfile_hat, &pers, sizeof(namrec));
     write(namfile, &namfile_hat, sizeof(namrec));
@@ -1371,13 +1332,12 @@ void putpers(void)
 }
 
 
-
-void getevent(int n)
-{
+void getevent(int n) {
     int err = 0;
 
-    if (n == 0)
+    if (n == 0) {
         n = location;
+    }
 
     n = n % numevnts + 1;
 
@@ -1388,14 +1348,12 @@ void getevent(int n)
 }
 
 
-void freeevent(void)
-{
+void freeevent(void) {
     unlock(eventfile);
 }
 
 
-void putevent(void)
-{
+void putevent(void) {
     lseek(eventfile, (event.validat - 1L) * sizeof(eventrec), 0);
     memcpy(&eventfile_hat, &event, sizeof(eventrec));
     write(eventfile, &eventfile_hat, sizeof(eventrec));
@@ -1403,8 +1361,7 @@ void putevent(void)
 }
 
 
-void getblock(int n)
-{
+void getblock(int n) {
     lock(descfile);
     lseek(descfile, (n - 1L) * sizeof(descrec), 0);
     read(descfile, &descfile_hat, sizeof(descrec));
@@ -1412,15 +1369,16 @@ void getblock(int n)
 }
 
 
-void putblock(void)
-{
+void putblock(void) {
     int n;
 
     n = block.descrinum;
-    if (debug)
+    if (debug) {
         mprintf("?putblock: %d\n", n);
-    if (n == 0)
+    }
+    if (n == 0) {
         return;
+    }
 
     lseek(descfile, (n - 1L) * sizeof(descrec), 0);
     memcpy(&descfile_hat, &block, sizeof(descrec));
@@ -1429,14 +1387,12 @@ void putblock(void)
 }
 
 
-void freeblock(void)
-{
+void freeblock(void) {
     unlock(descfile);
 }
 
 
-void getline(int n)
-{
+void getline(int n) {
 
     if (n == -1) {
         *oneliner.theline = '\0';
@@ -1450,10 +1406,10 @@ void getline(int n)
 }
 
 
-void putline(void)
-{
-    if (oneliner.linenum <= 0)
+void putline(void) {
+    if (oneliner.linenum <= 0) {
         return;
+    }
 
     lseek(linefile, (oneliner.linenum - 1L) * sizeof(linerec), 0);
     memcpy(&linefile_hat, &oneliner, sizeof(linerec));
@@ -1462,12 +1418,9 @@ void putline(void)
 }
 
 
-void freeline(void)
-{
+void freeline(void) {
     unlock(linefile);
 }
-
-
 
 
 /*
@@ -1476,8 +1429,7 @@ Index record 2 -- One liners that are free
 */
 
 
-void getindex(int n)
-{
+void getindex(int n) {
     lock(indexfile);
     lseek(indexfile, (n - 1L) * sizeof(indexrec), 0);
     read(indexfile, &indexfile_hat, sizeof(indexrec));
@@ -1485,19 +1437,16 @@ void getindex(int n)
 }
 
 
-void putindex(void)
-{
+void putindex(void) {
     lseek(indexfile, (indx.indexnum - 1L) * sizeof(indexrec), 0);
     memcpy(&indexfile_hat, &indx, sizeof(indexrec));
     write(indexfile, &indexfile_hat, sizeof(indexrec));
     unlock(indexfile);
 }
 
-void freeindex(void)
-{
+void freeindex(void) {
     unlock(indexfile);
 }
-
 
 
 /*
@@ -1507,8 +1456,7 @@ Allocates the oneliner resource using the indexrec bitmaps
 Return the number of a one liner if one is available
 and remove it from the free list
 */
-boolean alloc_line(int *n)
-{
+boolean alloc_line(int *n) {
     boolean Result, found;
 
     getindex(I_LINE);
@@ -1522,10 +1470,11 @@ boolean alloc_line(int *n)
         *n = 1;
         found = false;
         while (!found && *n <= indx.top) {
-            if (indx.free[*n - 1])
+            if (indx.free[*n - 1]) {
                 found = true;
-            else
+            } else {
                 (*n)++;
+            }
         }
         if (found) {
             indx.free[*n - 1] = false;
@@ -1548,11 +1497,10 @@ boolean alloc_line(int *n)
 put the line specified by n back on the free list
 zeroes n also, for convenience
 */
-void delete_line(int *n)
-{
-    if (*n == DEFAULT_LINE)
+void delete_line(int *n) {
+    if (*n == DEFAULT_LINE) {
         *n = 0;
-    else if (*n > 0) {
+    } else if (*n > 0) {
         getindex(I_LINE);
         indx.inuse--;
         indx.free[*n - 1] = true;
@@ -1562,9 +1510,7 @@ void delete_line(int *n)
 }
 
 
-
-boolean alloc_int(int *n)
-{
+boolean alloc_int(int *n) {
     boolean Result, found;
 
     getindex(I_INT);
@@ -1578,10 +1524,11 @@ boolean alloc_int(int *n)
         *n = 1;
         found = false;
         while (!found && *n <= indx.top) {
-            if (indx.free[*n - 1])
+            if (indx.free[*n - 1]) {
                 found = true;
-            else
+            } else {
                 (*n)++;
+            }
         }
         if (found) {
             indx.free[*n - 1] = false;
@@ -1600,8 +1547,7 @@ boolean alloc_int(int *n)
 }
 
 
-void delete_int(int *n)
-{
+void delete_int(int *n) {
     if (*n > 0) {
         getindex(I_INT);
         indx.inuse--;
@@ -1612,17 +1558,16 @@ void delete_int(int *n)
 }
 
 
-
 /*
 Return the number of a description block if available and
 remove it from the free list
 */
-boolean alloc_block(int *n)
-{
+boolean alloc_block(int *n) {
     boolean Result, found;
 
-    if (debug)
+    if (debug) {
         mprintf("?alloc_block entry\n");
+    }
     getindex(I_BLOCK);
     if (indx.inuse == indx.top) {
         freeindex();
@@ -1634,18 +1579,20 @@ boolean alloc_block(int *n)
         *n = 1;
         found = false;
         while (!found && *n <= indx.top) {
-            if (indx.free[*n - 1])
+            if (indx.free[*n - 1]) {
                 found = true;
-            else
+            } else {
                 (*n)++;
+            }
         }
         if (found) {
             indx.free[*n - 1] = false;
             Result = true;
             indx.inuse++;
             putindex();
-            if (debug)
+            if (debug) {
                 mprintf("?alloc_block successful\n");
+            }
             return true;
         } else {
             freeindex();
@@ -1657,14 +1604,11 @@ boolean alloc_block(int *n)
 }
 
 
-
-
 /*
 puts a description block back on the free list
 zeroes n for convenience
 */
-void delete_block(int *n)
-{
+void delete_block(int *n) {
     if (*n == DEFAULT_LINE) {
         *n = 0;   /* no line really exists in the file */
         return;
@@ -1684,13 +1628,11 @@ void delete_block(int *n)
 }
 
 
-
 /*
 Return the number of a room if one is available
 and remove it from the free list
 */
-boolean alloc_room(int *n)
-{
+boolean alloc_room(int *n) {
     boolean Result, found;
 
     getindex(I_ROOM);
@@ -1704,10 +1646,11 @@ boolean alloc_room(int *n)
         *n = 1;
         found = false;
         while (!found && *n <= indx.top) {
-            if (indx.free[*n - 1])
+            if (indx.free[*n - 1]) {
                 found = true;
-            else
+            } else {
                 (*n)++;
+            }
         }
         if (found) {
             indx.free[*n - 1] = false;
@@ -1730,10 +1673,10 @@ Called by DEL_ROOM()
 put the room specified by n back on the free list
 zeroes n also, for convenience
 */
-void delete_room(int *n)
-{
-    if (*n == 0)
+void delete_room(int *n) {
+    if (*n == 0) {
         return;
+    }
     getindex(I_ROOM);
     indx.inuse--;
     indx.free[*n - 1] = true;
@@ -1742,9 +1685,7 @@ void delete_room(int *n)
 }
 
 
-
-boolean alloc_log(int *n)
-{
+boolean alloc_log(int *n) {
     boolean Result, found;
 
     getindex(I_PLAYER);
@@ -1758,10 +1699,11 @@ boolean alloc_log(int *n)
         *n = 1;
         found = false;
         while (!found && *n <= indx.top) {
-            if (indx.free[*n - 1])
+            if (indx.free[*n - 1]) {
                 found = true;
-            else
+            } else {
                 (*n)++;
+            }
         }
         if (found) {
             indx.free[*n - 1] = false;
@@ -1779,10 +1721,10 @@ boolean alloc_log(int *n)
 }
 
 
-void delete_log(int *n)
-{
-    if (*n == 0)
+void delete_log(int *n) {
+    if (*n == 0) {
         return;
+    }
     getindex(I_PLAYER);
     indx.inuse--;
     indx.free[*n - 1] = true;
@@ -1791,19 +1733,19 @@ void delete_log(int *n)
 }
 
 
-char *lowcase(char *Result, char *s)
-{
+char *lowcase(char *Result, char *s) {
     string sprime;
     int i, FORLIM;
 
-    if (*s == '\0')
+    if (*s == '\0') {
         return strcpy(Result, "");
-    else {
+    } else {
         strcpy(sprime, s);
         FORLIM = strlen(s);
         for (i = 0; i < FORLIM; i++) {
-            if (isupper(sprime[i]))
+            if (isupper(sprime[i])) {
                 sprime[i] = _tolower(sprime[i]);
+            }
         }
         return strcpy(Result, sprime);
     }
@@ -1812,8 +1754,7 @@ char *lowcase(char *Result, char *s)
 
 /* lookup a spell with disambiguation in the spell list */
 
-boolean lookup_spell(int *n, char *s_)
-{
+boolean lookup_spell(int *n, char *s_) {
     string s;
     int i = 1;
     int poss;
@@ -1825,9 +1766,9 @@ boolean lookup_spell(int *n, char *s_)
     strcpy(s, lowcase(STR1, s));
     FORLIM = numspells;
     for (i = 1; i <= FORLIM; i++) {
-        if (!strcmp(s, spells[i-1]))
+        if (!strcmp(s, spells[i - 1])) {
             num = i;
-        else if (strncmp(s, spells[i-1], strlen(s)) == 0) {
+        } else if (strncmp(s, spells[i - 1], strlen(s)) == 0) {
             maybe++;
             poss = i;
         }
@@ -1838,15 +1779,15 @@ boolean lookup_spell(int *n, char *s_)
     } else if (maybe == 1) {
         *n = poss;
         return true;
-    } else if (maybe > 1)
+    } else if (maybe > 1) {
         return false;
-    else
+    } else {
         return false;
+    }
 }
 
 
-boolean lookup_user(int *pnum, char *s_)
-{
+boolean lookup_user(int *pnum, char *s_) {
     string s;
     int i = 1;
     int poss;
@@ -1863,10 +1804,10 @@ boolean lookup_user(int *pnum, char *s_)
     strcpy(s, lowcase(STR1, s));
     FORLIM = indx.top;
     for (i = 1; i <= FORLIM; i++) {
-        if (!indx.free[i-1]) {
-            if (!strcmp(s, user.idents[i-1]))
+        if (!indx.free[i - 1]) {
+            if (!strcmp(s, user.idents[i - 1])) {
                 num = i;
-            else if (strncmp(s, user.idents[i-1], strlen(s)) == 0) {
+            } else if (strncmp(s, user.idents[i - 1], strlen(s)) == 0) {
                 maybe++;
                 poss = i;
             }
@@ -1888,8 +1829,7 @@ boolean lookup_user(int *pnum, char *s_)
 }
 
 
-boolean alloc_obj(int *n)
-{
+boolean alloc_obj(int *n) {
     boolean Result, found;
 
     getindex(I_OBJECT);
@@ -1903,10 +1843,11 @@ boolean alloc_obj(int *n)
         *n = 1;
         found = false;
         while (!found && *n <= indx.top) {
-            if (indx.free[*n - 1])
+            if (indx.free[*n - 1]) {
                 found = true;
-            else
+            } else {
                 (*n)++;
+            }
         }
         if (found) {
             indx.free[*n - 1] = false;
@@ -1924,10 +1865,10 @@ boolean alloc_obj(int *n)
 }
 
 
-void delete_obj(int *n)
-{
-    if (*n == 0)
+void delete_obj(int *n) {
+    if (*n == 0) {
         return;
+    }
     getindex(I_OBJECT);
     indx.inuse--;
     indx.free[*n - 1] = true;
@@ -1936,10 +1877,7 @@ void delete_obj(int *n)
 }
 
 
-
-
-boolean lookup_obj(int *pnum, char *s_)
-{
+boolean lookup_obj(int *pnum, char *s_) {
     string s;
     int i = 1;
     int poss;
@@ -1956,10 +1894,10 @@ boolean lookup_obj(int *pnum, char *s_)
     strcpy(s, lowcase(STR1, s));
     FORLIM = indx.top;
     for (i = 1; i <= FORLIM; i++) {
-        if (!indx.free[i-1]) {
-            if (!strcmp(s, objnam.idents[i-1]))
+        if (!indx.free[i - 1]) {
+            if (!strcmp(s, objnam.idents[i - 1])) {
                 num = i;
-            else if (strncmp(s, objnam.idents[i-1], strlen(s)) == 0) {
+            } else if (strncmp(s, objnam.idents[i - 1], strlen(s)) == 0) {
                 maybe++;
                 poss = i;
             }
@@ -1981,72 +1919,67 @@ boolean lookup_obj(int *pnum, char *s_)
 }
 
 
-
 /* returns true if object N is in this room */
 
-boolean obj_here(int n)
-{
+boolean obj_here(int n) {
     int i = 1;
     boolean found = false;
 
     while (i <= maxobjs && !found) {
-        if (here.objs[i-1] == n)
+        if (here.objs[i - 1] == n) {
             found = true;
-        else
+        } else {
             i++;
+        }
     }
     return found;
 }
 
 
-
-
 /* returns true if object N is being held by the player */
 
-boolean obj_hold(int n)
-{
+boolean obj_hold(int n) {
     int i;
     boolean found;
 
-    if (n == 0)
+    if (n == 0) {
         return false;
-    else {
+    } else {
         i = 1;
         found = false;
         while (i <= maxhold && !found) {
-            if (here.people[myslot-1].holding[i-1] == n)
+            if (here.people[myslot - 1].holding[i - 1] == n) {
                 found = true;
-            else
+            } else {
                 i++;
+            }
         }
         return found;
     }
 }
 
 
-
 /* return the slot of an object that is HERE */
-int find_obj(int objnum)
-{
+int find_obj(int objnum) {
     int Result = 0, i = 1;
 
     while (i <= maxobjs) {
-        if (here.objs[i-1] == objnum)
+        if (here.objs[i - 1] == objnum) {
             Result = i;
+        }
         i++;
     }
     return Result;
 }
 
 
-
 /* similar to lookup_obj, but only returns true if the object is in
    this room or is being held by the player */
 
-boolean parse_obj(int *n, char *s, boolean override)
-{
-    if (!lookup_obj(n, s))
+boolean parse_obj(int *n, char *s, boolean override) {
+    if (!lookup_obj(n, s)) {
         return false;
+    }
     if (obj_here(*n) || obj_hold(*n)) {
         /* took out a great block of code that wouldn't let
        parse_obj work if player couldn't see object */
@@ -2057,10 +1990,7 @@ boolean parse_obj(int *n, char *s, boolean override)
 }
 
 
-
-
-boolean lookup_pers(int *pnum, char *s_)
-{
+boolean lookup_pers(int *pnum, char *s_) {
     string s;
     int i = 1;
     int poss;
@@ -2077,12 +2007,12 @@ boolean lookup_pers(int *pnum, char *s_)
     strcpy(s, lowcase(STR1, s));
     FORLIM = indx.top;
     for (i = 1; i <= FORLIM; i++) {
-        if (!indx.free[i-1]) {
-            lowcase(pname, pers.idents[i-1]);
+        if (!indx.free[i - 1]) {
+            lowcase(pname, pers.idents[i - 1]);
 
-            if (!strcmp(s, pname))
+            if (!strcmp(s, pname)) {
                 num = i;
-            else if (strncmp(s, pname, strlen(s)) == 0) {
+            } else if (strncmp(s, pname, strlen(s)) == 0) {
                 maybe++;
                 poss = i;
             }
@@ -2104,9 +2034,7 @@ boolean lookup_pers(int *pnum, char *s_)
 }
 
 
-
-boolean parse_pers(int *pnum, char * s_)
-{
+boolean parse_pers(int *pnum, char *s_) {
     boolean Result;
     string s;
     int persnum;
@@ -2119,12 +2047,12 @@ boolean parse_pers(int *pnum, char * s_)
     gethere(0);
     strcpy(s, lowcase(STR1, s));
     for (i = 1; i <= maxpeople; i++) {
-        if (here.people[i-1].kind > 0) {
-            lowcase(pname, here.people[i-1].name);
+        if (here.people[i - 1].kind > 0) {
+            lowcase(pname, here.people[i - 1].name);
 
-            if (!strcmp(s, pname))
+            if (!strcmp(s, pname)) {
                 num = i;
-            else if (strncmp(s, pname, strlen(s)) == 0) {
+            } else if (strncmp(s, pname, strlen(s)) == 0) {
                 maybe++;
                 poss = i;
             }
@@ -2145,40 +2073,40 @@ boolean parse_pers(int *pnum, char * s_)
         persnum = 0;
         Result = false;
     }
-    if (persnum <= 0)
+    if (persnum <= 0) {
         return Result;
-    if (here.people[persnum-1].hiding > 0)
+    }
+    if (here.people[persnum - 1].hiding > 0) {
         return false;
+    }
     Result = true;
     *pnum = persnum;
     return true;
 }
 
 
-
-
-
 /*
 Returns TRUE if player is owner of room n
 If no n is given default will be this room (location)
 */
-boolean is_owner(int n, boolean surpress)
-{
+boolean is_owner(int n, boolean surpress) {
     boolean Result = false;
 
     gethere(n);
-    if (!strcmp(here.owner, userid) || privd)
+    if (!strcmp(here.owner, userid) || privd) {
         return true;
-    if (!surpress)
+    }
+    if (!surpress) {
         mprintf("You are not the owner of this room.\n");
+    }
     return false;
 }
 
 
-char *room_owner(char *Result, int n)
-{
-    if (n == 0)
+char *room_owner(char *Result, int n) {
+    if (n == 0) {
         return strcpy(Result, "no room");
+    }
     gethere(n);
     strcpy(Result, here.owner);
     gethere(0);   /* restore old state! */
@@ -2191,38 +2119,39 @@ Returns TRUE if player is allowed to alter the exit
 TRUE if either this room or if target room is owned by player
 */
 
-boolean can_alter(int dir, int room_)
-{
+boolean can_alter(int dir, int room_) {
     string STR1;
 
     gethere(0);
-    if (!strcmp(here.owner, userid) || privd)
+    if (!strcmp(here.owner, userid) || privd) {
         return true;
-    else {
-        if (here.exits[dir-1].toloc > 0) {
-            if (!strcmp(room_owner(STR1, here.exits[dir-1].toloc), userid))
+    } else {
+        if (here.exits[dir - 1].toloc > 0) {
+            if (!strcmp(room_owner(STR1, here.exits[dir - 1].toloc), userid)) {
                 return true;
-            else
+            } else {
                 return false;
-        } else
+            }
+        } else {
             return false;
+        }
     }
 }
 
 
-boolean can_make(int dir, int room_)
-{
+boolean can_make(int dir, int room_) {
     boolean Result = false;
 
     gethere(room_);   /* 5 is accept door */
-    if (here.exits[dir-1].toloc != 0) {
+    if (here.exits[dir - 1].toloc != 0) {
         mprintf("There is already an exit there.  Use UNLINK or RELINK.\n");
         return false;
     }
-    if (!strcmp(here.owner, userid) || here.exits[dir-1].kind == 5 || privd ||
-        !strcmp(here.owner, "*"))
+    if (!strcmp(here.owner, userid) || here.exits[dir - 1].kind == 5 || privd ||
+        !strcmp(here.owner, "*")) {
         /* I'm the owner */
         return true;
+    }
     /* there's an accept */
     /* Monster Manager */
     /* disowned room */
@@ -2234,23 +2163,21 @@ boolean can_make(int dir, int room_)
 /*
 print a one liner
 */
-void print_line(int n)
-{
+void print_line(int n) {
     if (n == DEFAULT_LINE) {
         mprintf("<default line>\n");
         return;
     }
-    if (n <= 0)
+    if (n <= 0) {
         return;
+    }
     getline(n);
     freeline();
     puts(oneliner.theline);
 }
 
 
-
-void print_desc(int dsc, char *default_)
-{
+void print_desc(int dsc, char *default_) {
     int i = 1;
 
     if (dsc == DEFAULT_LINE) {
@@ -2258,23 +2185,21 @@ void print_desc(int dsc, char *default_)
         return;
     }
     if (dsc <= 0) {
-        if (dsc < 0)
+        if (dsc < 0) {
             print_line(abs(dsc));
+        }
         return;
     }
     getblock(dsc);
     freeblock();
     while (i <= block.desclen) {
-        puts(block.lines[i-1]);
+        puts(block.lines[i - 1]);
         i++;
     }
 }
 
 
-
-
-void make_line(int *n, char *prompt, int limit)
-{
+void make_line(int *n, char *prompt, int limit) {
     string s;
     boolean ok;
 
@@ -2289,14 +2214,16 @@ void make_line(int *n, char *prompt, int limit)
         return;
     }
     if (!strcmp(s, "*")) {
-        if (debug)
+        if (debug) {
             mprintf("?deleting line %d\n", *n);
+        }
         delete_line(n);
         return;
     }
     if (*s == '\0') {
-        if (debug)
+        if (debug) {
             mprintf("?deleting line %d\n", *n);
+        }
         delete_line(n);
         return;
     }
@@ -2305,29 +2232,33 @@ void make_line(int *n, char *prompt, int limit)
         return;
     }
     if (*n == 0 || *n == DEFAULT_LINE) {
-        if (debug)
+        if (debug) {
             mprintf("?makeline: allocating line\n");
+        }
         ok = alloc_line(n);
-    } else
+    } else {
         ok = true;
+    }
 
-    if (!ok)
+    if (!ok) {
         return;
-    if (debug)
+    }
+    if (debug) {
         mprintf("?ok in makeline\n");
+    }
     getline(*n);
     strcpy(oneliner.theline, s);
     putline();
 
-    if (debug)
+    if (debug) {
         mprintf("?completed putline in makeline\n");
+    }
 }
 
 
 /* translate a direction s [north, south, etc...] into the integer code */
 
-boolean lookup_dir(int *dir, char *s_)
-{
+boolean lookup_dir(int *dir, char *s_) {
     string s;
     int i = 1;
     int poss;
@@ -2337,9 +2268,9 @@ boolean lookup_dir(int *dir, char *s_)
     strcpy(s, s_);
     strcpy(s, lowcase(STR1, s));
     for (i = 1; i <= maxexit; i++) {
-        if (!strcmp(s, direct[i-1]))
+        if (!strcmp(s, direct[i - 1])) {
             num = i;
-        else if (strncmp(s, direct[i-1], strlen(s)) == 0) {
+        } else if (strncmp(s, direct[i - 1], strlen(s)) == 0) {
             maybe++;
             poss = i;
         }
@@ -2360,8 +2291,7 @@ boolean lookup_dir(int *dir, char *s_)
 }
 
 
-boolean lookup_show(int *n, char *s_)
-{
+boolean lookup_show(int *n, char *s_) {
     string s;
     int i = 1;
     int poss;
@@ -2373,9 +2303,9 @@ boolean lookup_show(int *n, char *s_)
     strcpy(s, lowcase(STR1, s));
     FORLIM = numshow;
     for (i = 1; i <= FORLIM; i++) {
-        if (!strcmp(s, show[i-1]))
+        if (!strcmp(s, show[i - 1])) {
             num = i;
-        else if (strncmp(s, show[i-1], strlen(s)) == 0) {
+        } else if (strncmp(s, show[i - 1], strlen(s)) == 0) {
             maybe++;
             poss = i;
         }
@@ -2396,8 +2326,7 @@ boolean lookup_show(int *n, char *s_)
 }
 
 
-boolean lookup_set(int *n, char *s_)
-{
+boolean lookup_set(int *n, char *s_) {
     string s;
     int i = 1;
     int poss;
@@ -2409,9 +2338,9 @@ boolean lookup_set(int *n, char *s_)
     strcpy(s, lowcase(STR1, s));
     FORLIM = numset;
     for (i = 1; i <= FORLIM; i++) {
-        if (!strcmp(s, setkey[i-1]))
+        if (!strcmp(s, setkey[i - 1])) {
             num = i;
-        else if (strncmp(s, setkey[i-1], strlen(s)) == 0) {
+        } else if (strncmp(s, setkey[i - 1], strlen(s)) == 0) {
             maybe++;
             poss = i;
         }
@@ -2422,15 +2351,15 @@ boolean lookup_set(int *n, char *s_)
     } else if (maybe == 1) {
         *n = poss;
         return true;
-    } else if (maybe > 1)
+    } else if (maybe > 1) {
         return false;
-    else
+    } else {
         return false;
+    }
 }
 
 
-boolean lookup_room(int *n, char *s_)
-{
+boolean lookup_room(int *n, char *s_) {
     boolean Result;
     string s;
     int top;
@@ -2452,9 +2381,9 @@ boolean lookup_room(int *n, char *s_)
         maybe = 0;
         num = 0;
         for (i = 1; i <= top; i++) {
-            if (!strcmp(s, nam.idents[i-1]))
+            if (!strcmp(s, nam.idents[i - 1])) {
                 num = i;
-            else if (strncmp(s, nam.idents[i-1], strlen(s)) == 0) {
+            } else if (strncmp(s, nam.idents[i - 1], strlen(s)) == 0) {
                 maybe++;
                 poss = i;
             }
@@ -2467,10 +2396,11 @@ boolean lookup_room(int *n, char *s_)
             Result = true;
             *n = poss;
             return true;
-        } else if (maybe > 1)
+        } else if (maybe > 1) {
             return false;
-        else
+        } else {
             return false;
+        }
     } else {
 
         return false;
@@ -2479,70 +2409,73 @@ boolean lookup_room(int *n, char *s_)
 }
 
 
-boolean exact_room(int *n,  char *s)
-{
+boolean exact_room(int *n, char *s) {
     string STR2;
 
-    if (debug)
+    if (debug) {
         mprintf("?exact room: s = %s\n", s);
+    }
     if (lookup_room(n, s)) {
-        if (!strcmp(nam.idents[*n - 1], lowcase(STR2, s)))
+        if (!strcmp(nam.idents[*n - 1], lowcase(STR2, s))) {
             return true;
-        else
+        } else {
             return false;
-    } else
+        }
+    } else {
         return false;
+    }
 }
 
 
-boolean exact_pers(int *n, char *s)
-{
+boolean exact_pers(int *n, char *s) {
     string STR1, STR2;
 
     if (lookup_pers(n, s)) {
-        if (!strcmp(lowcase(STR1, pers.idents[*n - 1]), lowcase(STR2, s)))
+        if (!strcmp(lowcase(STR1, pers.idents[*n - 1]), lowcase(STR2, s))) {
             return true;
-        else
+        } else {
             return false;
-    } else
+        }
+    } else {
         return false;
+    }
 }
 
 
-boolean exact_user(int *n, char *s)
-{
+boolean exact_user(int *n, char *s) {
     string STR1, STR2;
 
     if (lookup_user(n, s)) {
-        if (!strcmp(lowcase(STR1, user.idents[*n - 1]), lowcase(STR2, s)))
+        if (!strcmp(lowcase(STR1, user.idents[*n - 1]), lowcase(STR2, s))) {
             return true;
-        else
+        } else {
             return false;
-    } else
+        }
+    } else {
         return false;
+    }
 }
 
 
-boolean exact_obj(int *n, char *s)
-{
+boolean exact_obj(int *n, char *s) {
     string STR1;
 
     if (lookup_obj(n, s)) {
-        if (!strcmp(objnam.idents[*n - 1], lowcase(STR1, s)))
+        if (!strcmp(objnam.idents[*n - 1], lowcase(STR1, s))) {
             return true;
-        else
+        } else {
             return false;
-    } else
+        }
+    } else {
         return false;
+    }
 }
-
 
 
 /*
 Return n as the direction number if s is a valid alias for an exit
 */
-boolean lookup_alias(int *n, char *s_)
-{
+boolean lookup_alias(int *n, char *s_) {
     string s;
     int i = 1;
     int poss;
@@ -2553,9 +2486,9 @@ boolean lookup_alias(int *n, char *s_)
     gethere(0);
     strcpy(s, lowcase(STR1, s));
     for (i = 1; i <= maxexit; i++) {
-        if (!strcmp(s, here.exits[i-1].alias))
+        if (!strcmp(s, here.exits[i - 1].alias)) {
             num = i;
-        else if (strncmp(s, here.exits[i-1].alias, strlen(s)) == 0) {
+        } else if (strncmp(s, here.exits[i - 1].alias, strlen(s)) == 0) {
             maybe++;
             poss = i;
         }
@@ -2566,23 +2499,23 @@ boolean lookup_alias(int *n, char *s_)
     } else if (maybe == 1) {
         *n = poss;
         return true;
-    } else if (maybe > 1)
+    } else if (maybe > 1) {
         return false;
-    else
+    } else {
         return false;
+    }
 }
 
 
-void exit_default(int dir, int kind)
-{
+void exit_default(int dir, int kind) {
     switch (kind) {
 
         case 1:
-            mprintf("There is a passage leading %s.\n", direct[dir-1]);
+            mprintf("There is a passage leading %s.\n", direct[dir - 1]);
             break;
 
         case 2:
-            mprintf("There is a locked door leading %s.\n", direct[dir-1]);
+            mprintf("There is a locked door leading %s.\n", direct[dir - 1]);
             break;
 
         case 5:
@@ -2593,7 +2526,7 @@ void exit_default(int dir, int kind)
                 case east:
                 case west:
                     mprintf("A note on the %s wall says \"Your exit here.\"\n",
-                            direct[dir-1]);
+                            direct[dir - 1]);
                     break;
 
                 case up:
@@ -2607,7 +2540,7 @@ void exit_default(int dir, int kind)
             break;
 
         default:
-            mprintf("There is an exit: %s\n", direct[dir-1]);
+            mprintf("There is an exit: %s\n", direct[dir - 1]);
             break;
     }
 }
@@ -2616,88 +2549,86 @@ void exit_default(int dir, int kind)
 /*
 Prints out the exits here for DO_LOOK()
 */
-void show_exits(void)
-{
+void show_exits(void) {
     int i;
     boolean one = false;
     boolean cansee;
 
     for (i = 1; i <= maxexit; i++) {
-        if (here.exits[i-1].toloc != 0 || here.exits[i-1].kind == 5)
+        if (here.exits[i - 1].toloc != 0 || here.exits[i - 1].kind == 5)
             /* there is an exit */
         {  /* there could be an exit */
-            if (here.exits[i-1].hidden == 0 || found_exit[i-1])
+            if (here.exits[i - 1].hidden == 0 || found_exit[i - 1]) {
                 cansee = true;
-            else
+            } else {
                 cansee = false;
+            }
 
-            if (here.exits[i-1].kind == 6) {
+            if (here.exits[i - 1].kind == 6) {
                 /* door kind only visible with object */
-                if (obj_hold(here.exits[i-1].objreq))
+                if (obj_hold(here.exits[i - 1].objreq)) {
                     cansee = true;
-                else
+                } else {
                     cansee = false;
+                }
             }
 
             if (cansee) {
-                if (here.exits[i-1].exitdesc == DEFAULT_LINE) {
-                    exit_default(i, here.exits[i-1].kind);
+                if (here.exits[i - 1].exitdesc == DEFAULT_LINE) {
+                    exit_default(i, here.exits[i - 1].kind);
                     /* give it direction and type */
                     one = true;
-                } else if (here.exits[i-1].exitdesc > 0) {
-                    print_line(here.exits[i-1].exitdesc);
+                } else if (here.exits[i - 1].exitdesc > 0) {
+                    print_line(here.exits[i - 1].exitdesc);
                     one = true;
                 }
             }
         }
 
     }
-    if (one)
+    if (one) {
         putchar('\n');
+    }
 }
 
 
-void setevent(void)
-{
+void setevent(void) {
     getevent(0);
     freeevent();
     myevent = event.point;
 }
 
 
-
-boolean isnum(char *s)
-{
+boolean isnum(char *s) {
     boolean Result = true;
     int i = 1;
 
-    if (strlen(s) < 1)
+    if (strlen(s) < 1) {
         return false;
+    }
     while (i <= strlen(s)) {
-        if (!isdigit(s[i-1]))
+        if (!isdigit(s[i - 1])) {
             Result = false;
+        }
         i++;
     }
     return Result;
 }
 
 
-int number(char *s)
-{
+int number(char *s) {
     int i;
 
-    if (strlen(s) < 1 || !isdigit(s[0]))
+    if (strlen(s) < 1 || !isdigit(s[0])) {
         return 0;
-    else {
+    } else {
         i = atoi(s);
         return i;
     }
 }
 
 
-
-void log_event(int send, int act, int targ, int p, char *s, int room_)
-{
+void log_event(int send, int act, int targ, int p, char *s, int room_) {
     /* slot of sender */
     /* what event occurred */
     /* target of event */
@@ -2706,14 +2637,17 @@ void log_event(int send, int act, int targ, int p, char *s, int room_)
     /* room to log event in */
     anevent *WITH;
 
-    if (room_ == 0)
+    if (room_ == 0) {
         room_ = location;
+    }
     getevent(room_);
     event.point++;
-    if (debug)
+    if (debug) {
         mprintf("?logging event %d to point %d\n", act, event.point);
-    if (event.point > maxevent)
+    }
+    if (event.point > maxevent) {
         event.point = 1;
+    }
     WITH = &event.evnt[event.point - 1];
     WITH->sender = send;
     WITH->action = act;
@@ -2725,13 +2659,13 @@ void log_event(int send, int act, int targ, int p, char *s, int room_)
 }
 
 
-void log_action(int theaction, int thetarget)
-{
-    if (debug)
+void log_action(int theaction, int thetarget) {
+    if (debug) {
         mprintf("?log_action(%d,%d)\n", theaction, thetarget);
+    }
     getroom(0);
-    here.people[myslot-1].act = theaction;
-    here.people[myslot-1].targ = thetarget;
+    here.people[myslot - 1].act = theaction;
+    here.people[myslot - 1].targ = thetarget;
     putroom();
 
     logged_act = true;
@@ -2739,8 +2673,7 @@ void log_action(int theaction, int thetarget)
 }
 
 
-char *desc_action(char *Result, int theaction, int thetarget)
-{
+char *desc_action(char *Result, int theaction, int thetarget) {
     string s;
 
     switch (theaction) {   /* use command mnemonics */
@@ -2797,40 +2730,40 @@ char *desc_action(char *Result, int theaction, int thetarget)
 }
 
 
-boolean protected_(int n)
-{
-    if (n == 0)
+boolean protected_(int n) {
+    if (n == 0) {
         n = myslot;
-    if (here.people[n-1].act == c_system || here.people[n-1].act == c_self ||
-        here.people[n-1].act == e_program ||
-        here.people[n-1].act == e_custroom ||
-        here.people[n-1].act == c_custom || here.people[n-1].act == e_detail)
+    }
+    if (here.people[n - 1].act == c_system || here.people[n - 1].act == c_self ||
+        here.people[n - 1].act == e_program ||
+        here.people[n - 1].act == e_custroom ||
+        here.people[n - 1].act == c_custom || here.people[n - 1].act == e_detail) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
-
 
 
 /*
 user procedure to designate an exit for acceptance of links
 */
-void do_accept(char *s)
-{
+void do_accept(char *s) {
     int dir;
 
     if (!lookup_dir(&dir, s)) {
         mprintf("To allow others to make an exit, type ACCEPT <direction of exit>.\n");
         return;
     }
-    if (!can_make(dir, 0))
+    if (!can_make(dir, 0)) {
         return;
+    }
     getroom(0);
-    here.exits[dir-1].kind = 5;
+    here.exits[dir - 1].kind = 5;
     putroom();
 
     log_event(myslot, E_ACCEPT, 0, 0, "", 0);
-    mprintf("Someone will be able to make an exit %s.\n", direct[dir-1]);
+    mprintf("Someone will be able to make an exit %s.\n", direct[dir - 1]);
 }
 
 
@@ -2838,77 +2771,80 @@ void do_accept(char *s)
 User procedure to refuse an exit for links
 Note: may be unlink
 */
-void do_refuse(char *s)
-{
+void do_refuse(char *s) {
     int dir;
     boolean ok;
     exit_ *WITH;
 
-    if (!is_owner(0, false))
+    if (!is_owner(0, false)) {
         return;
+    }
     /* is_owner prints error message itself */
     if (!lookup_dir(&dir, s)) {
         mprintf("To undo an Accept, type REFUSE <direction>.\n");
         return;
     }
     getroom(0);
-    WITH = &here.exits[dir-1];
+    WITH = &here.exits[dir - 1];
     if (WITH->toloc == 0 && WITH->kind == 5) {
         WITH->kind = 0;
         ok = true;
-    } else
+    } else {
         ok = false;
+    }
     putroom();
     if (ok) {
         log_event(myslot, E_REFUSE, 0, 0, "", 0);
-        mprintf("Exits %s will be refused.\n", direct[dir-1]);
-    } else
+        mprintf("Exits %s will be refused.\n", direct[dir - 1]);
+    } else {
         mprintf("Exits were not being accepted there.\n");
+    }
 }
 
 
-void nicedate(char *timestr, char *newstr)
-{
+void nicedate(char *timestr, char *newstr) {
 
 /* Thu Dec 20 00:06:14 2001 --> 20-Dec-2001 */
 
-*newstr++ = timestr[8];
-*newstr++ = timestr[9];
-*newstr++ = '-';
-*newstr++ = timestr[4];
-*newstr++ = timestr[5];
-*newstr++ = timestr[6];
-*newstr++ = '-';
-*newstr++ = timestr[20];
-*newstr++ = timestr[21];
-*newstr++ = timestr[22];
-*newstr++ = timestr[23];
-*newstr++ = '\0';
+    *newstr++ = timestr[8];
+    *newstr++ = timestr[9];
+    *newstr++ = '-';
+    *newstr++ = timestr[4];
+    *newstr++ = timestr[5];
+    *newstr++ = timestr[6];
+    *newstr++ = '-';
+    *newstr++ = timestr[20];
+    *newstr++ = timestr[21];
+    *newstr++ = timestr[22];
+    *newstr++ = timestr[23];
+    *newstr++ = '\0';
 }
 
-void nicetime(char *timestr, char *newstr)
-{
-int hours;
-char dayornite[3];
+void nicetime(char *timestr, char *newstr) {
+    int hours;
+    char dayornite[3];
 
-if (timestr[11] == ' ')
-hours = timestr[12] - '0';
-else
-hours = (timestr[11]-'0')*10 + (timestr[12]-'0');
-if (hours < 12)
-strcpy(dayornite, "am");
-else
-strcpy(dayornite, "pm");
-if (hours >= 13)
-hours -= 12;
-if (!hours)
-hours = 12;
-sprintf(newstr, "%d:%c%c%s", hours, timestr[14],
-timestr[15], dayornite);
+    if (timestr[11] == ' ') {
+        hours = timestr[12] - '0';
+    } else {
+        hours = (timestr[11] - '0') * 10 + (timestr[12] - '0');
+    }
+    if (hours < 12) {
+        strcpy(dayornite, "am");
+    } else {
+        strcpy(dayornite, "pm");
+    }
+    if (hours >= 13) {
+        hours -= 12;
+    }
+    if (!hours) {
+        hours = 12;
+    }
+    sprintf(newstr, "%d:%c%c%s", hours, timestr[14],
+            timestr[15], dayornite);
 }
 
-char *nice_time(void)
-{
+char *nice_time(void) {
     char *timestr;
     char the_date[17];
     char the_time[8];
@@ -2919,14 +2855,12 @@ char *nice_time(void)
     timestr = ctime(&time_now);
     nicedate(timestr, the_date);
     nicetime(timestr, the_time);
-    sprintf(buf,"%s  %s", the_date, the_time);
-    return(buf);
+    sprintf(buf, "%s  %s", the_date, the_time);
+    return (buf);
 }
 
 
-
-char *sysdate(char *Result)
-{
+char *sysdate(char *Result) {
     char *timestr;
     time_t time_now;
 
@@ -2937,8 +2871,7 @@ char *sysdate(char *Result)
 }
 
 
-char *systime(char *Result)
-{
+char *systime(char *Result) {
     char *timestr;
     time_t time_now;
 
@@ -2949,10 +2882,8 @@ char *systime(char *Result)
 }
 
 
-
 /* substitute a parameter string for the # sign in the source string */
-char *subs_parm(char *Result, char *s, char *parm)
-{
+char *subs_parm(char *Result, char *s, char *parm) {
     string right, left;
     int i;   /* i is point to break at */
     char STR1[256];
@@ -2969,22 +2900,22 @@ char *subs_parm(char *Result, char *s, char *parm)
             sprintf(right, "%.*s", strlen(s) - i, s + i);
             sprintf(left, "%.*s", i, s);
         }
-        if (strlen(left) <= 1)
+        if (strlen(left) <= 1) {
             *left = '\0';
-        else {
-            sprintf(STR1, "%.*s", (int)(strlen(left) - 1), left);
+        } else {
+            sprintf(STR1, "%.*s", (int) (strlen(left) - 1), left);
             strcpy(left, STR1);
         }
         sprintf(Result, "%s%s%s", left, parm, right);
 
         return Result;
-    } else
+    } else {
         return strcpy(Result, s);
+    }
 }
 
 
-void time_health(void)
-{
+void time_health(void) {
     char STR2[162];
 
     if (healthcycle <= 0) {  /* how quickly they heal */
@@ -2995,7 +2926,7 @@ void time_health(void)
         myhealth++;
 
         getroom(0);
-        here.people[myslot-1].health = myhealth;
+        here.people[myslot - 1].health = myhealth;
         putroom();
 
         /*show new health rating */
@@ -3057,45 +2988,49 @@ void time_health(void)
 }
 
 
-void time_noises(void)
-{
+void time_noises(void) {
     int n;
 
-    if (rnd100() > 2)
+    if (rnd100() > 2) {
         return;
+    }
     n = rnd100();
-    if ((unsigned)n <= 40)
+    if ((unsigned) n <= 40) {
         log_event(0, E_NOISES, rnd100(), 0, "", 0);
-    else if (n >= 41 && n <= 60)
+    } else if (n >= 41 && n <= 60) {
         log_event(0, E_ALTNOISE, rnd100(), 0, "", 0);
+    }
 }
 
 
-void time_trapdoor(boolean silent)
-{
+void time_trapdoor(boolean silent) {
     boolean fall;
     char STR2[162];
 
-    if (rnd100() >= here.trapchance)
+    if (rnd100() >= here.trapchance) {
         return;
+    }
     /* trapdoor fires! */
 
     if (here.trapto > 0) {   /*(protected) or*/
-        if (logged_act)
+        if (logged_act) {
             fall = false;
-        else if (here.magicobj == 0)
+        } else if (here.magicobj == 0) {
             fall = true;
-        else if (obj_hold(here.magicobj))
+        } else if (obj_hold(here.magicobj)) {
             fall = false;
-        else
+        } else {
             fall = true;
+        }
     }
         /* logged action should cover {protected) */
-    else
+    else {
         fall = false;
+    }
 
-    if (!fall)
+    if (!fall) {
         return;
+    }
     do_exit(here.trapto);
     if (!silent) {
         sprintf(STR2, "\n%s%s", old_prompt, line);
@@ -3104,19 +3039,18 @@ void time_trapdoor(boolean silent)
 }
 
 
-void time_midnight(void)
-{
+void time_midnight(void) {
     string STR1;
 
-    if (!strcmp(systime(STR1), "12:00am"))
+    if (!strcmp(systime(STR1), "12:00am")) {
         log_event(0, E_MIDNIGHT, rnd100(), 0, "", 0);
+    }
 }
 
 
 /* cause random events to occurr (ha ha ha) */
 
-void rnd_event(boolean silent)
-{
+void rnd_event(boolean silent) {
     if (rndcycle != 200) {  /* inside here 3 times/min */
         rndcycle++;
         return;
@@ -3131,8 +3065,7 @@ void rnd_event(boolean silent)
 }
 
 
-void do_die(void)
-{
+void do_die(void) {
     boolean some;
 
     mprintf("\n        *** You have died ***\n\n");
@@ -3156,8 +3089,7 @@ void do_die(void)
 }
 
 
-void poor_health(int p)
-{
+void poor_health(int p) {
     if (myhealth <= p) {
         do_die();
         /* they died */
@@ -3165,13 +3097,13 @@ void poor_health(int p)
     }
     myhealth--;
     getroom(0);
-    here.people[myslot-1].health = myhealth;
+    here.people[myslot - 1].health = myhealth;
     putroom();
     log_event(myslot, E_WEAKER, myhealth, 0, "", 0);
 
     /* show new health rating */
     mprintf("You ");
-    switch (here.people[myslot-1].health) {
+    switch (here.people[myslot - 1].health) {
 
         case 9:
             mprintf("are still in exceptional health.\n");
@@ -3220,72 +3152,69 @@ void poor_health(int p)
 }
 
 
-
 /* count objects here */
 
-int find_numobjs(void)
-{
+int find_numobjs(void) {
     int sum = 0;
     int i;
 
     for (i = 0; i < maxobjs; i++) {
-        if (here.objs[i] != 0)
+        if (here.objs[i] != 0) {
             sum++;
+        }
     }
     return sum;
 }
-
 
 
 /* optional parameter is slot of player's objects to count */
 
-int find_numhold(int player)
-{
+int find_numhold(int player) {
     int sum = 0;
     int i;
 
-    if (player == 0)
+    if (player == 0) {
         player = myslot;
+    }
 
     for (i = 0; i < maxhold; i++) {
-        if (here.people[player-1].holding[i] != 0)
+        if (here.people[player - 1].holding[i] != 0) {
             sum++;
+        }
     }
     return sum;
 }
 
 
-
-
-void take_hit(int p)
-{
+void take_hit(int p) {
     int i;
 
-    if (p <= 0)
+    if (p <= 0) {
         return;
-    if (rnd100() < (p - 1) * 30 + 55)   /* chance that they're hit */
+    }
+    if (rnd100() < (p - 1) * 30 + 55) {   /* chance that they're hit */
         poor_health(p);
+    }
 
     if (find_numobjs() <= maxobjs) {
         /* maybe they drop something if they're hit */
-        for (i = 1; i <= p; i++)
+        for (i = 1; i <= p; i++) {
             maybe_drop();
+        }
     }
 }
 
 
-int punch_force(int sock)
-{
+int punch_force(int sock) {
     int p;
 
-    if ((unsigned)sock < 32 && ((1L << sock) & 0x19cc) != 0)
-    {   /* no punch or a graze */
+    if ((unsigned) sock < 32 && ((1L << sock) & 0x19cc) != 0) {   /* no punch or a graze */
         p = 0;
         return p;
     }
-    if ((unsigned)sock < 32 && ((1L << sock) & 0x610) != 0)   /* hard punches */
+    if ((unsigned) sock < 32 && ((1L << sock) & 0x610) != 0) {   /* hard punches */
         p = 2;
-    else {
+    } else {
         p = 1;
         /* 1,5,13,14,15 */
     }
@@ -3294,8 +3223,7 @@ int punch_force(int sock)
 }
 
 
-void put_punch(int sock, char *s)
-{
+void put_punch(int sock, char *s) {
     switch (sock) {
 
         case 1:
@@ -3361,8 +3289,7 @@ void put_punch(int sock, char *s)
 }
 
 
-void get_punch(int sock, char *s)
-{
+void get_punch(int sock, char *s) {
     switch (sock) {
 
         case 1:
@@ -3428,8 +3355,7 @@ void get_punch(int sock, char *s)
 }
 
 
-void view_punch(char *a, char *b, int p)
-{
+void view_punch(char *a, char *b, int p) {
     switch (p) {
 
         case 1:
@@ -3495,16 +3421,14 @@ void view_punch(char *a, char *b, int p)
 }
 
 
-
-
-void desc_health(int n, char *header)
-{
-    if (*header == '\0')
-        mprintf("%s ", here.people[n-1].name);
-    else
+void desc_health(int n, char *header) {
+    if (*header == '\0') {
+        mprintf("%s ", here.people[n - 1].name);
+    } else {
         fputs(header, stdout);
+    }
 
-    switch (here.people[n-1].health) {
+    switch (here.people[n - 1].health) {
 
         case 9:
             mprintf("is in exceptional health, and looks very strong.\n");
@@ -3553,8 +3477,7 @@ void desc_health(int n, char *header)
 }
 
 
-char *obj_part(char *Result, int objnum, boolean doread)
-{
+char *obj_part(char *Result, int objnum, boolean doread) {
     string s;
     char STR1[84];
     char STR2[86];
@@ -3590,13 +3513,13 @@ char *obj_part(char *Result, int objnum, boolean doread)
 }
 
 
-void print_subs(int n, char *s)
-{
+void print_subs(int n, char *s) {
     string STR1;
 
     if (n <= 0 || n == DEFAULT_LINE) {
-        if (n == DEFAULT_LINE)
+        if (n == DEFAULT_LINE) {
             mprintf("?<default line> in print_subs\n");
+        }
         return;
     }
     getline(n);
@@ -3605,12 +3528,10 @@ void print_subs(int n, char *s)
 }
 
 
-
 /* print out a (up to) 10 line description block, substituting string s for
    up to one occurance of # per line */
 
-void block_subs(int n, char *s)
-{
+void block_subs(int n, char *s) {
     int p;
     int i = 1;
     string STR1;
@@ -3619,49 +3540,50 @@ void block_subs(int n, char *s)
         print_subs(abs(n), s);
         return;
     }
-    if (n <= 0 || n == DEFAULT_LINE)
+    if (n <= 0 || n == DEFAULT_LINE) {
         return;
+    }
     getblock(n);
     freeblock();
     while (i <= block.desclen) {
-        p = strpos2("#", block.lines[i-1], 1);
-        if (p > 0)
-            puts(subs_parm(STR1, block.lines[i-1], s));
-        else
-            puts(block.lines[i-1]);
+        p = strpos2("#", block.lines[i - 1], 1);
+        if (p > 0) {
+            puts(subs_parm(STR1, block.lines[i - 1], s));
+        } else {
+            puts(block.lines[i - 1]);
+        }
         i++;
     }
 }
 
 
-void show_noises(int n)
-{
+void show_noises(int n) {
     if (n < 33) {
         mprintf("There are strange noises coming from behind you.\n");
         return;
     }
-    if (n < 66)
+    if (n < 66) {
         mprintf("You hear strange rustling noises behind you.\n");
-    else
+    } else {
         mprintf("There are faint noises coming from behind you.\n");
+    }
 }
 
 
-void show_altnoise(int n)
-{
+void show_altnoise(int n) {
     if (n < 33) {
         mprintf("A chill wind blows, ruffling your clothes and chilling your bones.\n");
         return;
     }
-    if (n < 66)
+    if (n < 66) {
         mprintf("Muffled scuffling sounds can be heard behind you.\n");
-    else
+    } else {
         mprintf("A loud crash can be heard in the distance.\n");
+    }
 }
 
 
-void show_midnight(int n, boolean *printed)
-{
+void show_midnight(int n, boolean *printed) {
     if (!midnight_notyet) {
         *printed = false;
         return;
@@ -3677,48 +3599,49 @@ void show_midnight(int n, boolean *printed)
 }
 
 
-
-
-void handle_event(boolean *printed)
-{
+void handle_event(boolean *printed) {
     int send, act, targ, p;
     string s, sendname, STR3;
     anevent *WITH;
 
     *printed = true;
-    if (debug)
+    if (debug) {
         mprintf("?handling event %12d\n", myevent);
-    WITH = &event.evnt[myevent-1];
+    }
+    WITH = &event.evnt[myevent - 1];
     send = WITH->sender;
     act = WITH->action;
     targ = WITH->target;
     p = WITH->parm;
     strcpy(s, WITH->msg);
-    if (send != 0)
-        strcpy(sendname, here.people[send-1].name);
-    else
+    if (send != 0) {
+        strcpy(sendname, here.people[send - 1].name);
+    } else {
         strcpy(sendname, "<Unknown>");
+    }
 
     switch (act) {
 
         case E_EXIT:
-            if (here.exits[targ-1].goin == DEFAULT_LINE)
-                mprintf("%s has gone %s.\n", s, direct[targ-1]);
-            else if (here.exits[targ-1].goin != 0 &&
-                     here.exits[targ-1].goin != DEFAULT_LINE)
-                block_subs(here.exits[targ-1].goin, s);
-            else
+            if (here.exits[targ - 1].goin == DEFAULT_LINE) {
+                mprintf("%s has gone %s.\n", s, direct[targ - 1]);
+            } else if (here.exits[targ - 1].goin != 0 &&
+                       here.exits[targ - 1].goin != DEFAULT_LINE) {
+                block_subs(here.exits[targ - 1].goin, s);
+            } else {
                 *printed = false;
+            }
             break;
 
         case E_ENTER:
-            if (here.exits[targ-1].comeout == DEFAULT_LINE)
-                mprintf("%s has come into the room from: %s\n", s, direct[targ-1]);
-            else if (here.exits[targ-1].comeout != 0 &&
-                     here.exits[targ-1].comeout != DEFAULT_LINE)
-                block_subs(here.exits[targ-1].comeout, s);
-            else
+            if (here.exits[targ - 1].comeout == DEFAULT_LINE) {
+                mprintf("%s has come into the room from: %s\n", s, direct[targ - 1]);
+            } else if (here.exits[targ - 1].comeout != 0 &&
+                       here.exits[targ - 1].comeout != DEFAULT_LINE) {
+                block_subs(here.exits[targ - 1].comeout, s);
+            } else {
                 *printed = false;
+            }
             break;
 
         case E_BEGIN:
@@ -3734,10 +3657,11 @@ void handle_event(boolean *printed)
                 mprintf("%s says,\n", sendname);
                 mprintf("\"%s\"\n", s);
             } else {
-                if (rnd100() < 50 || strlen(s) > 50)
+                if (rnd100() < 50 || strlen(s) > 50) {
                     mprintf("%s: \"%s\"\n", sendname, s);
-                else
+                } else {
                     mprintf("%s says, \"%s\"\n", sendname, s);
+                }
             }
             break;
 
@@ -3759,7 +3683,7 @@ void handle_event(boolean *printed)
             break;
 
         case E_DETACH:
-            mprintf("%s has destroyed the exit %s.\n", s, direct[targ-1]);
+            mprintf("%s has destroyed the exit %s.\n", s, direct[targ - 1]);
             break;
 
         case E_EDITDONE:
@@ -3804,11 +3728,12 @@ void handle_event(boolean *printed)
                 hiding = false;
                 getroom(0);
                 /* they're not hidden anymore */
-                here.people[myslot-1].hiding = 0;
+                here.people[myslot - 1].hiding = 0;
                 putroom();
-            } else
+            } else {
                 mprintf("%s has found %s hiding in the shadows!\n",
-                        sendname, here.people[targ-1].name);
+                        sendname, here.people[targ - 1].name);
+            }
             break;
 
         case E_PUNCH:
@@ -3818,8 +3743,9 @@ void handle_event(boolean *printed)
                 /* relic, but not harmful */
                 ping_answered = true;
                 healthcycle = 0;
-            } else
-                view_punch(sendname, here.people[targ-1].name, p);
+            } else {
+                view_punch(sendname, here.people[targ - 1].name, p);
+            }
             break;
 
         case E_MADEOBJ:
@@ -3832,15 +3758,17 @@ void handle_event(boolean *printed)
 
         case E_DROP:
             puts(s);
-            if (here.objdesc != 0)
+            if (here.objdesc != 0) {
                 print_subs(here.objdesc, obj_part(STR3, p, true));
+            }
             break;
 
         case E_BOUNCEDIN:
-            if (targ == 0 || targ == DEFAULT_LINE)
+            if (targ == 0 || targ == DEFAULT_LINE) {
                 mprintf("%s has bounced into the room.\n", obj_part(STR3, p, true));
-            else
+            } else {
                 print_subs(targ, obj_part(STR3, p, true));
+            }
             break;
 
         case E_DROPALL:
@@ -3856,17 +3784,19 @@ void handle_event(boolean *printed)
             break;
 
         case E_NOISES:
-            if (here.rndmsg == 0 || here.rndmsg == DEFAULT_LINE)
+            if (here.rndmsg == 0 || here.rndmsg == DEFAULT_LINE) {
                 show_noises(targ);
-            else
+            } else {
                 print_line(here.rndmsg);
+            }
             break;
 
         case E_ALTNOISE:
-            if (here.xmsg2 == 0 || here.xmsg2 == DEFAULT_LINE)
+            if (here.xmsg2 == 0 || here.xmsg2 == DEFAULT_LINE) {
                 show_altnoise(targ);
-            else
+            } else {
                 block_subs(here.xmsg2, myname);
+            }
             break;
 
         case E_REALNOISE:
@@ -3881,8 +3811,9 @@ void handle_event(boolean *printed)
             if (targ == myslot) {
                 mprintf("%s is trying to ping you.\n", sendname);
                 log_event(myslot, E_PONG, send, 0, "", 0);
-            } else
-                mprintf("%s is pinging %s.\n", sendname, here.people[targ-1].name);
+            } else {
+                mprintf("%s is pinging %s.\n", sendname, here.people[targ - 1].name);
+            }
             break;
 
         case E_PONG:
@@ -3893,9 +3824,10 @@ void handle_event(boolean *printed)
             if (targ == myslot) {
                 mprintf("%s pounces on you from the shadows!\n", sendname);
                 take_hit(2);
-            } else
+            } else {
                 mprintf("%s jumps out of the shadows and attacks %s.\n",
-                        sendname, here.people[targ-1].name);
+                        sendname, here.people[targ - 1].name);
+            }
             break;
 
         case E_SLIPPED:
@@ -3903,31 +3835,34 @@ void handle_event(boolean *printed)
             break;
 
         case E_HPOOFOUT:
-            if (rnd100() > 50)
+            if (rnd100() > 50) {
                 mprintf("Great wisps of orange smoke drift out of the shadows.\n");
-            else
+            } else {
                 *printed = false;
+            }
             break;
 
         case E_HPOOFIN:
-            if (rnd100() > 50)
+            if (rnd100() > 50) {
                 mprintf("Some wisps of orange smoke drift about in the shadows.\n");
-            else
+            } else {
                 *printed = false;
+            }
             break;
 
         case E_FAILGO:
             if (targ > 0) {
                 mprintf("%s has failed to go ", sendname);
-                mprintf("%s.\n", direct[targ-1]);
+                mprintf("%s.\n", direct[targ - 1]);
             }
             break;
 
         case E_TRYPUNCH:
-            if (targ == myslot)
+            if (targ == myslot) {
                 mprintf("%s fails to punch you.\n", sendname);
-            else
-                mprintf("%s fails to punch %s.\n", sendname, here.people[targ-1].name);
+            } else {
+                mprintf("%s fails to punch %s.\n", sendname, here.people[targ - 1].name);
+            }
             break;
 
         case E_PINGONE:
@@ -3949,7 +3884,7 @@ void handle_event(boolean *printed)
             break;
 
         case E_WEAKER:
-            here.people[send-1].health = targ;
+            here.people[send - 1].health = targ;
 
             /* This is a hack for efficiency so we don't read the room record twice;
        we need the current data now for desc_health, but checkevents, our caller,
@@ -3975,24 +3910,27 @@ void handle_event(boolean *printed)
 
         case E_WHISPER:
             if (targ == myslot) {
-                if (strlen(s) < 39)
+                if (strlen(s) < 39) {
                     mprintf("%s whispers to you, \"%s\"\n", sendname, s);
-                else {
+                } else {
                     mprintf("%s whispers something to you:\n", sendname);
                     mprintf("%s whispers, ", sendname);
-                    if (strlen(s) > 50)
+                    if (strlen(s) > 50) {
                         putchar('\n');
+                    }
                     mprintf("\"%s\"\n", s);
                 }
             } else if (privd || rnd100() > 85) {
                 mprintf("You overhear %s whispering to %s!\n",
-                        sendname, here.people[targ-1].name);
+                        sendname, here.people[targ - 1].name);
                 mprintf("%s whispers, ", sendname);
-                if (strlen(s) > 50)
+                if (strlen(s) > 50) {
                     putchar('\n');
+                }
                 mprintf("\"%s\"\n", s);
-            } else
-                mprintf("%s is whispering to %s.\n", sendname, here.people[targ-1].name);
+            } else {
+                mprintf("%s is whispering to %s.\n", sendname, here.people[targ - 1].name);
+            }
             break;
 
         case E_WIELD:
@@ -4049,10 +3987,11 @@ void handle_event(boolean *printed)
             break;
 
         case E_LOOKYOU:
-            if (targ == myslot)
+            if (targ == myslot) {
                 mprintf("%s is looking at you.\n", sendname);
-            else
-                mprintf("%s looks at %s.\n", sendname, here.people[targ-1].name);
+            } else {
+                mprintf("%s looks at %s.\n", sendname, here.people[targ - 1].name);
+            }
             break;
 
         case E_LOOKSELF:
@@ -4068,10 +4007,11 @@ void handle_event(boolean *printed)
             break;
 
         case E_CHILL:
-            if (targ == 0 || targ == DEFAULT_LINE)
+            if (targ == 0 || targ == DEFAULT_LINE) {
                 mprintf("A chill wind blows over you.\n");
-            else
+            } else {
                 print_desc(targ, "<no default supplied>");
+            }
             break;
 
         case E_NOISE2:
@@ -4112,9 +4052,9 @@ void handle_event(boolean *printed)
                 putchar('\n');
             } else {
                 mprintf("%s directs a firey burst of energy at %s!\n",
-                        sendname, here.people[targ-1].name);
+                        sendname, here.people[targ - 1].name);
                 mprintf("A thick burst of orange smoke results, and when it clears, you see\n");
-                mprintf("that %s is gone.\n", here.people[targ-1].name);
+                mprintf("that %s is gone.\n", here.people[targ - 1].name);
             }
             break;
 
@@ -4156,11 +4096,11 @@ void handle_event(boolean *printed)
             break;
     }
 }
+
 /* p2c: mon.pas, line 3429: Warning: Type attribute GLOBAL ignored [128] */
 
 
-void checkevents(boolean silent)
-{
+void checkevents(boolean silent) {
     boolean gotone = false;
     boolean tmp;
     boolean printed = false;
@@ -4172,29 +4112,34 @@ void checkevents(boolean silent)
     memcpy(&event, &eventfile_hat, sizeof(eventrec));
     while (myevent != event.point) {
         myevent++;
-        if (myevent > maxevent)
+        if (myevent > maxevent) {
             myevent = 1;
+        }
 
         if (debug) {
             mprintf("?checking event %12d\n", myevent);
-            if (event.evnt[myevent-1].loc == location)
+            if (event.evnt[myevent - 1].loc == location) {
                 mprintf("  - event here\n");
-            else
+            } else {
                 mprintf("  - event elsewhere\n");
-            mprintf("  - event number = %d\n", event.evnt[myevent-1].action);
+            }
+            mprintf("  - event number = %d\n", event.evnt[myevent - 1].action);
         }
 
-        if (event.evnt[myevent-1].loc != location)
+        if (event.evnt[myevent - 1].loc != location) {
             continue;
-        if (event.evnt[myevent-1].sender == myslot)
+        }
+        if (event.evnt[myevent - 1].sender == myslot) {
             continue;
+        }
 
         /* if sent by me don't look at it */
         /* will use global record event */
         putchars("\015\033[K");
         handle_event(&tmp);
-        if (tmp)
+        if (tmp) {
             printed = true;
+        }
 
         inmem = false;   /* re-read important data that */
         gethere(0);   /* may have been altered */
@@ -4210,11 +4155,9 @@ void checkevents(boolean silent)
 }
 
 
-
 /* count the number of people in this room; assumes a gethere has been done */
 
-int find_numpeople(void)
-{
+int find_numpeople(void) {
     int sum = 0;
     int i;
 
@@ -4228,54 +4171,50 @@ int find_numpeople(void)
 }
 
 
-
 /* don't give them away, but make noise--maybe
    percent is percentage chance that they WON'T make any noise */
 
-void noisehide(int percent)
-{
+void noisehide(int percent) {
     /* assumed gethere;  */
     if (hiding && find_numpeople() > 1) {
-        if (rnd100() > percent)
+        if (rnd100() > percent) {
             log_event(myslot, E_REALNOISE, rnd100(), 0, "", 0);
+        }
         /* myslot: don't tell them they made noise */
     }
 }
 
 
-
-boolean checkhide(void)
-{
+boolean checkhide(void) {
     boolean Result = false;
 
-    if (!hiding)
+    if (!hiding) {
         return true;
+    }
     noisehide(50);
     mprintf("You can't do that while you're hiding.\n");
     return false;
 }
 
 
-
-void clear_command(void)
-{
-    if (!logged_act)
+void clear_command(void) {
+    if (!logged_act) {
         return;
+    }
     getroom(0);
-    here.people[myslot-1].act = 0;
+    here.people[myslot - 1].act = 0;
     putroom();
     logged_act = false;
 }
 
 
 /* forward procedure take_token(aslot, roomno: integer); */
-void take_token(int aslot, int roomno)
-{
+void take_token(int aslot, int roomno) {
     /* remove self from a room's people list */
     peoplerec *WITH;
 
     getroom(roomno);
-    WITH = &here.people[aslot-1];
+    WITH = &here.people[aslot - 1];
     WITH->kind = 0;
     *WITH->username = '\0';
     *WITH->name = '\0';
@@ -4287,137 +4226,137 @@ void take_token(int aslot, int roomno)
         hidelev:integer := 0):boolean;
                          put a person in a room's people list
                          returns myslot */
-boolean put_token(int room_, int *aslot, int hidelev)
-{
+boolean put_token(int room_, int *aslot, int hidelev) {
     boolean Result;
     int i, j;
     boolean found = false;
     int savehold[maxhold];
 
     if (first_puttoken) {
-        for (i = 0; i < maxhold; i++)
+        for (i = 0; i < maxhold; i++) {
             savehold[i] = 0;
+        }
         first_puttoken = false;
     } else {
         gethere(0);
-        for (i = 0; i < maxhold; i++)
-            savehold[i] = here.people[myslot-1].holding[i];
+        for (i = 0; i < maxhold; i++) {
+            savehold[i] = here.people[myslot - 1].holding[i];
+        }
     }
 
     getroom(room_);
     i = 1;
     while (i <= maxpeople && !found) {
-        if (*here.people[i-1].name == '\0')
+        if (*here.people[i - 1].name == '\0') {
             found = true;
-        else
+        } else {
             i++;
+        }
     }
     Result = found;
     if (!found) {
         freeroom();
         return Result;
     }
-    here.people[i-1].kind = 1;   /* I'm a real player */
-    strcpy(here.people[i-1].name, myname);
-    strcpy(here.people[i-1].username, userid);
-    here.people[i-1].hiding = hidelev;
+    here.people[i - 1].kind = 1;   /* I'm a real player */
+    strcpy(here.people[i - 1].name, myname);
+    strcpy(here.people[i - 1].username, userid);
+    here.people[i - 1].hiding = hidelev;
     /* hidelev is zero for most everyone
      unless you want to poof in and remain hidden */
 
-    here.people[i-1].wearing = mywear;
-    here.people[i-1].wielding = mywield;
-    here.people[i-1].health = myhealth;
-    here.people[i-1].self = myself;
+    here.people[i - 1].wearing = mywear;
+    here.people[i - 1].wielding = mywield;
+    here.people[i - 1].health = myhealth;
+    here.people[i - 1].self = myself;
 
-    here.people[i-1].act = 0;
+    here.people[i - 1].act = 0;
 
-    for (j = 0; j < maxhold; j++)
-        here.people[i-1].holding[j] = savehold[j];
+    for (j = 0; j < maxhold; j++) {
+        here.people[i - 1].holding[j] = savehold[j];
+    }
     putroom();
 
     *aslot = i;
-    for (j = 0; j < maxexit; j++)   /* haven't found any exits in */
+    for (j = 0; j < maxexit; j++) {   /* haven't found any exits in */
         found_exit[j] = false;
+    }
     /* the new room */
 
     /* note the user's new location in the logfile */
     getint(N_LOCATION);
-    anint.int_[mylog-1] = room_;
+    anint.int_[mylog - 1] = room_;
     putint();
     return Result;
 }
 
 
-void log_exit(int direction, int room_, int sender_slot)
-{
+void log_exit(int direction, int room_, int sender_slot) {
     log_event(sender_slot, E_EXIT, direction, 0, myname, room_);
 }
 
 
-void log_entry(int direction, int room_, int sender_slot)
-{
+void log_entry(int direction, int room_, int sender_slot) {
     log_event(sender_slot, E_ENTER, direction, 0, myname, room_);
 }
 
 
-void log_begin(int room_)
-{
+void log_begin(int room_) {
     log_event(0, E_BEGIN, 0, 0, myname, room_);
 }
 
 
-void log_quit(int room_, boolean dropped)
-{
+void log_quit(int room_, boolean dropped) {
     log_event(0, E_QUIT, 0, 0, myname, room_);
-    if (dropped)
+    if (dropped) {
         log_event(0, E_DROPALL, 0, 0, myname, room_);
+    }
 }
-
-
 
 
 /* return the number of people you can see here */
 
-int n_can_see(void)
-{
+int n_can_see(void) {
     int Result;
     int sum = 0;
     int i, selfslot;
 
-    if (here.locnum == location)
+    if (here.locnum == location) {
         selfslot = myslot;
-    else {
+    } else {
         selfslot = 0;
 
     }
     for (i = 1; i <= maxpeople; i++) {
-        if (i != selfslot && *here.people[i-1].name != '\0' &&
-            here.people[i-1].hiding == 0)
+        if (i != selfslot && *here.people[i - 1].name != '\0' &&
+            here.people[i - 1].hiding == 0) {
             sum++;
+        }
     }
     Result = sum;
-    if (debug)
+    if (debug) {
         mprintf("?n_can_see = %d\n", sum);
+    }
     return Result;
 }
 
 
-
-char *next_can_see(char *Result, int *point)
-{
+char *next_can_see(char *Result, int *point) {
     boolean found = false;
     int selfslot;
 
-    if (here.locnum != location)
+    if (here.locnum != location) {
         selfslot = 0;
-    else
+    } else {
         selfslot = myslot;
+    }
     while (!found && *point <= maxpeople) {
         if (*point != selfslot && *here.people[*point - 1].name != '\0' &&
-            here.people[*point - 1].hiding == 0)
+            here.people[*point - 1].hiding == 0) {
             found = true;
-        else
+        } else {
             (*point)++;
+        }
     }
 
     if (found) {
@@ -4431,19 +4370,18 @@ char *next_can_see(char *Result, int *point)
 }
 
 
-void niceprint(int *len, char *s)
-{
+void niceprint(int *len, char *s) {
     if (*len + strlen(s) > 78) {
         *len = 0;
         putchar('\n');
-    } else
+    } else {
         *len += strlen(s);
+    }
     fputs(s, stdout);
 }
 
 
-void people_header(char *where)
-{
+void people_header(char *where) {
     int point = 1;
     string tmp;
     int i, n, len;
@@ -4470,8 +4408,9 @@ void people_header(char *where)
             len = 0;
             for (i = 1; i < n; i++) {  /* at least 1 to 2 */
                 next_can_see(tmp, &point);
-                if (i != n - 1)
+                if (i != n - 1) {
                     strcat(tmp, ", ");
+                }
                 niceprint(&len, tmp);
             }
 
@@ -4485,44 +4424,44 @@ void people_header(char *where)
 }
 
 
-void desc_person(int i)
-{
+void desc_person(int i) {
     shortstring pname;
     string STR3;
 
-    strcpy(pname, here.people[i-1].name);
+    strcpy(pname, here.people[i - 1].name);
 
-    if (here.people[i-1].act != 0) {
+    if (here.people[i - 1].act != 0) {
         mprintf("%s is", pname);
-        puts(desc_action(STR3, here.people[i-1].act, here.people[i-1].targ));
+        puts(desc_action(STR3, here.people[i - 1].act, here.people[i - 1].targ));
         /* describes what person last did */
     }
 
-    if (here.people[i-1].health != GOODHEALTH)
+    if (here.people[i - 1].health != GOODHEALTH) {
         desc_health(i, "");
+    }
 
-    if (here.people[i-1].wielding > 0)
+    if (here.people[i - 1].wielding > 0) {
         mprintf("%s is wielding %s.\n",
-                pname, obj_part(STR3, here.people[i-1].wielding, true));
+                pname, obj_part(STR3, here.people[i - 1].wielding, true));
+    }
 
 }
 
 
-void show_people(void)
-{
+void show_people(void) {
     int i;
 
     people_header("here.");
     for (i = 1; i <= maxpeople; i++) {
-        if (*here.people[i-1].name != '\0' && i != myslot &&
-            here.people[i-1].hiding == 0)
+        if (*here.people[i - 1].name != '\0' && i != myslot &&
+            here.people[i - 1].hiding == 0) {
             desc_person(i);
+        }
     }
 }
 
 
-void show_group(void)
-{
+void show_group(void) {
     int gloc1, gloc2;
     shortstring gnam1, gnam2;
 
@@ -4543,12 +4482,12 @@ void show_group(void)
 }
 
 
-void desc_obj(int n)
-{
+void desc_obj(int n) {
     string STR2;
 
-    if (n == 0)
+    if (n == 0) {
         return;
+    }
     getobj(n);
     freeobj();
     if (obj.linedesc == DEFAULT_LINE) {
@@ -4556,24 +4495,24 @@ void desc_obj(int n)
 
         /* the FALSE means obj_part shouldn't do its
        own getobj, cause we already did one */
-    } else
+    } else {
         print_line(obj.linedesc);
-}
-
-
-void show_objects(void)
-{
-    int i;
-
-    for (i = 0; i < maxobjs; i++) {
-        if (here.objs[i] != 0 && here.objhide[i] == 0)
-            desc_obj(here.objs[i]);
     }
 }
 
 
-boolean lookup_detail(int *n, char *s_)
-{
+void show_objects(void) {
+    int i;
+
+    for (i = 0; i < maxobjs; i++) {
+        if (here.objs[i] != 0 && here.objhide[i] == 0) {
+            desc_obj(here.objs[i]);
+        }
+    }
+}
+
+
+boolean lookup_detail(int *n, char *s_) {
     string s;
     int i = 1;
     int poss;
@@ -4584,9 +4523,9 @@ boolean lookup_detail(int *n, char *s_)
     *n = 0;
     strcpy(s, lowcase(STR1, s));
     for (i = 1; i <= maxdetail; i++) {
-        if (!strcmp(s, here.detail[i-1]))
+        if (!strcmp(s, here.detail[i - 1])) {
             num = i;
-        else if (strncmp(s, here.detail[i-1], strlen(s)) == 0) {
+        } else if (strncmp(s, here.detail[i - 1], strlen(s)) == 0) {
             maybe++;
             poss = i;
         }
@@ -4597,32 +4536,32 @@ boolean lookup_detail(int *n, char *s_)
     } else if (maybe == 1) {
         *n = poss;
         return true;
-    } else if (maybe > 1)
+    } else if (maybe > 1) {
         return false;
-    else
+    } else {
         return false;
+    }
 }
 
 
-boolean look_detail(char *s)
-{
+boolean look_detail(char *s) {
     int n;
 
     if (lookup_detail(&n, s)) {
-        if (here.detaildesc[n-1] == 0)
+        if (here.detaildesc[n - 1] == 0) {
             return false;
-        else {
-            print_desc(here.detaildesc[n-1], "<no default supplied>");
-            log_event(myslot, E_LOOKDETAIL, 0, 0, here.detail[n-1], 0);
+        } else {
+            print_desc(here.detaildesc[n - 1], "<no default supplied>");
+            log_event(myslot, E_LOOKDETAIL, 0, 0, here.detail[n - 1], 0);
             return true;
         }
-    } else
+    } else {
         return false;
+    }
 }
 
 
-boolean look_person(char *s)
-{
+boolean look_person(char *s) {
     int objnum, i, n;
     boolean first;
     string STR3;
@@ -4632,10 +4571,11 @@ boolean look_person(char *s)
             log_event(myslot, E_LOOKSELF, n, 0, "", 0);
             mprintf(
                     "You step outside of yourself for a moment to get an objective self-appraisal:\n\n");
-        } else
+        } else {
             log_event(myslot, E_LOOKYOU, n, 0, "", 0);
-        if (here.people[n-1].self != 0) {
-            print_desc(here.people[n-1].self, "<no default supplied>");
+        }
+        if (here.people[n - 1].self != 0) {
+            print_desc(here.people[n - 1].self, "<no default supplied>");
             putchar('\n');
         }
 
@@ -4644,39 +4584,41 @@ boolean look_person(char *s)
         /* Do an inventory of person S */
         first = true;
         for (i = 0; i < maxhold; i++) {
-            objnum = here.people[n-1].holding[i];
+            objnum = here.people[n - 1].holding[i];
             if (objnum != 0) {
                 if (first) {
-                    mprintf("%s is holding:\n", here.people[n-1].name);
+                    mprintf("%s is holding:\n", here.people[n - 1].name);
                     first = false;
                 }
                 mprintf("   %s\n", obj_part(STR3, objnum, true));
             }
         }
-        if (first)
-            mprintf("%s is empty handed.\n", here.people[n-1].name);
+        if (first) {
+            mprintf("%s is empty handed.\n", here.people[n - 1].name);
+        }
 
         return true;
-    } else
+    } else {
         return false;
+    }
 }
 
 
-
-void do_examine(char *s, boolean *three, boolean silent)
-{
+void do_examine(char *s, boolean *three, boolean silent) {
     int n;
     string msg, STR2;
 
     *three = false;
     if (!parse_obj(&n, s, false)) {
-        if (!silent)
+        if (!silent) {
             mprintf("That object cannot be seen here.\n");
+        }
         return;
     }
     if (!(obj_here(n) || obj_hold(n))) {
-        if (!silent)
+        if (!silent) {
             mprintf("That object cannot be seen here.\n");
+        }
         return;
     }
     *three = true;
@@ -4685,16 +4627,15 @@ void do_examine(char *s, boolean *three, boolean silent)
     freeobj();
     sprintf(msg, "%s is examining %s.", myname, obj_part(STR2, n, true));
     log_event(myslot, E_EXAMINE, 0, 0, msg, 0);
-    if (obj.examine == 0)
-        mprintf("You see nothing special about the %s.\n", objnam.idents[n-1]);
-    else
+    if (obj.examine == 0) {
+        mprintf("You see nothing special about the %s.\n", objnam.idents[n - 1]);
+    } else {
         print_desc(obj.examine, "<no default supplied>");
+    }
 }
 
 
-
-void print_room(void)
-{
+void print_room(void) {
     switch (here.nameprint) {
 
         case 0:   /* don't print name */
@@ -4730,28 +4671,29 @@ void print_room(void)
         case 3:
             print_desc(here.primary, "<no default supplied>");
             if (here.magicobj != 0) {
-                if (obj_hold(here.magicobj))
+                if (obj_hold(here.magicobj)) {
                     print_desc(here.secondary, "<no default supplied>");
+                }
             }
             break;
 
         case 4:
             if (here.magicobj != 0) {
-                if (obj_hold(here.magicobj))
+                if (obj_hold(here.magicobj)) {
                     print_desc(here.secondary, "<no default supplied>");
-                else
+                } else {
                     print_desc(here.primary, "<no default supplied>");
-            } else
+                }
+            } else {
                 print_desc(here.primary, "<no default supplied>");
+            }
             break;
     }
     putchar('\n');
 }
 
 
-
-void do_look(char *s)
-{
+void do_look(char *s) {
     boolean one, two, three;
 
     gethere(0);
@@ -4781,11 +4723,10 @@ void do_look(char *s)
 }
 
 
-void init_exit(int dir)
-{
+void init_exit(int dir) {
     exit_ *WITH;
 
-    WITH = &here.exits[dir-1];
+    WITH = &here.exits[dir - 1];
     WITH->exitdesc = DEFAULT_LINE;
     WITH->fail = DEFAULT_LINE;   /* default descriptions */
     WITH->success = 0;   /* until they customize */
@@ -4804,9 +4745,7 @@ void init_exit(int dir)
 }
 
 
-
-void remove_exit(int dir)
-{
+void remove_exit(int dir) {
     int targroom, targslot;
     boolean hereacc, targacc;
 
@@ -4814,41 +4753,46 @@ void remove_exit(int dir)
      the room that the exit he is deleting is in */
 
     getroom(0);
-    targroom = here.exits[dir-1].toloc;
-    targslot = here.exits[dir-1].slot;
-    here.exits[dir-1].toloc = 0;
+    targroom = here.exits[dir - 1].toloc;
+    targslot = here.exits[dir - 1].slot;
+    here.exits[dir - 1].toloc = 0;
     init_exit(dir);
 
-    if (!strcmp(here.owner, userid) || privd)
+    if (!strcmp(here.owner, userid) || privd) {
         hereacc = false;
-    else
+    } else {
         hereacc = true;
+    }
 
-    if (hereacc)
-        here.exits[dir-1].kind = 5;   /* put an "accept" in its place */
-    else
-        here.exits[dir-1].kind = 0;
+    if (hereacc) {
+        here.exits[dir - 1].kind = 5;   /* put an "accept" in its place */
+    } else {
+        here.exits[dir - 1].kind = 0;
+    }
 
     putroom();
     log_event(myslot, E_DETACH, dir, 0, myname, location);
 
     getroom(targroom);
-    here.exits[targslot-1].toloc = 0;
+    here.exits[targslot - 1].toloc = 0;
 
-    if (!strcmp(here.owner, userid) || privd)
+    if (!strcmp(here.owner, userid) || privd) {
         targacc = false;
-    else
+    } else {
         targacc = true;
+    }
 
-    if (targacc)
-        here.exits[targslot-1].kind = 5;   /* put an "accept" in its place */
-    else
-        here.exits[targslot-1].kind = 0;
+    if (targacc) {
+        here.exits[targslot - 1].kind = 5;   /* put an "accept" in its place */
+    } else {
+        here.exits[targslot - 1].kind = 0;
+    }
 
     putroom();
 
-    if (targroom != location)
+    if (targroom != location) {
         log_event(0, E_DETACH, targslot, 0, myname, targroom);
+    }
     mprintf("Exit destroyed.\n");
 }
 
@@ -4856,13 +4800,13 @@ void remove_exit(int dir)
 /*
 User procedure to unlink a room
 */
-void do_unlink(char *s)
-{
+void do_unlink(char *s) {
     int dir;
 
     gethere(0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     if (!lookup_dir(&dir, s)) {
         mprintf("To remove an exit, type UNLINK <direction of exit>.\n");
         return;
@@ -4871,34 +4815,31 @@ void do_unlink(char *s)
         mprintf("You are not allowed to remove that exit.\n");
         return;
     }
-    if (here.exits[dir-1].toloc == 0)
+    if (here.exits[dir - 1].toloc == 0) {
         mprintf("There is no exit there to unlink.\n");
-    else
+    } else {
         remove_exit(dir);
+    }
 }
 
 
-
-boolean desc_allowed(void)
-{
-    if (!strcmp(here.owner, userid) || privd)
+boolean desc_allowed(void) {
+    if (!strcmp(here.owner, userid) || privd) {
         return true;
-    else {
+    } else {
         mprintf("Sorry, you are not allowed to alter the descriptions in this room.\n");
         return false;
     }
 }
 
 
-
-char *slead(char *Result, char *s)
-{
+char *slead(char *Result, char *s) {
     int i;
     boolean going;
 
-    if (*s == '\0')
+    if (*s == '\0') {
         return strcpy(Result, "");
-    else {
+    } else {
         i = 1;
         going = true;
         while (going) {
@@ -4906,36 +4847,40 @@ char *slead(char *Result, char *s)
                 going = false;
                 break;
             }
-            if (s[i-1] == ' ' || s[i-1] == '\t')
+            if (s[i - 1] == ' ' || s[i - 1] == '\t') {
                 i++;
-            else
+            } else {
                 going = false;
+            }
         }
 
-        if (i > strlen(s))
+        if (i > strlen(s)) {
             return strcpy(Result, "");
-        else {
-            sprintf(Result, "%.*s", (int)(strlen(s) - i + 1), s + i - 1);
+        } else {
+            sprintf(Result, "%.*s", (int) (strlen(s) - i + 1), s + i - 1);
             return Result;
         }
     }
 }
 
 
-char *bite(char *Result, char *s)
-{
+char *bite(char *Result, char *s) {
     int i, orig_i;
     string STR1;
     char STR2[256];
 
-    if (*s == '\0')
+    if (*s == '\0') {
         return strcpy(Result, "");
+    }
 
-    for (i = 0; i < strlen(s); i++)
-        if (s[i] == ' ')
+    for (i = 0; i < strlen(s); i++) {
+        if (s[i] == ' ') {
             break;
-    if (i >= strlen(s))
+        }
+    }
+    if (i >= strlen(s)) {
         i = 0;
+    }
 
     if (i == 0) {
         strcpy(Result, s);
@@ -4954,8 +4899,7 @@ char *bite(char *Result, char *s)
 }
 
 
-void edit_help(void)
-{
+void edit_help(void) {
     mprintf("\nA\tAppend text to end\n");
     mprintf("C\tCheck text for correct length with parameter substitution (#)\n");
     mprintf("D #\tDelete line #\n");
@@ -4970,8 +4914,7 @@ void edit_help(void)
 }
 
 
-void edit_replace(int n)
-{
+void edit_replace(int n) {
     string prompt, s;
 
     if (n > heredsc.desclen || n < 1) {
@@ -4980,17 +4923,17 @@ void edit_replace(int n)
     }
     sprintf(prompt, "%2d: ", n);
     grab_line(prompt, s, true);
-    if (strcmp(s, "**"))
-        strcpy(heredsc.lines[n-1], s);
+    if (strcmp(s, "**")) {
+        strcpy(heredsc.lines[n - 1], s);
+    }
 }
 
 
-void edit_insert(int n)
-{
+void edit_insert(int n) {
     int i;
 
     if (heredsc.desclen == descmax) {
-        mprintf("You have already used all %ld lines of text.\n", (long)descmax);
+        mprintf("You have already used all %ld lines of text.\n", (long) descmax);
         return;
     }
     if (n < 1 || n > heredsc.desclen) {
@@ -4999,19 +4942,19 @@ void edit_insert(int n)
         mprintf("Use A (add) to add text to the end of your description.\n");
         return;
     }
-    for (i = heredsc.desclen + 1; i > n; i--)
-        strcpy(heredsc.lines[i-1], heredsc.lines[i-2]);
+    for (i = heredsc.desclen + 1; i > n; i--) {
+        strcpy(heredsc.lines[i - 1], heredsc.lines[i - 2]);
+    }
     heredsc.desclen++;
-    *heredsc.lines[n-1] = '\0';
+    *heredsc.lines[n - 1] = '\0';
 }
 
 
-void edit_doinsert(int n)
-{
+void edit_doinsert(int n) {
     string s, prompt;
 
     if (heredsc.desclen == descmax) {
-        mprintf("You have already used all %ld lines of text.\n", (long)descmax);
+        mprintf("You have already used all %ld lines of text.\n", (long) descmax);
         return;
     }
     if (n < 1 || n > heredsc.desclen) {
@@ -5025,15 +4968,14 @@ void edit_doinsert(int n)
         grab_line(prompt, s, true);
         if (strcmp(s, "**")) {
             edit_insert(n);   /* put the blank line in */
-            strcpy(heredsc.lines[n-1], s);   /* copy this line onto it */
+            strcpy(heredsc.lines[n - 1], s);   /* copy this line onto it */
             n++;
         }
     } while (heredsc.desclen != descmax && strcmp(s, "**"));
 }
 
 
-void edit_show(void)
-{
+void edit_show(void) {
     int i = 1;
 
     putchar('\n');
@@ -5042,29 +4984,28 @@ void edit_show(void)
         return;
     }
     while (i <= heredsc.desclen) {
-        mprintf("%2d: %s\n", i, heredsc.lines[i-1]);
+        mprintf("%2d: %s\n", i, heredsc.lines[i - 1]);
         i++;
     }
 }
 
 
-void edit_append(void)
-{
+void edit_append(void) {
     string prompt, s;
     boolean stilladding = true;
 
     if (heredsc.desclen == descmax) {
-        mprintf("You have already used all %ld lines of text.\n", (long)descmax);
+        mprintf("You have already used all %ld lines of text.\n", (long) descmax);
         return;
     }
     mprintf("Enter text.  Terminate with ** at the beginning of a line.\n");
-    mprintf("You have %ld lines maximum.\n\n", (long)descmax);
+    mprintf("You have %ld lines maximum.\n\n", (long) descmax);
     while (heredsc.desclen < descmax && stilladding) {
         sprintf(prompt, "%2d: ", heredsc.desclen + 1);
         grab_line(prompt, s, true);
-        if (!strcmp(s, "**"))
+        if (!strcmp(s, "**")) {
             stilladding = false;
-        else {
+        } else {
             heredsc.desclen++;
             strcpy(heredsc.lines[heredsc.desclen - 1], s);
         }
@@ -5072,8 +5013,7 @@ void edit_append(void)
 }
 
 
-void edit_delete(int n)
-{
+void edit_delete(int n) {
     int i, FORLIM;
 
     if (heredsc.desclen == 0) {
@@ -5089,30 +5029,31 @@ void edit_delete(int n)
         return;
     }
     FORLIM = heredsc.desclen;
-    for (i = n; i < FORLIM; i++)
-        strcpy(heredsc.lines[i-1], heredsc.lines[i]);
+    for (i = n; i < FORLIM; i++) {
+        strcpy(heredsc.lines[i - 1], heredsc.lines[i]);
+    }
     heredsc.desclen--;
 }
 
 
-void check_subst(void)
-{
+void check_subst(void) {
     int i, FORLIM;
 
-    if (heredsc.desclen <= 0)
+    if (heredsc.desclen <= 0) {
         return;
+    }
     FORLIM = heredsc.desclen;
     for (i = 1; i <= FORLIM; i++) {
-        if (strpos2("#", heredsc.lines[i-1], 1) > 0 &&
-            strlen(heredsc.lines[i-1]) > 59)
+        if (strpos2("#", heredsc.lines[i - 1], 1) > 0 &&
+            strlen(heredsc.lines[i - 1]) > 59) {
             mprintf("Warning: line %d is too long for correct parameter substitution.\n",
                     i);
+        }
     }
 }
 
 
-boolean edit_desc(int *dsc)
-{
+boolean edit_desc(int *dsc) {
     boolean Result = true;
     char cmd;
     string s;
@@ -5121,9 +5062,9 @@ boolean edit_desc(int *dsc)
     char STR1[256];
     string STR2;
 
-    if (*dsc == DEFAULT_LINE)
+    if (*dsc == DEFAULT_LINE) {
         heredsc.desclen = 0;
-    else if (*dsc > 0) {
+    } else if (*dsc > 0) {
         getblock(*dsc);
         freeblock();
         memcpy(&heredsc, &block, sizeof(descrec));
@@ -5133,11 +5074,13 @@ boolean edit_desc(int *dsc)
         freeline();
         strcpy(heredsc.lines[0], oneliner.theline);
         heredsc.desclen = 1;
-    } else
+    } else {
         heredsc.desclen = 0;
+    }
 
-    if (heredsc.desclen == 0)
+    if (heredsc.desclen == 0) {
         edit_append();
+    }
     do {
         putchar('\n');
         do {
@@ -5148,10 +5091,11 @@ boolean edit_desc(int *dsc)
         cmd = s[0];
 
         if (strlen(s) > 1) {
-            sprintf(STR1, "%.*s", (int)(strlen(s) - 1), s + 1);
+            sprintf(STR1, "%.*s", (int) (strlen(s) - 1), s + 1);
             n = number(slead(STR2, STR1));
-        } else
+        } else {
             n = 0;
+        }
 
         switch (cmd) {
 
@@ -5184,8 +5128,9 @@ boolean edit_desc(int *dsc)
 
             case 'e':
                 check_subst();
-                if (debug)
+                if (debug) {
                     mprintf("edit_desc: dsc is %d\n", *dsc);
+                }
 
 
                 /* what I do here may require some explanation:
@@ -5238,9 +5183,9 @@ boolean edit_desc(int *dsc)
                     }
                     /* more than 1 lines */
                 } else {
-                    if (*dsc == 0)
+                    if (*dsc == 0) {
                         alloc_block(dsc);
-                    else if (*dsc < 0) {
+                    } else if (*dsc < 0) {
                         delete_line(dsc);
                         alloc_block(dsc);
                     }
@@ -5288,19 +5233,17 @@ boolean edit_desc(int *dsc)
 }
 
 
-
-
-boolean alloc_detail(int *n, char *s)
-{
+boolean alloc_detail(int *n, char *s) {
     boolean Result;
     boolean found = false;
 
     *n = 1;
     while (*n <= maxdetail && !found) {
-        if (here.detaildesc[*n - 1] == 0)
+        if (here.detaildesc[*n - 1] == 0) {
             found = true;
-        else
+        } else {
             (*n)++;
+        }
     }
     Result = found;
     if (!found) {
@@ -5322,13 +5265,13 @@ Known problem: if two people edit the description to the same room one of their
 This is unlikely to happen unless the Monster Manager tries to edit a
 description while the room's owner is also editing it.
 */
-void do_describe(char *s)
-{
+void do_describe(char *s) {
     int i, newdsc;
 
     gethere(0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     if (*s == '\0') {  /* describe this room */
         if (!desc_allowed()) {
             /* describe a detail of this room */
@@ -5348,44 +5291,43 @@ void do_describe(char *s)
     }
     if (strlen(s) > veryshortlen) {
         mprintf("Your detail keyword can only be %ld characters.\n",
-                (long)veryshortlen);
+                (long) veryshortlen);
         return;
     }
-    if (!desc_allowed())
+    if (!desc_allowed()) {
         return;
+    }
     if (!lookup_detail(&i, s)) {
         if (!alloc_detail(&i, s)) {
-            mprintf("You have used all %ld details.\n", (long)maxdetail);
+            mprintf("You have used all %ld details.\n", (long) maxdetail);
             mprintf("To delete a detail, DESCRIBE <the detail> and delete all the text.\n");
         }
     }
-    if (i == 0)
+    if (i == 0) {
         return;
+    }
     log_action(e_detail, 0);
-    mprintf("[ Editing detail \"%s\" of this room ]\n", here.detail[i-1]);
-    newdsc = here.detaildesc[i-1];
+    mprintf("[ Editing detail \"%s\" of this room ]\n", here.detail[i - 1]);
+    newdsc = here.detaildesc[i - 1];
     if (edit_desc(&newdsc)) {
         getroom(0);
-        here.detaildesc[i-1] = newdsc;
+        here.detaildesc[i - 1] = newdsc;
         putroom();
     }
     log_event(myslot, E_DONEDET, 0, 0, "", 0);
 }
 
 
-
-
-void del_room(int n)
-{
+void del_room(int n) {
     int i;
     exit_ *WITH;
 
     getnam();
-    *nam.idents[n-1] = '\0';   /* blank out name */
+    *nam.idents[n - 1] = '\0';   /* blank out name */
     putnam();
 
     getown();
-    *own.idents[n-1] = '\0';   /* blank out owner */
+    *own.idents[n - 1] = '\0';   /* blank out owner */
     putown();
 
     getroom(n);
@@ -5404,9 +5346,7 @@ void del_room(int n)
 }
 
 
-
-void createroom(char *s)
-{
+void createroom(char *s) {
     /* create a room with name s */
     int roomno, dummy, i, rand_accept;
     exit_ *WITH;
@@ -5418,23 +5358,24 @@ void createroom(char *s)
     }
     if (strlen(s) > shortlen) {
         mprintf("Please limit your room name to a maximum of %ld characters.\n",
-                (long)shortlen);
+                (long) shortlen);
         return;
     }
     if (exact_room(&dummy, s)) {
         mprintf("That room name has already been used.  Please give a unique room name.\n");
         return;
     }
-    if (!alloc_room(&roomno))
+    if (!alloc_room(&roomno)) {
         return;
+    }
     log_action(form, 0);
 
     getnam();
-    lowcase(nam.idents[roomno-1], s);   /* assign room name */
+    lowcase(nam.idents[roomno - 1], s);   /* assign room name */
     putnam();   /* case insensitivity */
 
     getown();
-    strcpy(own.idents[roomno-1], userid);   /* assign room owner */
+    strcpy(own.idents[roomno - 1], userid);   /* assign room owner */
     putown();
 
     getroom(roomno);
@@ -5469,22 +5410,28 @@ void createroom(char *s)
     here.exitfail = DEFAULT_LINE;
     here.ofail = DEFAULT_LINE;
 
-    for (i = 0; i < maxpeople; i++)
+    for (i = 0; i < maxpeople; i++) {
         here.people[i].kind = 0;
+    }
 
-    for (i = 0; i < maxpeople; i++)
+    for (i = 0; i < maxpeople; i++) {
         *here.people[i].name = '\0';
+    }
 
-    for (i = 0; i < maxobjs; i++)
+    for (i = 0; i < maxobjs; i++) {
         here.objs[i] = 0;
+    }
 
-    for (i = 0; i < maxdetail; i++)
+    for (i = 0; i < maxdetail; i++) {
         *here.detail[i] = '\0';
-    for (i = 0; i < maxdetail; i++)
+    }
+    for (i = 0; i < maxdetail; i++) {
         here.detaildesc[i] = 0;
+    }
 
-    for (i = 0; i < maxobjs; i++)
+    for (i = 0; i < maxobjs; i++) {
         here.objhide[i] = 0;
+    }
 
     for (i = 0; i < maxexit; i++) {
         WITH = &here.exits[i];
@@ -5513,15 +5460,13 @@ void createroom(char *s)
     rand_accept = rnd100() % 6 + 1;
 /* p2c: mon.pas, line 4689:
  * Note: Using % for possibly-negative arguments [317] */
-    here.exits[rand_accept-1].kind = 5;
+    here.exits[rand_accept - 1].kind = 5;
 
     putroom();
 }
 
 
-
-void show_help(void)
-{
+void show_help(void) {
     string s;
 
     mprintf(
@@ -5569,8 +5514,7 @@ void show_help(void)
 }
 
 
-int lookup_cmd(char *s_)
-{
+int lookup_cmd(char *s_) {
     string s;
     int i = 1;   /* index for loop */
     int poss;   /* a possible match -- only for partial matches */
@@ -5586,26 +5530,26 @@ int lookup_cmd(char *s_)
     strcpy(s, lowcase(STR1, s));
     FORLIM = numcmds;
     for (i = 1; i <= FORLIM; i++) {
-        if (!strcmp(s, cmds[i-1]))
+        if (!strcmp(s, cmds[i - 1])) {
             num = i;
-        else if (strncmp(s, cmds[i-1], strlen(s)) == 0) {
+        } else if (strncmp(s, cmds[i - 1], strlen(s)) == 0) {
             maybe++;
             poss = i;
         }
     }
-    if (num != 0)
+    if (num != 0) {
         return num;
-    else if (maybe == 1)
+    } else if (maybe == 1) {
         return poss;
-    else if (maybe > 1)
+    } else if (maybe > 1) {
         return error;   /* "Ambiguous" */
-    else
+    } else {
         return error;
+    }
 }
 
 
-void addrooms(int n)
-{
+void addrooms(int n) {
     int i, FORLIM;
 
     getindex(I_ROOM);
@@ -5625,9 +5569,7 @@ void addrooms(int n)
 }
 
 
-
-void addints(int n)
-{
+void addints(int n) {
     int i, FORLIM;
 
     getindex(I_INT);
@@ -5643,9 +5585,7 @@ void addints(int n)
 }
 
 
-
-void addlines(int n)
-{
+void addlines(int n) {
     int i, FORLIM;
 
     getindex(I_LINE);
@@ -5661,8 +5601,7 @@ void addlines(int n)
 }
 
 
-void addblocks(int n)
-{
+void addblocks(int n) {
     int i, FORLIM;
 
     getindex(I_BLOCK);
@@ -5678,8 +5617,7 @@ void addblocks(int n)
 }
 
 
-void addobjects(int n)
-{
+void addobjects(int n) {
     int i, FORLIM;
 
     getindex(I_OBJECT);
@@ -5695,8 +5633,7 @@ void addobjects(int n)
 }
 
 
-void dist_list(void)
-{
+void dist_list(void) {
     int i, j;
     FILE *f;
     intrec where_they_are;
@@ -5728,24 +5665,29 @@ void dist_list(void)
     for (i = 0; i < maxplayers; i++) {
         if (!indx.free[i]) {
             fputs(user.idents[i], f);
-            for (j = strlen(user.idents[i]); j <= 15; j++)
+            for (j = strlen(user.idents[i]); j <= 15; j++) {
                 putc(' ', f);
+            }
             fprintf(f, "! %s", pers.idents[i]);
-            for (j = strlen(pers.idents[i]); j <= 21; j++)
+            for (j = strlen(pers.idents[i]); j <= 21; j++) {
                 putc(' ', f);
+            }
 
             fputs(adate.idents[i], f);
             if (strlen(adate.idents[i]) < 19) {
-                for (j = strlen(adate.idents[i]); j <= 18; j++)
+                for (j = strlen(adate.idents[i]); j <= 18; j++) {
                     putc(' ', f);
+                }
             }
-            if (anint.int_[i] != 0)
+            if (anint.int_[i] != 0) {
                 fprintf(f, " * ");
-            else
+            } else {
                 fprintf(f, "   ");
+            }
 
-            if (privd)
+            if (privd) {
                 fputs(nam.idents[where_they_are.int_[i] - 1], f);
+            }
             putc('\n', f);
 
         }
@@ -5755,8 +5697,7 @@ void dist_list(void)
 }
 
 
-void system_view(void)
-{
+void system_view(void) {
     int used, free, total;
 
     putchar('\n');
@@ -5802,8 +5743,7 @@ void system_view(void)
 
 /* remove a user from the log records (does not handle ownership) */
 
-void kill_user(char *s)
-{
+void kill_user(char *s) {
     int n;
 
     if (*s == '\0') {
@@ -5816,18 +5756,18 @@ void kill_user(char *s)
     }
     getindex(I_ASLEEP);
     freeindex();
-    if (indx.free[n-1]) {
+    if (indx.free[n - 1]) {
         delete_log(&n);
         mprintf("Player deleted.\n");
-    } else
+    } else {
         mprintf("That person is playing now.\n");
+    }
 }
 
 
 /* disown everything a player owns */
 
-void disown_user(char *s)
-{
+void disown_user(char *s) {
     int n, i;
     string tmp, theuser;
 
@@ -5835,21 +5775,23 @@ void disown_user(char *s)
         mprintf("No user specified.\n");
         return;
     }
-    if (debug)
+    if (debug) {
         mprintf("calling lookup_user with %s\n", s);
-    if (!lookup_user(&n, s))
+    }
+    if (!lookup_user(&n, s)) {
         mprintf("User not in log info, attempting to disown anyway.\n");
+    }
 
-    strcpy(theuser, user.idents[n-1]);
+    strcpy(theuser, user.idents[n - 1]);
 
     /* first disown all their rooms */
 
     getown();
     freeown();
     for (i = 1; i <= maxroom; i++) {
-        if (!strcmp(own.idents[i-1], theuser)) {
+        if (!strcmp(own.idents[i - 1], theuser)) {
             getown();
-            strcpy(own.idents[i-1], "*");
+            strcpy(own.idents[i - 1], "*");
             putown();
 
             getroom(i);
@@ -5879,8 +5821,7 @@ void disown_user(char *s)
 }
 
 
-void move_asleep(void)
-{
+void move_asleep(void) {
     string pname, rname;   /* player & room names */
     int newroom, n;   /* room number & player slot number */
 
@@ -5896,19 +5837,18 @@ void move_asleep(void)
     }
     getindex(I_ASLEEP);
     freeindex();
-    if (!indx.free[n-1]) {
+    if (!indx.free[n - 1]) {
         mprintf("That player is not asleep.\n");
         return;
     }
     getint(N_LOCATION);
-    anint.int_[n-1] = newroom;
+    anint.int_[n - 1] = newroom;
     putint();
     mprintf("Player moved.\n");
 }
 
 
-void system_help(void)
-{
+void system_help(void) {
     mprintf("\nB\tAdd description blocks\n");
     mprintf("D\tDisown <user>\n");
     mprintf("E\tExit (same as quit)\n");
@@ -5927,13 +5867,11 @@ void system_help(void)
 
 /* *************** FIX_STUFF ******************** */
 
-void fix_stuff(void)
-{
+void fix_stuff(void) {
 }
 
 
-void do_system(char *s_)
-{
+void do_system(char *s_) {
     string s, prompt;
     boolean done = false;
     char cmd;
@@ -5959,12 +5897,13 @@ void do_system(char *s_)
         n = 0;
         *p = '\0';
         if (strlen(s) > 1) {
-            sprintf(STR2, "%.*s", (int)(strlen(s) - 1), s + 1);
+            sprintf(STR2, "%.*s", (int) (strlen(s) - 1), s + 1);
             slead(p, STR2);
             n = number(p);
         }
-        if (debug)
+        if (debug) {
             mprintf("p = %s\n", p);
+        }
 
         switch (cmd) {
 
@@ -5999,42 +5938,47 @@ void do_system(char *s_)
 
                 /*add rooms*/
             case 'r':
-                if (n > 0)
+                if (n > 0) {
                     addrooms(n);
-                else
+                } else {
                     mprintf("To add rooms, say R <# to add>\n");
+                }
                 break;
 
                 /*add ints*/
             case 'i':
-                if (n > 0)
+                if (n > 0) {
                     addints(n);
-                else
+                } else {
                     mprintf("To add integers, say I <# to add>\n");
+                }
                 break;
 
                 /*add description blocks*/
             case 'b':
-                if (n > 0)
+                if (n > 0) {
                     addblocks(n);
-                else
+                } else {
                     mprintf("To add description blocks, say B <# to add>\n");
+                }
                 break;
 
                 /*add objects*/
             case 'o':
-                if (n > 0)
+                if (n > 0) {
                     addobjects(n);
-                else
+                } else {
                     mprintf("To add object records, say O <# to add>\n");
+                }
                 break;
 
                 /*add one-liners*/
             case 'l':
-                if (n > 0)
+                if (n > 0) {
                     addlines(n);
-                else
+                } else {
                     mprintf("To add one liner records, say L <# to add>\n");
+                }
                 break;
 
                 /*view current stats*/
@@ -6057,24 +6001,23 @@ void do_system(char *s_)
 }
 
 
-void do_version(char *s)
-{
+void do_version(char *s) {
     mprintf("Monster, a multiplayer adventure game where the players create the world\n");
     mprintf("and make the rules.\n\n");
     mprintf("Written by Rich Skrenta at Northwestern University, 1988.\n");
 }
 
 
-void rebuild_system(void)
-{
+void rebuild_system(void) {
     int i, j;
 
     mprintf("Creating index file 1-6\n");
     for (i = 1; i <= 7; i++) {
         lseek(indexfile, (i - 1L) * sizeof(indexrec), 0);
         bzero(&indexfile_hat, sizeof(indexfile_hat));
-        for (j = 0; j < maxindex; j++)
+        for (j = 0; j < maxindex; j++) {
             indexfile_hat.free[j] = true;
+        }
         indexfile_hat.indexnum = i;
         indexfile_hat.top = 0;   /* none of each to start */
         indexfile_hat.inuse = 0;
@@ -6109,8 +6052,9 @@ void rebuild_system(void)
         bzero(&namfile_hat, sizeof(namfile_hat));
         namfile_hat.validate = j;
         namfile_hat.loctop = 0;
-        for (i = 0; i < maxroom; i++)
+        for (i = 0; i < maxroom; i++) {
             *namfile_hat.idents[i] = '\0';
+        }
         write(namfile, &namfile_hat, sizeof(namfile_hat));
     }
 
@@ -6132,8 +6076,9 @@ void rebuild_system(void)
     }
 
     getindex(I_INT);
-    for (i = 0; i <= 5; i++)
+    for (i = 0; i <= 5; i++) {
         indx.free[i] = false;
+    }
     indx.top = 6;
     indx.inuse = 6;
     putindex();
@@ -6170,8 +6115,7 @@ void rebuild_system(void)
 }
 
 
-void tests(void)
-{
+void tests(void) {
     string s;
 
     mprintf("Running tests...\n");
@@ -6186,8 +6130,7 @@ void tests(void)
 }
 
 
-void special(char *s_)
-{
+void special(char *s_) {
     string s, STR1;
     char STR2[256];
     char *TEMP;
@@ -6205,20 +6148,23 @@ void special(char *s_)
         mprintf("Do you really want to destroy the entire universe?\n");
         fgets(s, 81, stdin);
         TEMP = strchr(s, '\n');
-        if (TEMP != NULL)
+        if (TEMP != NULL) {
             *TEMP = 0;
+        }
         if (*s != '\0') {
             sprintf(STR2, "%.1s", lowcase(STR1, s));
-            if (!strcmp(STR2, "y"))
+            if (!strcmp(STR2, "y")) {
                 rebuild_system();
+            }
         }
         return;
     }
-    if (!strcmp(s, "version"))
+    if (!strcmp(s, "version")) {
         mprintf("Monster, written by Rich Skrenta at Northwestern University, 1988.\n");
         /* Don't take this out please... */
-    else if (!strcmp(s, "quit"))
+    } else if (!strcmp(s, "quit")) {
         done = true;
+    }
 }
 
 
@@ -6227,30 +6173,31 @@ void special(char *s_)
    in other words, the room is too cluttered, and cannot hold any
    more objects
 */
-boolean place_obj(int n, boolean silent)
-{
+boolean place_obj(int n, boolean silent) {
     boolean Result;
     boolean found = false;
     int i = 1;
     string STR1;
 
-    if (here.objdrop == 0)
+    if (here.objdrop == 0) {
         getroom(0);
-    else
+    } else {
         getroom(here.objdrop);
+    }
     while (i <= maxobjs && !found) {
-        if (here.objs[i-1] == 0)
+        if (here.objs[i - 1] == 0) {
             found = true;
-        else
+        } else {
             i++;
+        }
     }
     Result = found;
     if (!found) {
         freeroom();
         return Result;
     }
-    here.objs[i-1] = n;
-    here.objhide[i-1] = 0;
+    here.objs[i - 1] = n;
+    here.objhide[i - 1] = 0;
     putroom();
 
     gethere(0);
@@ -6258,133 +6205,134 @@ boolean place_obj(int n, boolean silent)
 
     /* if it bounced somewhere else then tell them */
 
-    if (here.objdrop != 0 && here.objdest != 0)
+    if (here.objdrop != 0 && here.objdest != 0) {
         log_event(0, E_BOUNCEDIN, here.objdest, n, "", here.objdrop);
+    }
 
 
-    if (silent)
+    if (silent) {
         return Result;
-    if (here.objdesc != 0)
+    }
+    if (here.objdesc != 0) {
         print_subs(here.objdesc, obj_part(STR1, n, true));
-    else
+    } else {
         mprintf("Dropped.\n");
+    }
     return Result;
 }
 
 
 /* remove an object from this room */
-boolean take_obj(int objnum, int slot)
-{
+boolean take_obj(int objnum, int slot) {
     boolean Result;
 
     getroom(0);
-    if (here.objs[slot-1] == objnum) {
-        here.objs[slot-1] = 0;
-        here.objhide[slot-1] = 0;
+    if (here.objs[slot - 1] == objnum) {
+        here.objs[slot - 1] = 0;
+        here.objhide[slot - 1] = 0;
         Result = true;
-    } else
+    } else {
         Result = false;
+    }
     putroom();
     return Result;
 }
 
 
-boolean can_hold(void)
-{
-    if (find_numhold(0) < maxhold)
+boolean can_hold(void) {
+    if (find_numhold(0) < maxhold) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
 
-boolean can_drop(void)
-{
-    if (find_numobjs() < maxobjs)
+boolean can_drop(void) {
+    if (find_numobjs() < maxobjs) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
 
-int find_hold(int objnum, int slot)
-{
+int find_hold(int objnum, int slot) {
     int Result = 0, i = 1;
 
-    if (slot == 0)
+    if (slot == 0) {
         slot = myslot;
+    }
     while (i <= maxhold) {
-        if (here.people[slot-1].holding[i-1] == objnum)
+        if (here.people[slot - 1].holding[i - 1] == objnum) {
             Result = i;
+        }
         i++;
     }
     return Result;
 }
 
 
-
 /* put object number n into the player's inventory; returns false if
    he's holding too many things to carry another */
 
-boolean hold_obj(int n)
-{
+boolean hold_obj(int n) {
     boolean Result;
     boolean found = false;
     int i = 1;
 
     getroom(0);
     while (i <= maxhold && !found) {
-        if (here.people[myslot-1].holding[i-1] == 0)
+        if (here.people[myslot - 1].holding[i - 1] == 0) {
             found = true;
-        else
+        } else {
             i++;
+        }
     }
     Result = found;
     if (!found) {
         freeroom();
         return Result;
     }
-    here.people[myslot-1].holding[i-1] = n;
+    here.people[myslot - 1].holding[i - 1] = n;
     putroom();
 
     getobj(n);
     freeobj();
-    hold_kind[i-1] = obj.kind;
+    hold_kind[i - 1] = obj.kind;
     return Result;
 }
-
 
 
 /* remove an object (hold) from the player record, given the slot that
    the object is being held in */
 
-void drop_obj(int slot, int pslot)
-{
-    if (pslot == 0)
+void drop_obj(int slot, int pslot) {
+    if (pslot == 0) {
         pslot = myslot;
+    }
     getroom(0);
-    here.people[pslot-1].holding[slot-1] = 0;
+    here.people[pslot - 1].holding[slot - 1] = 0;
     putroom();
 
-    hold_kind[slot-1] = 0;
+    hold_kind[slot - 1] = 0;
 }
-
 
 
 /* maybe drop something I'm holding if I'm hit */
 
-void maybe_drop(void)
-{
+void maybe_drop(void) {
     int i, objnum;
     string s;
 
     i = rnd100() % maxhold + 1;
 /* p2c: mon.pas, line 5480:
  * Note: Using % for possibly-negative arguments [317] */
-    objnum = here.people[myslot-1].holding[i-1];
+    objnum = here.people[myslot - 1].holding[i - 1];
 
-    if (objnum == 0 || mywield == objnum || mywear == objnum)
+    if (objnum == 0 || mywield == objnum || mywear == objnum) {
         return;
+    }
     /* drop something */
 
     drop_obj(i, 0);
@@ -6395,34 +6343,32 @@ void maybe_drop(void)
     }
     getobjnam();
     freeobjnam();
-    mprintf("The %s has slipped out of your hands.\n", objnam.idents[objnum-1]);
+    mprintf("The %s has slipped out of your hands.\n", objnam.idents[objnum - 1]);
 
 
-    strcpy(s, objnam.idents[objnum-1]);
+    strcpy(s, objnam.idents[objnum - 1]);
     log_event(myslot, E_SLIPPED, 0, 0, s, 0);
 }
-
 
 
 /* return TRUE if the player is allowed to program the object n
    if checkpub is true then obj_owner will return true if the object in
    question is public */
 
-boolean obj_owner(int n, boolean checkpub)
-{
+boolean obj_owner(int n, boolean checkpub) {
     getobjown();
     freeobjown();
-    if (!strcmp(objown.idents[n-1], userid) || privd)
+    if (!strcmp(objown.idents[n - 1], userid) || privd) {
         return true;
-    else if (*objown.idents[n-1] == '\0' && checkpub)
+    } else if (*objown.idents[n - 1] == '\0' && checkpub) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
 
-void do_duplicate(char *s)
-{
+void do_duplicate(char *s) {
     int objnum;
     char STR1[50];
 
@@ -6461,14 +6407,14 @@ void do_duplicate(char *s)
 
 
 /* make an object */
-void do_makeobj(char *s)
-{
+void do_makeobj(char *s) {
     int objnum;
     char STR1[50];
 
     gethere(0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     if (!is_owner(location, true)) {
         mprintf("You may only create objects when you are in one of your own rooms.\n");
         return;
@@ -6479,7 +6425,7 @@ void do_makeobj(char *s)
     }
     if (strlen(s) > shortlen) {
         mprintf("Please limit your object names to %ld characters.\n",
-                (long)shortlen);
+                (long) shortlen);
         return;
     }
     if (exact_obj(&objnum, s)) {  /* object already exits */
@@ -6488,8 +6434,9 @@ void do_makeobj(char *s)
         mprintf("use the DUPLICATE command.\n");
         return;
     }
-    if (debug)
+    if (debug) {
         mprintf("?beggining to create object\n");
+    }
     if (find_numobjs() >= maxobjs) {
 
         mprintf(
@@ -6497,18 +6444,21 @@ void do_makeobj(char *s)
         return;
     }
     if (alloc_obj(&objnum)) {
-        if (debug)
+        if (debug) {
             mprintf("?alloc_obj successful\n");
+        }
         getobjnam();
-        lowcase(objnam.idents[objnum-1], s);
+        lowcase(objnam.idents[objnum - 1], s);
         putobjnam();
-        if (debug)
+        if (debug) {
             mprintf("?getobjnam completed\n");
+        }
         getobjown();
-        strcpy(objown.idents[objnum-1], userid);
+        strcpy(objown.idents[objnum - 1], userid);
         putobjown();
-        if (debug)
+        if (debug) {
             mprintf("?getobjown completed\n");
+        }
 
         getobj(objnum);
         obj.onum = objnum;
@@ -6537,10 +6487,11 @@ void do_makeobj(char *s)
 
         if (s[0] == 'U' || s[0] == 'u' || s[0] == 'O' || s[0] == 'o' ||
             s[0] == 'I' || s[0] == 'i' || s[0] == 'E' || s[0] == 'e' ||
-            s[0] == 'A' || s[0] == 'a')
+            s[0] == 'A' || s[0] == 'a') {
             obj.particle = 2;   /* an */
-        else
+        } else {
             obj.particle = 1;
+        }
         /* a */
 
         obj.d1 = 0;
@@ -6552,15 +6503,16 @@ void do_makeobj(char *s)
         putobj();
 
 
-        if (debug)
+        if (debug) {
             mprintf("putobj completed\n");
+        }
     }
     /* else: alloc_obj prints errors by itself */
-    if (!place_obj(objnum, true))
+    if (!place_obj(objnum, true)) {
         mprintf(
                 "?error in makeobj - could not place object; notify the Monster Manager.\n");
         /* put the new object here */
-    else {
+    } else {
         sprintf(STR1, "%s has created an object here.", myname);
         log_event(myslot, E_MADEOBJ, 0, 0, STR1, 0);
         mprintf("Object created.\n");
@@ -6571,8 +6523,7 @@ void do_makeobj(char *s)
 /* remove the type block for an object; all instances of the object must
    be destroyed first */
 
-void do_unmake(char *s)
-{
+void do_unmake(char *s) {
     int n;
     string tmp;
 
@@ -6600,8 +6551,7 @@ void do_unmake(char *s)
 
 /* destroy a copy of an object */
 
-void do_destroy(char *s)
-{
+void do_destroy(char *s) {
     int slot, n;
     string STR1;
     char STR2[118];
@@ -6620,7 +6570,7 @@ void do_destroy(char *s)
     }
     getobjown();
     freeobjown();
-    if (strcmp(objown.idents[n-1], userid) && *objown.idents[n-1] != '\0' &&
+    if (strcmp(objown.idents[n - 1], userid) && *objown.idents[n - 1] != '\0' &&
         !privd) {
         mprintf("You must be the owner of an object to destroy it.\n");
         return;
@@ -6657,52 +6607,52 @@ void do_destroy(char *s)
 }
 
 
-boolean links_possible(void)
-{
+boolean links_possible(void) {
     boolean Result = false;
     int i;
 
     gethere(0);
-    if (is_owner(location, true))
+    if (is_owner(location, true)) {
         return true;
+    }
     for (i = 0; i < maxexit; i++) {
-        if (here.exits[i].toloc == 0 && here.exits[i].kind == 5)
+        if (here.exits[i].toloc == 0 && here.exits[i].kind == 5) {
             Result = true;
+        }
     }
     return Result;
 }
 
 
-
 /* make a room */
-void do_form(char *s_)
-{
+void do_form(char *s_) {
     string s, STR1;
 
     strcpy(s, s_);
     gethere(0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     if (!links_possible()) {
         mprintf(
                 "You may not create any new exits here.  Go to a place where you can create\n");
         mprintf("an exit before FORMing a new room.\n");
         return;
     }
-    if (*s == '\0')
+    if (*s == '\0') {
         grab_line("Room name: ", s, true);
+    }
     strcpy(s, slead(STR1, s));
 
     createroom(s);
 }
 
 
-void xpoof(int loc)
-{
+void xpoof(int loc) {
     /* loc: integer; forward */
     int targslot;
 
-    if (!put_token(loc, &targslot, here.people[myslot-1].hiding)) {
+    if (!put_token(loc, &targslot, here.people[myslot - 1].hiding)) {
         mprintf("There is a crackle of electricity, but the poof fails.\n");
         return;
     }
@@ -6722,8 +6672,7 @@ void xpoof(int loc)
 }
 
 
-void do_poof(char *s_)
-{
+void do_poof(char *s_) {
     string s;
     int n, loc;
 
@@ -6748,13 +6697,12 @@ void do_poof(char *s_)
     }
     log_event(myslot, E_POOFYOU, n, loc, "", 0);
     mprintf("\nYou extend your arms, muster some energy, and %s is\n",
-            here.people[n-1].name);
+            here.people[n - 1].name);
     mprintf("engulfed in a cloud of orange smoke.\n\n");
 }
 
 
-void link_room(int origdir, int targdir, int targroom)
-{
+void link_room(int origdir, int targdir, int targroom) {
     exit_ *WITH, *WITH1;
 
     /* since exit creation involves the writing of two records,
@@ -6767,7 +6715,7 @@ void link_room(int origdir, int targdir, int targroom)
      would be hard*/
 
     getroom(0);
-    WITH = &here.exits[origdir-1];
+    WITH = &here.exits[origdir - 1];
     WITH->toloc = targroom;
     WITH->kind = 1;   /* type of exit, they can customize later */
     WITH->slot = targdir;   /* exit it comes out in in target room */
@@ -6776,11 +6724,12 @@ void link_room(int origdir, int targdir, int targroom)
     putroom();
 
     log_event(myslot, E_NEWEXIT, 0, 0, myname, location);
-    if (location != targroom)
+    if (location != targroom) {
         log_event(0, E_NEWEXIT, 0, 0, myname, targroom);
+    }
 
     getroom(targroom);
-    WITH1 = &here.exits[targdir-1];
+    WITH1 = &here.exits[targdir - 1];
     WITH1->toloc = location;
     WITH1->kind = 1;
     WITH1->slot = origdir;
@@ -6788,15 +6737,14 @@ void link_room(int origdir, int targdir, int targroom)
     init_exit(targdir);
     putroom();
     mprintf("Exit created.  Use CUSTOM %s to customize your exit.\n",
-            direct[origdir-1]);
+            direct[origdir - 1]);
 }
 
 
 /*
 User procedure to link a room
 */
-void do_link(char *s_)
-{
+void do_link(char *s_) {
     string s;
     boolean ok;
     string orgexitnam, targnam, trgexitnam;
@@ -6814,41 +6762,45 @@ void do_link(char *s_)
         return;
     }
     log_action(link, 0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     mprintf("Hit return alone at any prompt to terminate exit creation.\n\n");
 
-    if (*s == '\0')
+    if (*s == '\0') {
         firsttime = false;
-    else {
+    } else {
         bite(orgexitnam, s);
         firsttime = true;
     }
 
     do {
-        if (!firsttime)
+        if (!firsttime) {
             grab_line("Direction of exit? ", orgexitnam, true);
-        else
+        } else {
             firsttime = false;
+        }
 
         ok = lookup_dir(&origdir, orgexitnam);
-        if (ok)
+        if (ok) {
             ok = can_make(origdir, 0);
+        }
     } while (!(*orgexitnam == '\0' || ok));
 
     if (ok) {
-        if (*s == '\0')
+        if (*s == '\0') {
             firsttime = false;
-        else {
+        } else {
             strcpy(targnam, s);
             firsttime = true;
         }
 
         do {
-            if (!firsttime)
+            if (!firsttime) {
                 grab_line("Room to link to? ", targnam, true);
-            else
+            } else {
                 firsttime = false;
+            }
 
             ok = lookup_room(&targroom, targnam);
         } while (!(*targnam == '\0' || ok));
@@ -6859,44 +6811,44 @@ void do_link(char *s_)
             mprintf("Exit comes out in target room\n");
             grab_line("from what direction? ", trgexitnam, true);
             ok = lookup_dir(&targdir, trgexitnam);
-            if (ok)
+            if (ok) {
                 ok = can_make(targdir, targroom);
+            }
         } while (!(*trgexitnam == '\0' || ok));
     }
 
-    if (ok)  /* actually create the exit */
+    if (ok) {  /* actually create the exit */
         link_room(origdir, targdir, targroom);
+    }
 }
 
 
-void relink_room(int origdir, int targdir, int targroom)
-{
+void relink_room(int origdir, int targdir, int targroom) {
     exit_ tmp;
     int copyslot, copyloc;
 
     gethere(0);
-    memcpy(&tmp, &here.exits[origdir-1], sizeof(exit_));
+    memcpy(&tmp, &here.exits[origdir - 1], sizeof(exit_));
     copyloc = tmp.toloc;
     copyslot = tmp.slot;
 
     getroom(targroom);
-    memcpy(&here.exits[targdir-1], &tmp, sizeof(exit_));
+    memcpy(&here.exits[targdir - 1], &tmp, sizeof(exit_));
     putroom();
 
     getroom(copyloc);
-    here.exits[copyslot-1].toloc = targroom;
-    here.exits[copyslot-1].slot = targdir;
+    here.exits[copyslot - 1].toloc = targroom;
+    here.exits[copyslot - 1].slot = targdir;
     putroom();
 
     getroom(0);
-    here.exits[origdir-1].toloc = 0;
+    here.exits[origdir - 1].toloc = 0;
     init_exit(origdir);
     putroom();
 }
 
 
-void do_relink(char *s_)
-{
+void do_relink(char *s_) {
     string s;
     boolean ok;
     string orgexitnam, targnam, trgexitnam;
@@ -6908,41 +6860,45 @@ void do_relink(char *s_)
     strcpy(s, s_);
     log_action(c_relink, 0);
     gethere(0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     mprintf("Hit return alone at any prompt to terminate exit relinking.\n\n");
 
-    if (*s == '\0')
+    if (*s == '\0') {
         firsttime = false;
-    else {
+    } else {
         bite(orgexitnam, s);
         firsttime = true;
     }
 
     do {
-        if (!firsttime)
+        if (!firsttime) {
             grab_line("Direction of exit to relink? ", orgexitnam, true);
-        else
+        } else {
             firsttime = false;
+        }
 
         ok = lookup_dir(&origdir, orgexitnam);
-        if (ok)
+        if (ok) {
             ok = can_alter(origdir, 0);
+        }
     } while (!(*orgexitnam == '\0' || ok));
 
     if (ok) {
-        if (*s == '\0')
+        if (*s == '\0') {
             firsttime = false;
-        else {
+        } else {
             strcpy(targnam, s);
             firsttime = true;
         }
 
         do {
-            if (!firsttime)
+            if (!firsttime) {
                 grab_line("Room to relink exit into? ", targnam, true);
-            else
+            } else {
                 firsttime = false;
+            }
 
             ok = lookup_room(&targroom, targnam);
         } while (!(*targnam == '\0' || ok));
@@ -6953,34 +6909,35 @@ void do_relink(char *s_)
             mprintf("New exit comes out in target room\n");
             grab_line("from what direction? ", trgexitnam, true);
             ok = lookup_dir(&targdir, trgexitnam);
-            if (ok)
+            if (ok) {
                 ok = can_make(targdir, targroom);
+            }
         } while (!(*trgexitnam == '\0' || ok));
     }
 
-    if (ok)  /* actually create the exit */
+    if (ok) {  /* actually create the exit */
         relink_room(origdir, targdir, targroom);
+    }
 }
 
 
 /* print the room default no-go message if there is one;
    otherwise supply the generic "you can't go that way" */
 
-void default_fail(void)
-{
-    if (here.exitfail != 0 && here.exitfail != DEFAULT_LINE)
+void default_fail(void) {
+    if (here.exitfail != 0 && here.exitfail != DEFAULT_LINE) {
         print_desc(here.exitfail, "<no default supplied>");
-    else
+    } else {
         mprintf("You can't go that way.\n");
+    }
 }
 
 
-void exit_fail(int dir)
-{
-    if (dir < 1 || dir > maxexit)
+void exit_fail(int dir) {
+    if (dir < 1 || dir > maxexit) {
         default_fail();
-    else if (here.exits[dir-1].fail == DEFAULT_LINE) {
-        switch (here.exits[dir-1].kind) {
+    } else if (here.exits[dir - 1].fail == DEFAULT_LINE) {
+        switch (here.exits[dir - 1].kind) {
 
             case 5:
                 mprintf("There isn't an exit there yet.\n");
@@ -6994,8 +6951,9 @@ void exit_fail(int dir)
                 default_fail();
                 break;
         }
-    } else if (here.exits[dir-1].fail != 0)
-        block_subs(here.exits[dir-1].fail, myname);
+    } else if (here.exits[dir - 1].fail != 0) {
+        block_subs(here.exits[dir - 1].fail, myname);
+    }
 
 
     /* now print the exit failure message for everyone else in the room:
@@ -7021,14 +6979,13 @@ cases:
 6) generic fail
   */
 
-    if (dir != 0)
+    if (dir != 0) {
         log_event(myslot, E_FAILGO, dir, 0, "", 0);
+    }
 }
 
 
-
-void do_exit(int exit_slot)
-{
+void do_exit(int exit_slot) {
     /* (exit_slot: integer)-- declared forward */
     int orig_slot, targ_slot, orig_room, enter_slot, targ_room;
     boolean doalook;
@@ -7037,17 +6994,17 @@ void do_exit(int exit_slot)
         exit_fail(exit_slot);
         return;
     }
-    if (here.exits[exit_slot-1].toloc <= 0) {
+    if (here.exits[exit_slot - 1].toloc <= 0) {
         exit_fail(exit_slot);
         return;
     }
-    block_subs(here.exits[exit_slot-1].success, myname);
+    block_subs(here.exits[exit_slot - 1].success, myname);
 
     orig_slot = myslot;
     orig_room = location;
-    targ_room = here.exits[exit_slot-1].toloc;
-    enter_slot = here.exits[exit_slot-1].slot;
-    doalook = here.exits[exit_slot-1].autolook;
+    targ_room = here.exits[exit_slot - 1].toloc;
+    enter_slot = here.exits[exit_slot - 1].slot;
+    doalook = here.exits[exit_slot - 1].autolook;
 
     /* optimization for exit that goes nowhere;
      why go nowhere?  For special effects, we
@@ -7061,8 +7018,9 @@ void do_exit(int exit_slot)
         log_entry(enter_slot, targ_room, orig_slot);
         /* orig_slot in log_entry 'cause we're not
        really going anwhere */
-        if (doalook)
+        if (doalook) {
             do_look("");
+        }
         return;
     }
     take_token(orig_slot, orig_room);
@@ -7082,28 +7040,27 @@ void do_exit(int exit_slot)
     location = targ_room;
     setevent();
 
-    if (doalook)
+    if (doalook) {
         do_look("");
+    }
 }
 
 
-
-boolean cycle_open(void)
-{
+boolean cycle_open(void) {
     char ch;
     string s;
 
     systime(s);
     ch = s[4];
-    if (ch == '9' || ch == '7' || ch == '5' || ch == '3' || ch == '1')
+    if (ch == '9' || ch == '7' || ch == '5' || ch == '3' || ch == '1') {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
 
-boolean which_dir(int *dir, char *s_)
-{
+boolean which_dir(int *dir, char *s_) {
     boolean Result = true;
     string s;
     int aliasdir, exitdir;
@@ -7113,33 +7070,40 @@ boolean which_dir(int *dir, char *s_)
 
     strcpy(s, s_);
     strcpy(s, lowcase(STR1, s));
-    if (lookup_alias(&aliasdir, s))
+    if (lookup_alias(&aliasdir, s)) {
         aliasmatch = true;
-    else
+    } else {
         aliasmatch = false;
-    if (lookup_dir(&exitdir, s))
+    }
+    if (lookup_dir(&exitdir, s)) {
         exitmatch = true;
-    else
+    } else {
         exitmatch = false;
+    }
     if (aliasmatch) {
-        if (!strcmp(s, here.exits[aliasdir-1].alias))
+        if (!strcmp(s, here.exits[aliasdir - 1].alias)) {
             aliasexact = true;
-        else
+        } else {
             aliasexact = false;
-    } else
+        }
+    } else {
         aliasexact = false;
+    }
     if (exitmatch) {
-        if (!strcmp(s, direct[exitdir-1]) ||
-            !strcmp(s, (sprintf(STR2, "%.1s", direct[exitdir-1]), STR2)))
+        if (!strcmp(s, direct[exitdir - 1]) ||
+            !strcmp(s, (sprintf(STR2, "%.1s", direct[exitdir - 1]), STR2))) {
             exitexact = true;
-        else
+        } else {
             exitexact = false;
-    } else
+        }
+    } else {
         exitexact = false;
-    if (exitmatch)
-        exitreq = here.exits[exitdir-1].reqalias;
-    else
+    }
+    if (exitmatch) {
+        exitreq = here.exits[exitdir - 1].reqalias;
+    } else {
         exitreq = false;
+    }
 
     *dir = 0;
     if (aliasexact && exitexact) {
@@ -7160,15 +7124,15 @@ boolean which_dir(int *dir, char *s_)
     } else if (exitmatch && exitreq) {
         *dir = exitdir;
         return false;
-    } else
+    } else {
         return false;
+    }
     return true;
 }
 
 
-void exit_case(int dir)
-{
-    switch (here.exits[dir-1].kind) {
+void exit_case(int dir) {
+    switch (here.exits[dir - 1].kind) {
 
         case 0:
             exit_fail(dir);
@@ -7179,38 +7143,43 @@ void exit_case(int dir)
             break;
 
         case 3:
-            if (obj_hold(here.exits[dir-1].objreq))
+            if (obj_hold(here.exits[dir - 1].objreq)) {
                 exit_fail(dir);
-            else
+            } else {
                 do_exit(dir);
+            }
             break;
 
         case 4:
-            if (rnd100() < 34)
+            if (rnd100() < 34) {
                 do_exit(dir);
-            else
+            } else {
                 exit_fail(dir);
+            }
             break;
 
         case 2:
-            if (obj_hold(here.exits[dir-1].objreq))
+            if (obj_hold(here.exits[dir - 1].objreq)) {
                 do_exit(dir);
-            else
+            } else {
                 exit_fail(dir);
+            }
             break;
 
         case 6:
-            if (obj_hold(here.exits[dir-1].objreq))
+            if (obj_hold(here.exits[dir - 1].objreq)) {
                 do_exit(dir);
-            else
+            } else {
                 exit_fail(dir);
+            }
             break;
 
         case 7:
-            if (cycle_open())
+            if (cycle_open()) {
                 do_exit(dir);
-            else
+            } else {
                 exit_fail(dir);
+            }
             break;
     }
 }
@@ -7224,13 +7193,13 @@ Check that he can go to s
 Put him through the exit( in do_exit )
 Do a look for him( in do_exit )
 */
-void do_go(char *s, boolean verb)
-{
+void do_go(char *s, boolean verb) {
     int dir;
 
     gethere(0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     if (*s == '\0') {
         mprintf("You must give the direction you wish to travel.\n");
         return;
@@ -7243,30 +7212,31 @@ void do_go(char *s, boolean verb)
         exit_fail(dir);
         return;
     }
-    if (here.exits[dir-1].toloc == 0)
+    if (here.exits[dir - 1].toloc == 0) {
         exit_fail(dir);
-    else
+    } else {
         exit_case(dir);
+    }
 }
 
 
-void nice_say(char *s)
-{
+void nice_say(char *s) {
     /* capitalize the first letter of their sentence */
 
-    if (islower(s[0]))
+    if (islower(s[0])) {
         s[0] = _toupper(s[0]);
+    }
 
     /* put a period on the end of their sentence if
      they don't use any punctuation. */
 
-    if (isalpha(s[strlen(s) - 1]))
+    if (isalpha(s[strlen(s) - 1])) {
         strcat(s, ".");
+    }
 }
 
 
-void do_say(char *s_)
-{
+void do_say(char *s_) {
     string s;
 
     strcpy(s, s_);
@@ -7282,15 +7252,15 @@ void do_say(char *s_)
                   end;*/
 
     nice_say(s);
-    if (hiding)
+    if (hiding) {
         log_event(myslot, E_HIDESAY, 0, 0, s, 0);
-    else
+    } else {
         log_event(myslot, E_SAY, 0, 0, s, 0);
+    }
 }
 
 
-void do_setname(char *s)
-{
+void do_setname(char *s) {
     string notice;
     boolean ok;
     int dummy;
@@ -7303,7 +7273,7 @@ void do_setname(char *s)
     }
     if (strlen(s) > shortlen) {
         mprintf("Please limit your personal name to %ld characters.\n",
-                (long)shortlen);
+                (long) shortlen);
         return;
     }
     lowcase(sprime, s);
@@ -7316,8 +7286,9 @@ void do_setname(char *s)
     } else if (!strcmp(sprime, "faust") && strcmp(userid, FAUST_userid)) {
         mprintf("You are not Faust!  You may not have that name.\n");
         ok = false;
-    } else
+    } else {
         ok = true;
+    }
 
     if (ok) {
         if (exact_pers(&dummy, sprime)) {
@@ -7328,24 +7299,25 @@ void do_setname(char *s)
         }
     }
 
-    if (!ok)
+    if (!ok) {
         return;
+    }
     strcpy(myname, s);
     getroom(0);
-    strcpy(notice, here.people[myslot-1].name);
-    strcpy(here.people[myslot-1].name, s);
+    strcpy(notice, here.people[myslot - 1].name);
+    strcpy(here.people[myslot - 1].name, s);
     putroom();
     sprintf(notice + strlen(notice), " is now known as %s", s);
 
-    if (!hiding)
+    if (!hiding) {
         log_event(0, E_SETNAM, 0, 0, notice, 0);
+    }
     /* slot 0 means notify this player also */
 
     getpers();   /* note the new personal name in the logfile */
-    strcpy(pers.idents[mylog-1], s);   /* don't lowcase it */
+    strcpy(pers.idents[mylog - 1], s);   /* don't lowcase it */
     putpers();
 }
-
 
 
 /*
@@ -7357,8 +7329,7 @@ example display for alignment:
 
 */
 
-void do_who(void)
-{
+void do_who(void) {
     int i, j;
     boolean ok, metaok;
     veryshortstring roomown;
@@ -7387,10 +7358,11 @@ void do_who(void)
     mprintf("                %s %s\n\n", sysdate(STR1), systime(STR3));
     mprintf("Username        Game Name                 Where\n");
 
-    if (privd)   /* or has_kind(O_ALLSEEING) */
+    if (privd) {   /* or has_kind(O_ALLSEEING) */
         metaok = true;
-    else
+    } else {
         metaok = false;
+    }
     FORLIM = indx.top;
 
     for (i = 0; i < FORLIM; i++) {
@@ -7417,40 +7389,42 @@ void do_who(void)
 	   where they are  */
 
                 if (*roomown == '\0' || !strcmp(roomown, "*") ||
-                    !strcmp(roomown, userid))
+                    !strcmp(roomown, userid)) {
                     ok = true;
-                else
+                } else {
                     ok = false;
+                }
 
 
                 /* the player obviously knows where he is */
-                if (i + 1 == mylog)
+                if (i + 1 == mylog) {
                     ok = true;
+                }
             }
 
 
-            if (ok || metaok)
+            if (ok || metaok) {
                 puts(nam.idents[anint.int_[i] - 1]);
-            else
+            } else {
                 mprintf("n/a\n");
+            }
         }
     }
 }
 
 
-char *own_trans(char *Result, char *s)
-{
-    if (*s == '\0')
+char *own_trans(char *Result, char *s) {
+    if (*s == '\0') {
         return strcpy(Result, "<public>");
-    else if (!strcmp(s, "*"))
+    } else if (!strcmp(s, "*")) {
         return strcpy(Result, "<disowned>");
-    else
+    } else {
         return strcpy(Result, s);
+    }
 }
 
 
-void list_rooms(char *s)
-{
+void list_rooms(char *s) {
     boolean first = true;
     int i, j;
     int posit = 0;
@@ -7463,28 +7437,31 @@ void list_rooms(char *s)
             if (posit == 3) {
                 posit = 1;
                 putchar('\n');
-            } else
+            } else {
                 posit++;
+            }
             if (first) {
                 first = false;
                 mprintf("%s:\n", own_trans(STR2, s));
             }
             mprintf("    %s", nam.idents[i]);
-            for (j = strlen(nam.idents[i]); j <= 21; j++)
+            for (j = strlen(nam.idents[i]); j <= 21; j++) {
                 putchar(' ');
+            }
         }
     }
-    if (posit != 3)
+    if (posit != 3) {
         putchar('\n');
-    if (first)
+    }
+    if (first) {
         mprintf("No rooms owned by %s\n", own_trans(STR2, s));
-    else
+    } else {
         putchar('\n');
+    }
 }
 
 
-static void list_all_rooms(void)
-{
+static void list_all_rooms(void) {
     int i, j;
     boolean tmp[maxroom];
     int FORLIM, FORLIM1;
@@ -7499,15 +7476,15 @@ static void list_all_rooms(void)
             list_rooms(own.idents[i]);   /* player rooms */
             FORLIM1 = indx.top;
             for (j = 0; j < FORLIM1; j++) {
-                if (!strcmp(own.idents[j], own.idents[i]))
+                if (!strcmp(own.idents[j], own.idents[i])) {
                     tmp[j] = true;
+                }
             }
         }
     }
 }
 
-void do_rooms(char *s_)
-{
+void do_rooms(char *s_) {
     string s, cmd;
     veryshortstring id;
     boolean listall = false;
@@ -7523,40 +7500,41 @@ void do_rooms(char *s_)
 
     strcpy(s, lowcase(STR1, s));
     bite(cmd, s);
-    if (*cmd == '\0')
+    if (*cmd == '\0') {
         strcpy(id, userid);
-    else if (!strcmp(cmd, "public"))
+    } else if (!strcmp(cmd, "public")) {
         *id = '\0';
-    else if (!strcmp(cmd, "disowned"))
+    } else if (!strcmp(cmd, "disowned")) {
         strcpy(id, "*");
-    else if (!strcmp(cmd, "<public>"))
+    } else if (!strcmp(cmd, "<public>")) {
         *id = '\0';
-    else if (!strcmp(cmd, "<disowned>"))
+    } else if (!strcmp(cmd, "<disowned>")) {
         strcpy(id, "*");
-    else if (!strcmp(cmd, "*"))
+    } else if (!strcmp(cmd, "*")) {
         listall = true;
-    else if (strlen(cmd) > veryshortlen)
+    } else if (strlen(cmd) > veryshortlen) {
         sprintf(id, "%.*s", veryshortlen, cmd);
-    else
+    } else {
         strcpy(id, cmd);
+    }
 
     if (listall) {
-        if (privd)
+        if (privd) {
             list_all_rooms();
-        else
+        } else {
             mprintf("You may not obtain a list of all the rooms.\n");
+        }
         return;
     }
-    if (privd || !strcmp(userid, id) || *id == '\0' || !strcmp(id, "*"))
+    if (privd || !strcmp(userid, id) || *id == '\0' || !strcmp(id, "*")) {
         list_rooms(id);
-    else
+    } else {
         mprintf("You may not list rooms that belong to another player.\n");
+    }
 }
 
 
-
-void do_objects(void)
-{
+void do_objects(void) {
     int i;
     int total = 0, public_ = 0, disowned = 0, private_ = 0;
     int FORLIM;
@@ -7572,20 +7550,21 @@ void do_objects(void)
     putchar('\n');
     FORLIM = indx.top;
     for (i = 1; i <= FORLIM; i++) {
-        if (!indx.free[i-1]) {
+        if (!indx.free[i - 1]) {
             total++;
-            if (*objown.idents[i-1] == '\0') {
-                mprintf("%4d    %12s    %s\n", i, "<public>", objnam.idents[i-1]);
+            if (*objown.idents[i - 1] == '\0') {
+                mprintf("%4d    %12s    %s\n", i, "<public>", objnam.idents[i - 1]);
                 public_++;
-            } else if (!strcmp(objown.idents[i-1], "*")) {
-                mprintf("%4d    %12s    %s\n", i, "<disowned>", objnam.idents[i-1]);
+            } else if (!strcmp(objown.idents[i - 1], "*")) {
+                mprintf("%4d    %12s    %s\n", i, "<disowned>", objnam.idents[i - 1]);
                 disowned++;
             } else {
                 private_++;
 
-                if (!strcmp(objown.idents[i-1], userid) || privd)
+                if (!strcmp(objown.idents[i - 1], userid) || privd) {
                     mprintf("%4d    %12s    %s\n",
-                            i, objown.idents[i-1], objnam.idents[i-1]);
+                            i, objown.idents[i - 1], objnam.idents[i - 1]);
+                }
                 /* >>>>>> */
             }
         }
@@ -7598,8 +7577,7 @@ void do_objects(void)
 }
 
 
-void do_claim(char *s)
-{
+void do_claim(char *s) {
     int n;
     boolean ok;
     string tmp;
@@ -7610,17 +7588,18 @@ void do_claim(char *s)
             strcpy(here.owner, userid);
             putroom();
             getown();
-            strcpy(own.idents[location-1], userid);
+            strcpy(own.idents[location - 1], userid);
             putown();
             log_event(myslot, E_CLAIM, 0, 0, "", 0);
             mprintf("You are now the owner of this room.\n");
             return;
         }
         freeroom();
-        if (*here.owner == '\0')
+        if (*here.owner == '\0') {
             mprintf("This is a public room.  You may not claim it.\n");
-        else
+        } else {
             mprintf("This room has an owner.\n");
+        }
         return;
     }
     if (!lookup_obj(&n, s)) {
@@ -7629,23 +7608,24 @@ void do_claim(char *s)
     }
     getobjown();
     freeobjown();
-    if (*objown.idents[n-1] == '\0') {
+    if (*objown.idents[n - 1] == '\0') {
         mprintf("That is a public object.  You may DUPLICATE it, but may not CLAIM it.\n");
         return;
     }
-    if (strcmp(objown.idents[n-1], "*")) {
+    if (strcmp(objown.idents[n - 1], "*")) {
         mprintf("That object has an owner.\n");
         return;
     }
     getobj(n);
     freeobj();
-    if (obj.numexist == 0)
+    if (obj.numexist == 0) {
         ok = true;
-    else {
-        if (obj_hold(n) || obj_here(n))
+    } else {
+        if (obj_hold(n) || obj_here(n)) {
             ok = true;
-        else
+        } else {
             ok = false;
+        }
     }
 
     if (!ok) {
@@ -7653,7 +7633,7 @@ void do_claim(char *s)
         return;
     }
     getobjown();
-    strcpy(objown.idents[n-1], userid);
+    strcpy(objown.idents[n - 1], userid);
     putobjown();
     strcpy(tmp, obj.oname);
     log_event(myslot, E_OBJCLAIM, 0, 0, tmp, 0);
@@ -7661,8 +7641,7 @@ void do_claim(char *s)
 }
 
 
-void do_disown(char *s)
-{
+void do_disown(char *s) {
     int n;
     string tmp;
 
@@ -7678,7 +7657,7 @@ void do_disown(char *s)
         strcpy(here.owner, "*");
         putroom();
         getown();
-        strcpy(own.idents[location-1], "*");
+        strcpy(own.idents[location - 1], "*");
         putown();
         log_event(myslot, E_DISOWN, 0, 0, "", 0);
         mprintf("You have disowned this room.\n");
@@ -7693,20 +7672,19 @@ void do_disown(char *s)
     strcpy(tmp, obj.oname);
 
     getobjown();
-    if (strcmp(objown.idents[n-1], userid)) {
+    if (strcmp(objown.idents[n - 1], userid)) {
         freeobjown();
         mprintf("You are not the owner of any such thing.\n");
         return;
     }
-    strcpy(objown.idents[n-1], "*");
+    strcpy(objown.idents[n - 1], "*");
     putobjown();
     log_event(myslot, E_OBJDISOWN, 0, 0, tmp, 0);
     mprintf("You are no longer the owner of the %s.\n", tmp);
 }
 
 
-void do_public(char *s)
-{
+void do_public(char *s) {
     boolean ok;
     string tmp;
     int n;
@@ -7720,7 +7698,7 @@ void do_public(char *s)
         *here.owner = '\0';
         putroom();
         getown();
-        *own.idents[location-1] = '\0';
+        *own.idents[location - 1] = '\0';
         putown();
         return;
     }
@@ -7730,19 +7708,20 @@ void do_public(char *s)
     }
     getobjown();
     freeobjown();
-    if (*objown.idents[n-1] == '\0') {
+    if (*objown.idents[n - 1] == '\0') {
         mprintf("That is already public.\n");
         return;
     }
     getobj(n);
     freeobj();
-    if (obj.numexist == 0)
+    if (obj.numexist == 0) {
         ok = true;
-    else {
-        if (obj_hold(n) || obj_here(n))
+    } else {
+        if (obj_hold(n) || obj_here(n)) {
             ok = true;
-        else
+        } else {
             ok = false;
+        }
     }
 
     if (!ok) {
@@ -7750,7 +7729,7 @@ void do_public(char *s)
         return;
     }
     getobjown();
-    *objown.idents[n-1] = '\0';
+    *objown.idents[n - 1] = '\0';
     putobjown();
 
     strcpy(tmp, obj.oname);
@@ -7759,47 +7738,45 @@ void do_public(char *s)
 }
 
 
-
 /* sum up the number of real exits in this room */
 
-int find_numexits(void)
-{
+int find_numexits(void) {
     int i;
     int sum = 0;
 
     for (i = 0; i < maxexit; i++) {
-        if (here.exits[i].toloc != 0)
+        if (here.exits[i].toloc != 0) {
             sum++;
+        }
     }
     return sum;
 }
-
 
 
 /* clear all people who have played monster and quit in this location
    out of the room so that when they start up again they won't be here,
    because we are destroying this room */
 
-void clear_people(int loc)
-{
+void clear_people(int loc) {
     int i;
 
     getint(N_LOCATION);
     for (i = 0; i < maxplayers; i++) {
-        if (anint.int_[i] == loc)
+        if (anint.int_[i] == loc) {
             anint.int_[i] = 1;
+        }
     }
     putint();
 }
 
 
-void do_zap(char *s)
-{
+void do_zap(char *s) {
     int loc;
 
     gethere(0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     if (!lookup_room(&loc, s)) {
         mprintf("There is no room named %s.\n", s);
         return;
@@ -7821,28 +7798,28 @@ void do_zap(char *s)
     if (find_numobjs() == 0) {
         del_room(loc);
         mprintf("Room deleted.\n");
-    } else
+    } else {
         mprintf("You must remove all of the objects from that room first.\n");
+    }
 }
 
 
-boolean room_nameinuse(int num, char *newname)
-{
+boolean room_nameinuse(int num, char *newname) {
     int dummy;
 
     if (exact_obj(&dummy, newname)) {
-        if (dummy == num)
+        if (dummy == num) {
             return false;
-        else
+        } else {
             return true;
-    } else
+        }
+    } else {
         return false;
+    }
 }
 
 
-
-void do_rename(void)
-{
+void do_rename(void) {
     string newname;
 
     gethere(0);
@@ -7853,7 +7830,7 @@ void do_rename(void)
         return;
     }
     if (strlen(newname) > shortlen) {
-        mprintf("Please limit your room name to %ld characters.\n", (long)shortlen);
+        mprintf("Please limit your room name to %ld characters.\n", (long) shortlen);
         return;
     }
     if (room_nameinuse(location, newname)) {
@@ -7865,28 +7842,28 @@ void do_rename(void)
     putroom();
 
     getnam();
-    lowcase(nam.idents[location-1], newname);
+    lowcase(nam.idents[location - 1], newname);
     putnam();
     mprintf("Room name updated.\n");
 }
 
 
-boolean obj_nameinuse(int objnum, char *newname)
-{
+boolean obj_nameinuse(int objnum, char *newname) {
     int dummy;
 
     if (exact_obj(&dummy, newname)) {
-        if (dummy == objnum)
+        if (dummy == objnum) {
             return false;
-        else
+        } else {
             return true;
-    } else
+        }
+    } else {
         return false;
+    }
 }
 
 
-void do_objrename(int objnum)
-{
+void do_objrename(int objnum) {
     string newname;
 
     getobj(objnum);
@@ -7900,7 +7877,7 @@ void do_objrename(int objnum)
     }
     if (strlen(newname) > shortlen) {
         mprintf("Please limit your object name to %ld characters.\n",
-                (long)shortlen);
+                (long) shortlen);
         return;
     }
     if (obj_nameinuse(objnum, newname)) {
@@ -7912,15 +7889,13 @@ void do_objrename(int objnum)
     putobj();
 
     getobjnam();
-    lowcase(objnam.idents[objnum-1], newname);
+    lowcase(objnam.idents[objnum - 1], newname);
     putobjnam();
     mprintf("Object name updated.\n");
 }
 
 
-
-void view_room(void)
-{
+void view_room(void) {
     int i;
 
     putchar('\n');
@@ -7950,22 +7925,25 @@ void view_room(void)
     }
 
     mprintf("Room owner:    ");
-    if (*here.owner == '\0')
+    if (*here.owner == '\0') {
         mprintf("<public>\n");
-    else if (!strcmp(here.owner, "*"))
+    } else if (!strcmp(here.owner, "*")) {
         mprintf("<disowned>\n");
-    else
+    } else {
         puts(here.owner);
+    }
 
-    if (here.primary == 0)
+    if (here.primary == 0) {
         mprintf("There is no primary description\n");
-    else
+    } else {
         mprintf("There is a primary description\n");
+    }
 
-    if (here.secondary == 0)
+    if (here.secondary == 0) {
         mprintf("There is no secondary description\n");
-    else
+    } else {
         mprintf("There is a secondary description\n");
+    }
 
     switch (here.which) {
 
@@ -7999,47 +7977,51 @@ void view_room(void)
     }
 
     putchar('\n');
-    if (here.magicobj == 0)
+    if (here.magicobj == 0) {
         mprintf("There is no magic object for this room\n");
-    else
+    } else {
         mprintf("The magic object for this room is the %s.\n",
                 objnam.idents[here.magicobj - 1]);
+    }
 
-    if (here.objdrop == 0)
+    if (here.objdrop == 0) {
         mprintf("Dropped objects remain here\n");
-    else {
+    } else {
         mprintf("Dropped objects go to %s.\n", nam.idents[here.objdrop - 1]);
-        if (here.objdesc == 0)
+        if (here.objdesc == 0) {
             mprintf("Dropped.\n");
-        else
+        } else {
             print_line(here.objdesc);
-        if (here.objdest == 0)
+        }
+        if (here.objdest == 0) {
             mprintf("Nothing is printed when object \"bounces in\" to target room\n");
-        else
+        } else {
             print_line(here.objdest);
+        }
     }
     putchar('\n');
-    if (here.trapto == 0)
+    if (here.trapto == 0) {
         mprintf("There is no trapdoor set\n");
-    else
+    } else {
         mprintf("The trapdoor sends players %s with a chance factor of %d%%\n",
                 direct[here.trapto - 1], here.trapchance);
+    }
 
     for (i = 0; i < maxdetail; i++) {
         if (*here.detail[i] != '\0') {
             mprintf("Detail \"%s\" ", here.detail[i]);
-            if (here.detaildesc[i] > 0)
+            if (here.detaildesc[i] > 0) {
                 mprintf("has a description\n");
-            else
+            } else {
                 mprintf("has no description\n");
+            }
         }
     }
     putchar('\n');
 }
 
 
-void room_help(void)
-{
+void room_help(void) {
     mprintf("\nD\tAlter the way the room description prints\n");
     mprintf("N\tChange how the room Name prints\n");
     mprintf("P\tEdit the Primary room description [the default one] (same as desc)\n");
@@ -8059,9 +8041,7 @@ void room_help(void)
 }
 
 
-
-void custom_room(void)
-{
+void custom_room(void) {
     boolean done = false;
     string prompt;
     int n;
@@ -8112,10 +8092,12 @@ void custom_room(void)
                         here.trapto = n;
                         putroom();
                         mprintf("Room updated.\n");
-                    } else
+                    } else {
                         mprintf("No such direction.\n");
-                } else
+                    }
+                } else {
                     mprintf("No changes.\n");
+                }
                 break;
 
                 /*chance*/
@@ -8126,14 +8108,16 @@ void custom_room(void)
                 grab_line("? ", s, true);
                 if (isnum(s)) {
                     n = number(s);
-                    if ((unsigned)n <= 100) {
+                    if ((unsigned) n <= 100) {
                         getroom(0);
                         here.trapchance = n;
                         putroom();
-                    } else
+                    } else {
                         mprintf("Out of range.\n");
-                } else
+                    }
+                } else {
                     mprintf("No changes.\n");
+                }
                 break;
 
             case 's':
@@ -8163,10 +8147,11 @@ void custom_room(void)
                 mprintf(
                         "If dropped objects do not stay here, you may use a # for the object name.\n");
                 mprintf("Right now it says:\n");
-                if (here.objdesc == 0)
+                if (here.objdesc == 0) {
                     mprintf("Dropped. [default]\n");
-                else
+                } else {
                     print_line(here.objdesc);
+                }
 
                 n = here.objdesc;
                 make_line(&n, "", 79);
@@ -8178,10 +8163,11 @@ void custom_room(void)
             case 'x':
                 mprintf("Enter a line that will be randomly shown.\n");
                 mprintf("Right now it says:\n");
-                if (here.objdesc == 0)
+                if (here.objdesc == 0) {
                     mprintf("[none defined]\n");
-                else
+                } else {
                     print_line(here.rndmsg);
+                }
 
                 n = here.rndmsg;
                 make_line(&n, "", 79);
@@ -8197,10 +8183,11 @@ void custom_room(void)
                 mprintf("goes when an object dropped here \"bounces\" there:\n");
                 mprintf("Place a # where the object name should go.\n\n");
                 mprintf("Right now it says:\n");
-                if (here.objdest == 0)
+                if (here.objdest == 0) {
                     mprintf("Something has bounced into the room.\n");
-                else
+                } else {
                     print_line(here.objdest);
+                }
 
                 n = here.objdest;
                 make_line(&n, "", 79);
@@ -8212,36 +8199,39 @@ void custom_room(void)
             case 'm':
                 getobjnam();
                 freeobjnam();
-                if (here.magicobj == 0)
+                if (here.magicobj == 0) {
                     mprintf("There is currently no magic object for this room.\n");
-                else
+                } else {
                     mprintf("%s is currently the magic object for this room.\n",
                             objnam.idents[here.magicobj - 1]);
+                }
                 putchar('\n');
                 grab_line("New magic object? ", s, true);
-                if (*s == '\0')
+                if (*s == '\0') {
                     mprintf("No changes.\n");
-                else if (lookup_obj(&n, s)) {
+                } else if (lookup_obj(&n, s)) {
                     getroom(0);
                     here.magicobj = n;
                     putroom();
                     mprintf("Room updated.\n");
-                } else
+                } else {
                     mprintf("No such object found.\n");
+                }
                 break;
 
             case 'g':
                 getnam();
                 freenam();
-                if (here.objdrop == 0)
+                if (here.objdrop == 0) {
                     mprintf("Objects dropped fall here.\n");
-                else
+                } else {
                     mprintf("Objects dropped fall in %s.\n", nam.idents[here.objdrop - 1]);
+                }
                 mprintf("\nEnter * for [this room]:\n");
                 grab_line("Room dropped objects go to? ", s, true);
-                if (*s == '\0')
+                if (*s == '\0') {
                     mprintf("No changes.\n");
-                else if (!strcmp(s, "*")) {
+                } else if (!strcmp(s, "*")) {
                     getroom(0);
                     here.objdrop = 0;
                     putroom();
@@ -8251,8 +8241,9 @@ void custom_room(void)
                     here.objdrop = n;
                     putroom();
                     mprintf("Room updated.\n");
-                } else
+                } else {
                     mprintf("No such room found.\n");
+                }
                 break;
 
             case 'd':
@@ -8268,15 +8259,17 @@ void custom_room(void)
                 grab_line("? ", s, true);
                 if (isnum(s)) {
                     n = number(s);
-                    if ((unsigned)n < 32 && ((1L << n) & 0x1f) != 0) {
+                    if ((unsigned) n < 32 && ((1L << n) & 0x1f) != 0) {
                         getroom(0);
                         here.which = n;
                         putroom();
                         mprintf("Room updated.\n");
-                    } else
+                    } else {
                         mprintf("Out of range.\n");
-                } else
+                    }
+                } else {
                     mprintf("No changes.\n");
+                }
                 break;
 
             case 'n':
@@ -8287,14 +8280,16 @@ void custom_room(void)
                 grab_line("? ", s, true);
                 if (isnum(s)) {
                     n = number(s);
-                    if ((unsigned)n < 32 && ((1L << n) & 0x7) != 0) {
+                    if ((unsigned) n < 32 && ((1L << n) & 0x7) != 0) {
                         getroom(0);
                         here.nameprint = n;
                         putroom();
-                    } else
+                    } else {
                         mprintf("Out of range.\n");
-                } else
+                    }
+                } else {
                     mprintf("No changes.\n");
+                }
                 break;
 
             default:
@@ -8306,8 +8301,7 @@ void custom_room(void)
 }
 
 
-void analyze_exit(int dir)
-{
+void analyze_exit(int dir) {
     string s;
     char STR1[90];
     exit_ *WITH;
@@ -8317,24 +8311,28 @@ void analyze_exit(int dir)
     freenam();
     getobjnam();
     freeobjnam();
-    WITH = &here.exits[dir-1];
+    WITH = &here.exits[dir - 1];
     strcpy(s, WITH->alias);
-    if (*s == '\0')
+    if (*s == '\0') {
         strcpy(s, "(no alias)");
-    else
+    } else {
         sprintf(s, "(alias %s)", strcpy(STR1, s));
-    if (here.exits[dir-1].reqalias)
+    }
+    if (here.exits[dir - 1].reqalias) {
         strcat(s, " (required)");
-    else
+    } else {
         strcat(s, " (not required)");
+    }
 
-    if (WITH->toloc != 0)
+    if (WITH->toloc != 0) {
         mprintf("The %s exit %s goes to %s\n",
-                direct[dir-1], s, nam.idents[WITH->toloc - 1]);
-    else
-        mprintf("The %s exit goes nowhere.\n", direct[dir-1]);
-    if (WITH->hidden != 0)
+                direct[dir - 1], s, nam.idents[WITH->toloc - 1]);
+    } else {
+        mprintf("The %s exit goes nowhere.\n", direct[dir - 1]);
+    }
+    if (WITH->hidden != 0) {
         mprintf("Concealed.\n");
+    }
     mprintf("Exit type: ");
     switch (WITH->kind) {
 
@@ -8370,55 +8368,63 @@ void analyze_exit(int dir)
             mprintf("Timed exit\n");
             break;
     }
-    if (WITH->objreq == 0)
+    if (WITH->objreq == 0) {
         mprintf("No required object.\n");
-    else
+    } else {
         mprintf("Required object is: %s\n", objnam.idents[WITH->objreq - 1]);
+    }
 
 
     putchar('\n');
-    if (WITH->exitdesc == DEFAULT_LINE)
+    if (WITH->exitdesc == DEFAULT_LINE) {
         exit_default(dir, WITH->kind);
-    else
+    } else {
         print_line(WITH->exitdesc);
+    }
 
-    if (WITH->success == 0)
+    if (WITH->success == 0) {
         mprintf("(no success message)\n");
-    else
+    } else {
         print_desc(WITH->success, "<no default supplied>");
+    }
 
     if (WITH->fail == DEFAULT_LINE) {
-        if (WITH->kind == 5)
+        if (WITH->kind == 5) {
             mprintf("There isn' an exit there yet.\n");
-        else
+        } else {
             mprintf("You can't go that way.\n");
-    } else
+        }
+    } else {
         print_desc(WITH->fail, "<no default supplied>");
+    }
 
-    if (WITH->comeout == DEFAULT_LINE)
-        mprintf("# has come into the room from: %s\n", direct[dir-1]);
-    else
+    if (WITH->comeout == DEFAULT_LINE) {
+        mprintf("# has come into the room from: %s\n", direct[dir - 1]);
+    } else {
         print_desc(WITH->comeout, "<no default supplied>");
-    if (WITH->goin == DEFAULT_LINE)
-        mprintf("# has gone %s\n", direct[dir-1]);
-    else
+    }
+    if (WITH->goin == DEFAULT_LINE) {
+        mprintf("# has gone %s\n", direct[dir - 1]);
+    } else {
         print_desc(WITH->goin, "<no default supplied>");
+    }
 
     putchar('\n');
-    if (WITH->autolook)
+    if (WITH->autolook) {
         mprintf("LOOK automatically done after exit used\n");
-    else
+    } else {
         mprintf("LOOK supressed on exit use\n");
-    if (WITH->reqverb)
+    }
+    if (WITH->reqverb) {
         mprintf("The alias is required to be a verb for exit use\n");
-    else
+    } else {
         mprintf("The exit can be used with GO or as a verb\n");
+    }
     putchar('\n');
 }
 
 
-void custom_help(void)
-{
+void custom_help(void) {
     mprintf("\nA\tSet an Alias for the exit\n");
     mprintf("C\tConceal an exit\n");
     mprintf("D\tEdit the exit's main Description\n");
@@ -8438,18 +8444,18 @@ void custom_help(void)
 }
 
 
-void get_key(int dir)
-{
+void get_key(int dir) {
     string s;
     int n;
 
     getobjnam();
     freeobjnam();
-    if (here.exits[dir-1].objreq == 0)
+    if (here.exits[dir - 1].objreq == 0) {
         mprintf("Currently there is no key set for this exit.\n");
-    else
+    } else {
         mprintf("%s is the current key for this exit.\n",
-                objnam.idents[here.exits[dir-1].objreq - 1]);
+                objnam.idents[here.exits[dir - 1].objreq - 1]);
+    }
     mprintf("Enter * for [no key]\n\n");
 
     grab_line("What object is the door key? ", s, true);
@@ -8459,7 +8465,7 @@ void get_key(int dir)
     }
     if (!strcmp(s, "*")) {
         getroom(0);
-        here.exits[dir-1].objreq = 0;
+        here.exits[dir - 1].objreq = 0;
         putroom();
         mprintf("Exit updated.\n");
         return;
@@ -8469,14 +8475,13 @@ void get_key(int dir)
         return;
     }
     getroom(0);
-    here.exits[dir-1].objreq = n;
+    here.exits[dir - 1].objreq = n;
     putroom();
     mprintf("Exit updated.\n");
 }
 
 
-void do_custom(char *dirnam)
-{
+void do_custom(char *dirnam) {
     string prompt;
     boolean done;
     string s;
@@ -8484,8 +8489,9 @@ void do_custom(char *dirnam)
     string STR1;
 
     gethere(0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     if (*dirnam == '\0') {
         if (is_owner(location, true)) {
             custom_room();
@@ -8505,14 +8511,14 @@ void do_custom(char *dirnam)
         }
         log_action(c_custom, 0);
 
-        mprintf("Customizing %s exit\n", direct[dir-1]);
+        mprintf("Customizing %s exit\n", direct[dir - 1]);
         mprintf(
                 "If you would rather be customizing this room, type CUSTOM with no arguments\n");
         mprintf(
                 "If you would rather be customizing an object, type CUSTOM <object name>\n\n");
         mprintf("Type ** for any line to leave it unchanged.\n");
         mprintf("Type return for any line to select the default.\n\n");
-        sprintf(prompt, "Custom %s> ", direct[dir-1]);
+        sprintf(prompt, "Custom %s> ", direct[dir - 1]);
         done = false;
         do {
             do {
@@ -8541,10 +8547,10 @@ void do_custom(char *dirnam)
                             "Type the description that a player will see when the exit is found.\n");
                     mprintf("Make no text for description to unconceal the exit.\n\n");
                     mprintf("[ Editing the \"hidden exit found\" description ]\n");
-                    n = here.exits[dir-1].hidden;
+                    n = here.exits[dir - 1].hidden;
                     if (edit_desc(&n)) {
                         getroom(0);
-                        here.exits[dir-1].hidden = n;
+                        here.exits[dir - 1].hidden = n;
                         putroom();
                     }
                     break;
@@ -8552,49 +8558,52 @@ void do_custom(char *dirnam)
                     /*req alias*/
                 case 'r':
                     getroom(0);
-                    here.exits[dir-1].reqalias = !here.exits[dir-1].reqalias;
+                    here.exits[dir - 1].reqalias = !here.exits[dir - 1].reqalias;
                     putroom();
 
-                    if (here.exits[dir-1].reqalias)
+                    if (here.exits[dir - 1].reqalias) {
                         mprintf("The alias for this exit will be required to reference it.\n");
-                    else
+                    } else {
                         mprintf("The alias will not be required to reference this exit.\n");
+                    }
                     break;
 
                     /*req verb*/
                 case 'x':
                     getroom(0);
-                    here.exits[dir-1].reqverb = !here.exits[dir-1].reqverb;
+                    here.exits[dir - 1].reqverb = !here.exits[dir - 1].reqverb;
                     putroom();
 
-                    if (here.exits[dir-1].reqverb)
+                    if (here.exits[dir - 1].reqverb) {
                         mprintf(
                                 "The exit name will be required to be used as a verb to use the exit\n");
-                    else
+                    } else {
                         mprintf("The exit name may be used with GO or as a verb to use the exit\n");
+                    }
                     break;
 
                     /*autolook*/
                 case 'l':
                     getroom(0);
-                    here.exits[dir-1].autolook = !here.exits[dir-1].autolook;
+                    here.exits[dir - 1].autolook = !here.exits[dir - 1].autolook;
                     putroom();
 
-                    if (here.exits[dir-1].autolook)
+                    if (here.exits[dir - 1].autolook) {
                         mprintf("A LOOK will be done after the player travels through this exit.\n");
-                    else
+                    } else {
                         mprintf(
                                 "The automatic LOOK will not be done when a player uses this exit.\n");
+                    }
                     break;
 
                 case 'a':
                     grab_line("Alternate name for the exit? ", s, true);
-                    if (strlen(s) > veryshortlen)
+                    if (strlen(s) > veryshortlen) {
                         mprintf("Your alias must be less than %ld characters.\n",
-                                (long)veryshortlen);
-                    else {
+                                (long) veryshortlen);
+                    } else {
                         getroom(0);
-                        lowcase(here.exits[dir-1].alias, s);
+                        lowcase(here.exits[dir - 1].alias, s);
                         putroom();
                     }
                     break;
@@ -8609,26 +8618,31 @@ void do_custom(char *dirnam)
                     mprintf("1) Open passage\n");
                     mprintf("2) Door (object required to pass)\n");
                     mprintf("3) No passage if holding key\n");
-                    if (privd)
+                    if (privd) {
                         mprintf("4) exit randomly fails\n");
+                    }
                     mprintf("6) Exit exists only when holding object\n");
-                    if (privd)
+                    if (privd) {
                         mprintf("7) exit opens/closes invisibly every minute\n");
+                    }
                     putchar('\n');
                     grab_line("Which type? ", s, true);
                     if (isnum(s)) {
                         n = number(s);
-                        if ((unsigned)n < 32 && ((1L << n) & 0xdf) != 0) {
+                        if ((unsigned) n < 32 && ((1L << n) & 0xdf) != 0) {
                             getroom(0);
-                            here.exits[dir-1].kind = n;
+                            here.exits[dir - 1].kind = n;
                             putroom();
                             mprintf("Exit type updated.\n\n");
-                            if ((unsigned)n < 32 && ((1L << n) & 0x44) != 0)
+                            if ((unsigned) n < 32 && ((1L << n) & 0x44) != 0) {
                                 get_key(dir);
-                        } else
+                            }
+                        } else {
                             mprintf("Bad exit type.\n");
-                    } else
+                        }
+                    } else {
                         mprintf("Exit type not changed.\n");
+                    }
                     break;
 
                 case 'f':
@@ -8637,10 +8651,10 @@ void do_custom(char *dirnam)
                     mprintf("the exit but cannot for any reason.\n\n");
                     mprintf("[ Editing the exit failure description ]\n");
 
-                    n = here.exits[dir-1].fail;
+                    n = here.exits[dir - 1].fail;
                     if (edit_desc(&n)) {
                         getroom(0);
-                        here.exits[dir-1].fail = n;
+                        here.exits[dir - 1].fail = n;
                         putroom();
                     }
                     break;
@@ -8649,10 +8663,10 @@ void do_custom(char *dirnam)
                     mprintf("Edit the description that other players see when someone goes into\n");
                     mprintf("the exit.  Place a # where the player's name should appear.\n\n");
                     mprintf("[ Editing the exit \"go in\" description ]\n");
-                    n = here.exits[dir-1].goin;
+                    n = here.exits[dir - 1].goin;
                     if (edit_desc(&n)) {
                         getroom(0);
-                        here.exits[dir-1].goin = n;
+                        here.exits[dir - 1].goin = n;
                         putroom();
                     }
                     break;
@@ -8662,10 +8676,10 @@ void do_custom(char *dirnam)
                             "Edit the description that other players see when someone comes out of\n");
                     mprintf("the exit.  Place a # where the player's name should appear.\n\n");
                     mprintf("[ Editing the exit \"come out of\" description ]\n");
-                    n = here.exits[dir-1].comeout;
+                    n = here.exits[dir - 1].comeout;
                     if (edit_desc(&n)) {
                         getroom(0);
-                        here.exits[dir-1].comeout = n;
+                        here.exits[dir - 1].comeout = n;
                         putroom();
                     }
                     break;
@@ -8673,10 +8687,10 @@ void do_custom(char *dirnam)
                     /* main exit desc */
                 case 'd':
                     mprintf("Enter a one line description of the exit.\n\n");
-                    n = here.exits[dir-1].exitdesc;
+                    n = here.exits[dir - 1].exitdesc;
                     make_line(&n, "", 79);
                     getroom(0);
-                    here.exits[dir-1].exitdesc = n;
+                    here.exits[dir - 1].exitdesc = n;
                     putroom();
                     break;
 
@@ -8685,10 +8699,10 @@ void do_custom(char *dirnam)
                             "The success description will print when the player goes through the exit.\n\n");
                     mprintf("[ Editing the exit success description ]\n");
 
-                    n = here.exits[dir-1].success;
+                    n = here.exits[dir - 1].success;
                     if (edit_desc(&n)) {
                         getroom(0);
-                        here.exits[dir-1].success = n;
+                        here.exits[dir - 1].success = n;
                         putroom();
                     }
                     break;
@@ -8714,14 +8728,13 @@ void do_custom(char *dirnam)
 }
 
 
-
-void reveal_people(boolean *three)
-{
+void reveal_people(boolean *three) {
     int retry = 1;
     int i;
 
-    if (debug)
+    if (debug) {
         mprintf("?revealing people\n");
+    }
     *three = false;
 
     do {
@@ -8729,33 +8742,32 @@ void reveal_people(boolean *three)
         i = rnd100() % maxpeople + 1;
 /* p2c: mon.pas, line 7649:
  * Note: Using % for possibly-negative arguments [317] */
-        if (here.people[i-1].hiding > 0 && i != myslot) {
+        if (here.people[i - 1].hiding > 0 && i != myslot) {
             *three = true;
             mprintf("You've found %s hiding in the shadows!\n",
-                    here.people[i-1].name);
+                    here.people[i - 1].name);
             log_event(myslot, E_FOUNDYOU, i, 0, "", 0);
         }
     } while (!(retry > 7 || *three));
 }
 
 
-
-void reveal_objects(boolean *two)
-{
+void reveal_objects(boolean *two) {
     int i;
     string STR1;
 
-    if (debug)
+    if (debug) {
         mprintf("?revealing objects\n");
+    }
     *two = false;
     for (i = 0; i < maxobjs; i++) {
         if (here.objs[i] != 0) {   /* if there is an object here */
             if (here.objhide[i] != 0) {
                 *two = true;
 
-                if (here.objhide[i] == DEFAULT_LINE)
+                if (here.objhide[i] == DEFAULT_LINE) {
                     mprintf("You've found %s.\n", obj_part(STR1, here.objs[i], true));
-                else {
+                } else {
                     print_desc(here.objhide[i], "<no default supplied>");
                     delete_block(&here.objhide[i]);
                 }
@@ -8765,13 +8777,13 @@ void reveal_objects(boolean *two)
 }
 
 
-void reveal_exits(boolean *one)
-{
+void reveal_exits(boolean *one) {
     int retry = 1;
     int i;
 
-    if (debug)
+    if (debug) {
         mprintf("?revealing exits\n");
+    }
     *one = false;
 
     do {
@@ -8779,37 +8791,40 @@ void reveal_exits(boolean *one)
         i = rnd100() % maxexit + 1;   /* a random exit */
 /* p2c: mon.pas, line 7698:
  * Note: Using % for possibly-negative arguments [317] */
-        if (here.exits[i-1].hidden != 0 && !found_exit[i-1]) {
+        if (here.exits[i - 1].hidden != 0 && !found_exit[i - 1]) {
             *one = true;
-            found_exit[i-1] = true;   /* mark exit as found */
+            found_exit[i - 1] = true;   /* mark exit as found */
 
-            if (here.exits[i-1].hidden == DEFAULT_LINE) {
-                if (*here.exits[i-1].alias == '\0')
-                    mprintf("You've found a hidden exit: %s.\n", direct[i-1]);
-                else
-                    mprintf("You've found a hidden exit: %s.\n", here.exits[i-1].alias);
-            } else
-                print_desc(here.exits[i-1].hidden, "<no default supplied>");
+            if (here.exits[i - 1].hidden == DEFAULT_LINE) {
+                if (*here.exits[i - 1].alias == '\0') {
+                    mprintf("You've found a hidden exit: %s.\n", direct[i - 1]);
+                } else {
+                    mprintf("You've found a hidden exit: %s.\n", here.exits[i - 1].alias);
+                }
+            } else {
+                print_desc(here.exits[i - 1].hidden, "<no default supplied>");
+            }
         }
     } while (!(retry > 4 || *one));
 }
 
 
-void do_search(char *s)
-{
+void do_search(char *s) {
     int chance;
     boolean found = false, dummy = false;
 
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     chance = rnd100();
 
-    if ((unsigned)chance < 32 && ((1L << chance) & 0x1ffffeL) != 0)
+    if ((unsigned) chance < 32 && ((1L << chance) & 0x1ffffeL) != 0) {
         reveal_objects(&found);
-    else if (chance >= 21 && chance <= 40)
+    } else if (chance >= 21 && chance <= 40) {
         reveal_exits(&found);
-    else if (chance >= 41 && chance <= 60)
+    } else if (chance >= 41 && chance <= 60) {
         reveal_people(&dummy);
+    }
 
     if (found) {
         log_event(myslot, E_FOUND, 0, 0, "", 0);
@@ -8822,10 +8837,10 @@ void do_search(char *s)
 }
 
 
-void do_unhide(char *s)
-{
-    if (*s != '\0')
+void do_unhide(char *s) {
+    if (*s != '\0') {
         return;
+    }
     if (!hiding) {
         mprintf("You were not hiding.\n");
         return;
@@ -8833,14 +8848,13 @@ void do_unhide(char *s)
     hiding = false;
     log_event(myslot, E_UNHIDE, 0, 0, "", 0);
     getroom(0);
-    here.people[myslot-1].hiding = 0;
+    here.people[myslot - 1].hiding = 0;
     putroom();
     mprintf("You are no longer hiding.\n");
 }
 
 
-void do_hide(char *s)
-{
+void do_hide(char *s) {
     int slot, n, founddsc;
     string tmp;
 
@@ -8854,20 +8868,21 @@ void do_hide(char *s)
        people will see them hide */
 
         if (n_can_see() > 0) {
-            if (hiding)
+            if (hiding) {
                 mprintf("You can't hide any better with people in the room.\n");
-            else
+            } else {
                 mprintf("You can't hide when people are watching you.\n");
+            }
             return;
         }
         if (rnd100() > 25) {
-            if (here.people[myslot-1].hiding >= 4) {
+            if (here.people[myslot - 1].hiding >= 4) {
                 mprintf(
                         "You're pretty well hidden now.  I don't think you could be any less visible.\n");
                 return;
             }
             getroom(0);
-            here.people[myslot-1].hiding++;
+            here.people[myslot - 1].hiding++;
             putroom();
             if (hiding) {
                 log_event(myslot, E_NOISES, rnd100(), 0, "", 0);
@@ -8880,10 +8895,11 @@ void do_hide(char *s)
             hiding = true;
             return;
         }
-        if (hiding)
+        if (hiding) {
             mprintf("You could not find a better hiding place.\n");
-        else
+        } else {
             mprintf("You could not find a good hiding place.\n");
+        }
         return;
     }
 
@@ -8898,12 +8914,13 @@ void do_hide(char *s)
         mprintf("[ Editing the \"object found\" description ]\n");
         founddsc = 0;
         edit_desc(&founddsc);
-        if (founddsc == 0)
+        if (founddsc == 0) {
             founddsc = DEFAULT_LINE;
+        }
 
         getroom(0);
         slot = find_obj(n);
-        here.objhide[slot-1] = founddsc;
+        here.objhide[slot - 1] = founddsc;
         putroom();
 
         obj_part(tmp, n, true);
@@ -8911,15 +8928,15 @@ void do_hide(char *s)
         mprintf("You have hidden %s.\n", tmp);
         return;
     }
-    if (obj_hold(n))
+    if (obj_hold(n)) {
         mprintf("You'll have to put it down before it can be hidden.\n");
-    else
+    } else {
         mprintf("I see no such object here.\n");
+    }
 }
 
 
-void do_punch(char *s)
-{
+void do_punch(char *s) {
     int sock, n;
 
     if (*s == '\0') {
@@ -8939,7 +8956,7 @@ void do_punch(char *s)
         mprintf("A mystic shield of force prevents you from attacking.\n");
         return;
     }
-    if (!strcmp(here.people[n-1].username, MM_userid)) {
+    if (!strcmp(here.people[n - 1].username, MM_userid)) {
         log_event(myslot, E_TRYPUNCH, n, 0, "", 0);
         mprintf("You can't punch the Monster Manager.\n");
         return;
@@ -8948,17 +8965,17 @@ void do_punch(char *s)
         hiding = false;
 
         getroom(0);
-        here.people[myslot-1].hiding = 0;
+        here.people[myslot - 1].hiding = 0;
         putroom();
 
         log_event(myslot, E_HIDEPUNCH, n, 0, "", 0);
-        mprintf("You pounce unexpectedly on %s!\n", here.people[n-1].name);
+        mprintf("You pounce unexpectedly on %s!\n", here.people[n - 1].name);
     } else {
         sock = rnd100() % numpunches + 1;
 /* p2c: mon.pas, line 7860:
  * Note: Using % for possibly-negative arguments [317] */
         log_event(myslot, E_PUNCH, n, sock, "", 0);
-        put_punch(sock, here.people[n-1].name);
+        put_punch(sock, here.people[n - 1].name);
     }
     doawait(1 + mrandom() * 3);   /* Ha ha ha */
 }
@@ -8968,8 +8985,7 @@ void do_punch(char *s)
    Give the player a list of kinds of object he's allowed to make his object
    and update it */
 
-void prog_kind(int objnum)
-{
+void prog_kind(int objnum) {
     int n;
     string s;
 
@@ -8988,14 +9004,15 @@ void prog_kind(int objnum)
     putchar('\n');
     grab_line("Which kind? ", s, true);
 
-    if (!isnum(s))
+    if (!isnum(s)) {
         return;
+    }
     n = number(s);
     if (n > 100 && !privd) {
         mprintf("Out of range.\n");
         return;
     }
-    if ((unsigned)n > 3 && (n < 100 || n > 103)) {
+    if ((unsigned) n > 3 && (n < 100 || n > 103)) {
         mprintf("Out of range.\n");
         return;
     }
@@ -9006,19 +9023,16 @@ void prog_kind(int objnum)
 }
 
 
-
 /* support for do_program (custom an object)
    Based on the kind it is allow the
    user to set the various parameters for the effects associated with that
    kind */
 
-void prog_obj(int objnum)
-{
+void prog_obj(int objnum) {
 }
 
 
-void show_kind(int p)
-{
+void show_kind(int p) {
     switch (p) {
 
         case 0:
@@ -9056,35 +9070,35 @@ void show_kind(int p)
 }
 
 
-void obj_view(int objnum)
-{
+void obj_view(int objnum) {
     putchar('\n');
     getobj(objnum);
     freeobj();
     getobjown();
     freeobjown();
     mprintf("Object name:    %s\n", obj.oname);
-    mprintf("Owner:          %s\n\n", objown.idents[objnum-1]);
+    mprintf("Owner:          %s\n\n", objown.idents[objnum - 1]);
     show_kind(obj.kind);
     putchar('\n');
 
-    if (obj.linedesc == 0)
+    if (obj.linedesc == 0) {
         mprintf("There is a(n) # here\n");
-    else
+    } else {
         print_line(obj.linedesc);
+    }
 
-    if (obj.examine == 0)
+    if (obj.examine == 0) {
         mprintf("No inspection description set\n");
-    else
+    } else {
         print_desc(obj.examine, "<no default supplied>");
+    }
 
     /*writeln('Worth (in points) of this object: ',obj.worth:1);*/
     mprintf("Number in existence: %d\n\n", obj.numexist);
 }
 
 
-void program_help(void)
-{
+void program_help(void) {
     mprintf("\nA\t\"a\", \"an\", \"some\", etc.\n");
     mprintf("D\tEdit a Description of the object\n");
     mprintf("F\tEdit the GET failure message\n");
@@ -9108,8 +9122,7 @@ void program_help(void)
 }
 
 
-void do_program(char *objnam)
-{
+void do_program(char *objnam) {
     /* (objnam: string);  declared forward */
     string prompt;
     boolean done = false;
@@ -9118,8 +9131,9 @@ void do_program(char *objnam)
     string STR2;
 
     gethere(0);
-    if (!checkhide())
+    if (!checkhide()) {
         return;
+    }
     if (*objnam == '\0') {
         mprintf("To program an object, type PROGRAM <object name>.\n");
         return;
@@ -9183,8 +9197,9 @@ void do_program(char *objnam)
                     obj.getobjreq = n;
                     putobj();
                     mprintf("Object modified.\n");
-                } else
+                } else {
                     mprintf("No such object.\n");
+                }
                 break;
 
             case 'u':
@@ -9199,8 +9214,9 @@ void do_program(char *objnam)
                     obj.useobjreq = n;
                     putobj();
                     mprintf("Object modified.\n");
-                } else
+                } else {
                     mprintf("No such object.\n");
+                }
                 break;
 
             case '2':
@@ -9215,18 +9231,20 @@ void do_program(char *objnam)
                     obj.uselocreq = n;
                     putobj();
                     mprintf("Object modified.\n");
-                } else
+                } else {
                     mprintf("No such object.\n");
+                }
                 break;
 
             case 's':
                 getobj(objnum);
                 obj.sticky = !obj.sticky;
                 putobj();
-                if (obj.sticky)
+                if (obj.sticky) {
                     mprintf("The object will not be takeable.\n");
-                else
+                } else {
                     mprintf("The object will be takeable.\n");
+                }
                 break;
 
             case 'a':
@@ -9241,14 +9259,16 @@ void do_program(char *objnam)
                 grab_line("? ", s, true);
                 if (isnum(s)) {
                     n = number(s);
-                    if ((unsigned)n < 32 && ((1L << n) & 0x1f) != 0) {
+                    if ((unsigned) n < 32 && ((1L << n) & 0x1f) != 0) {
                         getobj(objnum);
                         obj.particle = n;
                         putobj();
-                    } else
+                    } else {
                         mprintf("Out of range.\n");
-                } else
+                    }
+                } else {
                     mprintf("No changes.\n");
+                }
                 break;
 
             case 'k':
@@ -9353,16 +9373,16 @@ void do_program(char *objnam)
 
 
 /* returns TRUE if anything was actually dropped */
-boolean drop_everything(int pslot)
-{
+boolean drop_everything(int pslot) {
     /* forward function drop_everything(pslot: integer := 0): boolean; */
     int i, slot;
     boolean didone = false;
     int theobj;
     string tmp;
 
-    if (pslot == 0)
+    if (pslot == 0) {
         pslot = myslot;
+    }
 
     gethere(0);
 
@@ -9370,13 +9390,13 @@ boolean drop_everything(int pslot)
     mywear = 0;
 
     for (i = 0; i < maxhold; i++) {
-        if (here.people[pslot-1].holding[i] != 0) {
+        if (here.people[pslot - 1].holding[i] != 0) {
             didone = true;
-            theobj = here.people[pslot-1].holding[i];
+            theobj = here.people[pslot - 1].holding[i];
             slot = find_hold(theobj, pslot);
-            if (place_obj(theobj, true))
+            if (place_obj(theobj, true)) {
                 drop_obj(slot, pslot);
-            else {
+            } else {
                 getobj(theobj);
                 obj.numexist--;
                 putobj();
@@ -9391,8 +9411,7 @@ boolean drop_everything(int pslot)
 }
 
 
-void do_endplay(int lognum, boolean ping)
-{
+void do_endplay(int lognum, boolean ping) {
 
     /* If update is true do_endplay will update the "last play" date & time
      we don't want to do this if this endplay is called from a ping */
@@ -9401,7 +9420,7 @@ void do_endplay(int lognum, boolean ping)
     if (!ping) {
         /* Set the "last date & time of play" */
         getdate();
-        sprintf(adate.idents[lognum-1], "%s %s", sysdate(STR1), systime(STR3));
+        sprintf(adate.idents[lognum - 1], "%s %s", sysdate(STR1), systime(STR3));
         putdate();
     }
 
@@ -9410,39 +9429,38 @@ void do_endplay(int lognum, boolean ping)
      so it can be restored the next time they play. */
 
     getindex(I_ASLEEP);
-    indx.free[lognum-1] = true;   /* Yes, I'm asleep */
+    indx.free[lognum - 1] = true;   /* Yes, I'm asleep */
     putindex();
 }
 
 
-boolean check_person(int n, char *id)
-{
+boolean check_person(int n, char *id) {
     inmem = false;
     gethere(0);
-    if (!strcmp(here.people[n-1].username, id))
+    if (!strcmp(here.people[n - 1].username, id)) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
 
-boolean nuke_person(int n, char *id)
-{
+boolean nuke_person(int n, char *id) {
     int lognum;
     string tmp;
 
     getroom(0);
-    if (!strcmp(here.people[n-1].username, id)) {
+    if (!strcmp(here.people[n - 1].username, id)) {
         /* drop everything they're carrying */
         drop_everything(n);
 
-        strcpy(tmp, here.people[n-1].username);
+        strcpy(tmp, here.people[n - 1].username);
         /* we'll need this for do_endplay */
 
         /* Remove the person from the room */
-        here.people[n-1].kind = 0;
-        *here.people[n-1].username = '\0';
-        *here.people[n-1].name = '\0';
+        here.people[n - 1].kind = 0;
+        *here.people[n - 1].username = '\0';
+        *here.people[n - 1].name = '\0';
         putroom();
 
         /* update the log entries for them */
@@ -9456,36 +9474,35 @@ boolean nuke_person(int n, char *id)
          "time of last play" information 'cause we
          don't know how long the "zombie" has been
          there. */
-        } else
+        } else {
             mprintf(
                     "?error in nuke_person; can't find their log number; notify the Monster Manager\n");
+        }
 
         return true;
-    }
-
-    else {
+    } else {
         freeroom();
         return false;
     }
 }
 
 
-boolean ping_player(int n, boolean silent)
-{
+boolean ping_player(int n, boolean silent) {
     boolean Result = false;
     int retry = 0;
     string id, idname;
 
 
-    strcpy(id, here.people[n-1].username);
-    strcpy(idname, here.people[n-1].name);
+    strcpy(id, here.people[n - 1].username);
+    strcpy(idname, here.people[n - 1].name);
 
     ping_answered = false;
 
     do {
         retry++;
-        if (!silent)
+        if (!silent) {
             mprintf("Sending ping # %d to %s . . .\n", retry, idname);
+        }
 
         log_event(myslot, E_PING, n, 0, myname, 0);
         doawait(1.0);
@@ -9496,43 +9513,48 @@ boolean ping_player(int n, boolean silent)
             if (check_person(n, id)) {
                 doawait(1.0);
                 checkevents(true);
-            } else
+            } else {
                 ping_answered = true;
+            }
         }
 
         if (!ping_answered) {
             if (check_person(n, id)) {
                 doawait(1.0);
                 checkevents(true);
-            } else
+            } else {
                 ping_answered = true;
+            }
         }
 
     } while (!(retry >= 3 || ping_answered));
 
     if (ping_answered) {
-        if (!silent)
+        if (!silent) {
             mprintf("That person is alive and well.\n");
+        }
         return false;
     }
-    if (!silent)
+    if (!silent) {
         mprintf("That person is not responding to your pings . . .\n");
+    }
 
     if (!nuke_person(n, id)) {
-        if (!silent)
+        if (!silent) {
             mprintf("That person is not a zombie after all.\n");
+        }
         return false;
     }
     Result = true;
-    if (!silent)
+    if (!silent) {
         mprintf("%s shimmers and vanishes from sight.\n", idname);
+    }
     log_event(myslot, E_PINGONE, n, 0, idname, 0);
     return true;
 }
 
 
-void do_ping(char *s)
-{
+void do_ping(char *s) {
     int n;
     boolean dummy;
 
@@ -9544,15 +9566,15 @@ void do_ping(char *s)
         mprintf("You see no person here by that name.\n");
         return;
     }
-    if (n == myslot)
+    if (n == myslot) {
         mprintf("Don't ping yourself.\n");
-    else
+    } else {
         dummy = ping_player(n, false);
+    }
 }
 
 
-void list_get(void)
-{
+void list_get(void) {
     boolean first = true;
     int i;
     string STR1;
@@ -9566,26 +9588,25 @@ void list_get(void)
             mprintf("   %s\n", obj_part(STR1, here.objs[i], true));
         }
     }
-    if (first)
+    if (first) {
         mprintf("There is nothing you see here that you can get.\n");
+    }
 }
-
 
 
 /* print the get success message for object number n */
 
-void p_getsucc(int n)
-{
+void p_getsucc(int n) {
     /* we assume getobj has already been done */
-    if (obj.getsuccess == 0 || obj.getsuccess == DEFAULT_LINE)
+    if (obj.getsuccess == 0 || obj.getsuccess == DEFAULT_LINE) {
         mprintf("Taken.\n");
-    else
+    } else {
         print_desc(obj.getsuccess, "<no default supplied>");
+    }
 }
 
 
-void do_meta_get(int n)
-{
+void do_meta_get(int n) {
     int slot;
     char STR1[118];
     string STR2;
@@ -9608,15 +9629,15 @@ void do_meta_get(int n)
         p_getsucc(n);
         return;
     }
-    if (obj_hold(n))
+    if (obj_hold(n)) {
         mprintf("You're already holding that item.\n");
-    else
+    } else {
         mprintf("That item isn't in an obvious place.\n");
+    }
 }
 
 
-void do_get(char *s)
-{
+void do_get(char *s) {
     int n;
     boolean ok;
     string STR2;
@@ -9633,24 +9654,27 @@ void do_get(char *s)
         if (obj.sticky) {
             ok = false;
             log_event(myslot, E_FAILGET, n, 0, "", 0);
-            if (obj.getfail == 0 || obj.getfail == DEFAULT_LINE)
+            if (obj.getfail == 0 || obj.getfail == DEFAULT_LINE) {
                 mprintf("You can't take %s.\n", obj_part(STR2, n, false));
-            else
+            } else {
                 print_desc(obj.getfail, "<no default supplied>");
+            }
         } else if (obj.getobjreq > 0) {
             if (!obj_hold(obj.getobjreq)) {
                 ok = false;
                 log_event(myslot, E_FAILGET, n, 0, "", 0);
-                if (obj.getfail == 0 || obj.getfail == DEFAULT_LINE)
+                if (obj.getfail == 0 || obj.getfail == DEFAULT_LINE) {
                     mprintf("You'll need something first to get the %s.\n",
                             obj_part(STR2, n, false));
-                else
+                } else {
                     print_desc(obj.getfail, "<no default supplied>");
+                }
             }
         }
 
-        if (ok)   /* get the object */
+        if (ok) {   /* get the object */
             do_meta_get(n);
+        }
 
         return;
     }
@@ -9658,13 +9682,13 @@ void do_get(char *s)
         mprintf(
                 "That detail of this room is here for the enjoyment of all Monster players,\n");
         mprintf("and may not be taken.\n");
-    } else
+    } else {
         mprintf("There is no object here by that name.\n");
+    }
 }
 
 
-void do_drop(char *s)
-{
+void do_drop(char *s) {
     int slot, n;
     string STR1;
     char STR2[116];
@@ -9705,20 +9729,20 @@ void do_drop(char *s)
     if (mywield == n) {
         mywield = 0;
         getroom(0);
-        here.people[myslot-1].wielding = 0;
+        here.people[myslot - 1].wielding = 0;
         putroom();
     }
-    if (mywear != n)
+    if (mywear != n) {
         return;
+    }
     mywear = 0;
     getroom(0);
-    here.people[myslot-1].wearing = 0;
+    here.people[myslot - 1].wearing = 0;
     putroom();
 }
 
 
-void do_inv(char *s)
-{
+void do_inv(char *s) {
     boolean first;
     int i, n, objnum;
     string STR1;
@@ -9729,7 +9753,7 @@ void do_inv(char *s)
         first = true;
         log_event(myslot, E_INVENT, 0, 0, "", 0);
         for (i = 0; i < maxhold; i++) {
-            objnum = here.people[myslot-1].holding[i];
+            objnum = here.people[myslot - 1].holding[i];
             if (objnum != 0) {
                 if (first) {
                     mprintf("You are holding:\n");
@@ -9738,8 +9762,9 @@ void do_inv(char *s)
                 mprintf("   %s\n", obj_part(STR1, objnum, true));
             }
         }
-        if (first)
+        if (first) {
             mprintf("You are empty handed.\n");
+        }
         return;
     }
     if (!parse_pers(&n, s)) {
@@ -9749,24 +9774,24 @@ void do_inv(char *s)
     first = true;
     log_event(myslot, E_LOOKYOU, n, 0, "", 0);
     for (i = 0; i < maxhold; i++) {
-        objnum = here.people[n-1].holding[i];
+        objnum = here.people[n - 1].holding[i];
         if (objnum != 0) {
             if (first) {
-                mprintf("%s is holding:\n", here.people[n-1].name);
+                mprintf("%s is holding:\n", here.people[n - 1].name);
                 first = false;
             }
-            mprintf("   %s\n", objnam.idents[objnum-1]);
+            mprintf("   %s\n", objnam.idents[objnum - 1]);
         }
     }
-    if (first)
-        mprintf("%s is empty handed.\n", here.people[n-1].name);
+    if (first) {
+        mprintf("%s is empty handed.\n", here.people[n - 1].name);
+    }
 }
 
 
 /* translate a personal name into a real userid on request */
 
-void do_whois(char *s)
-{
+void do_whois(char *s) {
     int n;
 
     if (!lookup_pers(&n, s)) {
@@ -9778,12 +9803,11 @@ void do_whois(char *s)
     /*getpers;
                   freepers;! Already done in lookup_pers !*/
 
-    mprintf("%s is %s.\n", pers.idents[n-1], user.idents[n-1]);
+    mprintf("%s is %s.\n", pers.idents[n - 1], user.idents[n - 1]);
 }
 
 
-void do_players(char *s)
-{
+void do_players(char *s) {
     int i, j;
     indexrec tmpasleep;
     intrec where_they_are;
@@ -9821,28 +9845,34 @@ void do_players(char *s)
     for (i = 0; i < maxplayers; i++) {
         if (!indx.free[i]) {
             fputs(user.idents[i], stdout);
-            for (j = strlen(user.idents[i]); j <= 15; j++)
+            for (j = strlen(user.idents[i]); j <= 15; j++) {
                 putchar(' ');
+            }
             fputs(pers.idents[i], stdout);
-            for (j = strlen(pers.idents[i]); j <= 21; j++)
+            for (j = strlen(pers.idents[i]); j <= 21; j++) {
                 putchar(' ');
+            }
 
             if (tmpasleep.free[i]) {
                 fputs(adate.idents[i], stdout);
                 if (strlen(adate.idents[i]) < 19) {
-                    for (j = strlen(adate.idents[i]); j <= 18; j++)
+                    for (j = strlen(adate.idents[i]); j <= 18; j++) {
                         putchar(' ');
+                    }
                 }
-            } else
+            } else {
                 mprintf("   -playing now-   ");
+            }
 
-            if (anint.int_[i] != 0 && anint.int_[i] != DEFAULT_LINE)
+            if (anint.int_[i] != 0 && anint.int_[i] != DEFAULT_LINE) {
                 mprintf(" * ");
-            else
+            } else {
                 mprintf("   ");
+            }
 
-            if (privd)
+            if (privd) {
                 fputs(nam.idents[where_they_are.int_[i] - 1], stdout);
+            }
             putchar('\n');
         }
     }
@@ -9850,20 +9880,20 @@ void do_players(char *s)
 }
 
 
-void do_self(char *s)
-{
+void do_self(char *s) {
     int n;
 
     if (*s == '\0') {
         log_action(c_self, 0);
         mprintf("[ Editing your self description ]\n");
-        if (!edit_desc(&myself))
+        if (!edit_desc(&myself)) {
             return;
+        }
         getroom(0);
-        here.people[myslot-1].self = myself;
+        here.people[myslot - 1].self = myself;
         putroom();
         getint(N_SELF);
-        anint.int_[mylog-1] = myself;
+        anint.int_[mylog - 1] = myself;
         putint();
         log_event(myslot, E_SELFDONE, 0, 0, "", 0);
         return;
@@ -9874,17 +9904,16 @@ void do_self(char *s)
     }
     getint(N_SELF);
     freeint();
-    if (anint.int_[n-1] == 0 || anint.int_[n-1] == DEFAULT_LINE)
+    if (anint.int_[n - 1] == 0 || anint.int_[n - 1] == DEFAULT_LINE) {
         mprintf("That person has not made a self-description.\n");
-    else {
-        print_desc(anint.int_[n-1], "<no default supplied>");
-        log_event(myslot, E_VIEWSELF, 0, 0, pers.idents[n-1], 0);
+    } else {
+        print_desc(anint.int_[n - 1], "<no default supplied>");
+        log_event(myslot, E_VIEWSELF, 0, 0, pers.idents[n - 1], 0);
     }
 }
 
 
-void do_health(char *s)
-{
+void do_health(char *s) {
     mprintf("You ");
     switch (myhealth) {
 
@@ -9935,8 +9964,7 @@ void do_health(char *s)
 }
 
 
-void crystal_look(int chill_msg)
-{
+void crystal_look(int chill_msg) {
     int numobj, numppl, numsee, i;
     boolean yes;
 
@@ -9946,13 +9974,14 @@ void crystal_look(int chill_msg)
     numppl = find_numpeople();
     numsee = n_can_see() + 1;
 
-    if (numppl > numsee)
+    if (numppl > numsee) {
         mprintf("Someone is hiding here.\n");
-    else if (numppl == 0)
+    } else if (numppl == 0) {
         mprintf("Strange, empty shadows swirl before your eyes.\n");
-    if (rnd100() > 50)
+    }
+    if (rnd100() > 50) {
         people_header("at this place.");
-    else {
+    } else {
         switch (numppl) {
 
             case 0:
@@ -9979,27 +10008,29 @@ void crystal_look(int chill_msg)
 
     numobj = find_numobjs();
     if (rnd100() > 50) {
-        if (rnd100() > 50)
+        if (rnd100() > 50) {
             show_objects();
-        else if (numobj > 0)
+        } else if (numobj > 0) {
             mprintf("Some objects are here.\n");
-        else
+        } else {
             mprintf("There are no objects here.\n");
+        }
     } else {
         yes = false;
         for (i = 0; i < maxobjs; i++) {
-            if (here.objhide[i] != 0)
+            if (here.objhide[i] != 0) {
                 yes = true;
+            }
         }
-        if (yes)
+        if (yes) {
             mprintf("Something is hidden here.\n");
+        }
     }
     putchar('\n');
 }
 
 
-void use_crystal(int objnum)
-{
+void use_crystal(int objnum) {
     boolean done;
     string s;
     int n, done_msg, chill_msg;
@@ -10022,14 +10053,15 @@ void use_crystal(int objnum)
         gethere(n);
         crystal_look(chill_msg);
         done = false;
-    } else
+    } else {
         done = true;
+    }
 
     while (!done) {
         grab_line("", s, true);
         if (lookup_dir(&n, s)) {
-            if (here.exits[n-1].toloc > 0) {
-                gethere(here.exits[n-1].toloc);
+            if (here.exits[n - 1].toloc > 0) {
+                gethere(here.exits[n - 1].toloc);
                 crystal_look(chill_msg);
             }
             continue;
@@ -10040,13 +10072,15 @@ void use_crystal(int objnum)
             if (lookup_room(&n, s)) {
                 gethere(n);
                 crystal_look(chill_msg);
-            } else
+            } else {
                 done = true;
+            }
         } else if (!strcmp(tmp, "say")) {
             i = (rnd100() & 3) + 1;
             log_event(0, E_NOISE2, i, 0, "", n);
-        } else
+        } else {
             done = true;
+        }
     }
 
     gethere(0);
@@ -10055,29 +10089,27 @@ void use_crystal(int objnum)
 }
 
 
-
-void p_usefail(int n)
-{
+void p_usefail(int n) {
     /* we assume getobj has already been done */
-    if (obj.usefail == 0 || obj.usefail == DEFAULT_LINE)
+    if (obj.usefail == 0 || obj.usefail == DEFAULT_LINE) {
         mprintf("It doesn't work for some reason.\n");
-    else
+    } else {
         print_desc(obj.usefail, "<no default supplied>");
+    }
 }
 
 
-void p_usesucc(int n)
-{
+void p_usesucc(int n) {
     /* we assume getobj has already been done */
-    if (obj.usesuccess == 0 || obj.usesuccess == DEFAULT_LINE)
+    if (obj.usesuccess == 0 || obj.usesuccess == DEFAULT_LINE) {
         mprintf("It seems to work, but nothing appears to happen.\n");
-    else
+    } else {
         print_desc(obj.usesuccess, "<no default supplied>");
+    }
 }
 
 
-void do_use(char *s)
-{
+void do_use(char *s) {
     int n;
 
     if (*s == '\0') {
@@ -10115,8 +10147,7 @@ void do_use(char *s)
 }
 
 
-void do_whisper(char *s_)
-{
+void do_whisper(char *s_) {
     string s;
     int n;
 
@@ -10137,13 +10168,13 @@ void do_whisper(char *s_)
     if (*s != '\0') {
         nice_say(s);
         log_event(myslot, E_WHISPER, n, 0, s, 0);
-    } else
+    } else {
         mprintf("Nothing whispered.\n");
+    }
 }
 
 
-void do_wield(char *s)
-{
+void do_wield(char *s) {
     string tmp;
     int n;
     string STR2;
@@ -10161,7 +10192,7 @@ void do_wield(char *s)
 
         mywield = 0;
         getroom(0);
-        here.people[mylog-1].wielding = 0;
+        here.people[mylog - 1].wielding = 0;
         putroom();
         return;
     }
@@ -10186,7 +10217,7 @@ void do_wield(char *s)
     }
     mywield = n;
     getroom(0);
-    here.people[myslot-1].wielding = n;
+    here.people[myslot - 1].wielding = n;
     putroom();
 
     log_event(myslot, E_WIELD, 0, 0, tmp, 0);
@@ -10194,8 +10225,7 @@ void do_wield(char *s)
 }
 
 
-void do_wear(char *s)
-{
+void do_wear(char *s) {
     string tmp;
     int n;
 
@@ -10212,7 +10242,7 @@ void do_wear(char *s)
 
         mywear = 0;
         getroom(0);
-        here.people[mylog-1].wearing = 0;
+        here.people[mylog - 1].wearing = 0;
         putroom();
         return;
     }
@@ -10233,7 +10263,7 @@ void do_wear(char *s)
     }
     mywear = n;
     getroom(0);
-    here.people[mylog-1].wearing = n;
+    here.people[mylog - 1].wearing = n;
     putroom();
 
     log_event(myslot, E_WEAR, 0, 0, tmp, 0);
@@ -10241,48 +10271,49 @@ void do_wear(char *s)
 }
 
 
-void do_brief(void)
-{
+void do_brief(void) {
     brief = !brief;
-    if (brief)
+    if (brief) {
         mprintf("Brief descriptions.\n");
-    else
+    } else {
         mprintf("Verbose descriptions.\n");
+    }
 }
 
 
-char *p_door_key(char *Result, int n)
-{
-    if (n == 0)
+char *p_door_key(char *Result, int n) {
+    if (n == 0) {
         return strcpy(Result, "<none>");
-    else
-        return strcpy(Result, objnam.idents[n-1]);
+    } else {
+        return strcpy(Result, objnam.idents[n - 1]);
+    }
 }
 
 
-
-void anal_exit(int dir)
-{
+void anal_exit(int dir) {
     exit_ *WITH;
     string STR2;
 
-    if (here.exits[dir-1].toloc == 0 && here.exits[dir-1].kind != 5)
+    if (here.exits[dir - 1].toloc == 0 && here.exits[dir - 1].kind != 5) {
         return;
+    }
     /* no exit here, don't print anything */
-    WITH = &here.exits[dir-1];
-    fputs(direct[dir-1], stdout);
+    WITH = &here.exits[dir - 1];
+    fputs(direct[dir - 1], stdout);
     if (*WITH->alias != '\0') {
         mprintf("(%s", WITH->alias);
-        if (WITH->reqalias)
+        if (WITH->reqalias) {
             mprintf(" required): ");
-        else
+        } else {
             mprintf("): ");
-    } else
+        }
+    } else {
         mprintf(": ");
+    }
 
-    if (WITH->toloc == 0 && WITH->kind == 5)
+    if (WITH->toloc == 0 && WITH->kind == 5) {
         mprintf("accept, no exit yet");
-    else if (WITH->toloc > 0) {
+    } else if (WITH->toloc > 0) {
         mprintf("to %s, ", nam.idents[WITH->toloc - 1]);
         switch (WITH->kind) {
 
@@ -10316,27 +10347,31 @@ void anal_exit(int dir)
 
             case 7:
                 mprintf("timed exit, now ");
-                if (cycle_open())
+                if (cycle_open()) {
                     mprintf("open");
-                else
+                } else {
                     mprintf("closed");
+                }
                 break;
         }
-        if (WITH->hidden != 0)
+        if (WITH->hidden != 0) {
             mprintf(", hidden");
-        if (WITH->reqverb)
+        }
+        if (WITH->reqverb) {
             mprintf(", reqverb");
-        if (!WITH->autolook)
+        }
+        if (!WITH->autolook) {
             mprintf(", autolook off");
-        if (here.trapto == dir)
+        }
+        if (here.trapto == dir) {
             mprintf(", trapdoor (%d%%)", here.trapchance);
+        }
     }
     putchar('\n');
 }
 
 
-void do_s_exits(void)
-{
+void do_s_exits(void) {
     int i;
     boolean accept;
     boolean one = false;
@@ -10348,10 +10383,11 @@ void do_s_exits(void)
     gethere(0);
 
     for (i = 1; i <= maxexit; i++) {
-        if (here.exits[i-1].toloc == 0 && here.exits[i-1].kind == 5)
+        if (here.exits[i - 1].toloc == 0 && here.exits[i - 1].kind == 5) {
             accept = true;
-        else
+        } else {
             accept = false;
+        }
 
         if (can_alter(i, 0) || accept) {
             if (!one) {  /* first time we do this then */
@@ -10365,21 +10401,22 @@ void do_s_exits(void)
         }
     }
 
-    if (!one)
+    if (!one) {
         mprintf("There are no exits here which you may inspect.\n");
+    }
 }
 
 
-void do_s_object(char *s_)
-{
+void do_s_object(char *s_) {
     string s;
     int n;
     objectrec x;
     string STR1;
 
     strcpy(s, s_);
-    if (*s == '\0')
+    if (*s == '\0') {
         grab_line("Object? ", s, true);
+    }
 
     if (!lookup_obj(&n, s)) {
         mprintf("There is no such object.\n");
@@ -10390,15 +10427,18 @@ void do_s_object(char *s_)
         return;
     }
     mprintf("%s: ", obj_part(STR1, n, true));
-    mprintf("%s is owner", objown.idents[n-1]);
+    mprintf("%s is owner", objown.idents[n - 1]);
     memcpy(&x, &obj, sizeof(objectrec));
 
-    if (x.sticky)
+    if (x.sticky) {
         mprintf(", sticky");
-    if (x.getobjreq > 0)
+    }
+    if (x.getobjreq > 0) {
         mprintf(", %s required to get", obj_part(STR1, x.getobjreq, true));
-    if (x.useobjreq > 0)
+    }
+    if (x.useobjreq > 0) {
         mprintf(", %s required to use", obj_part(STR1, x.useobjreq, true));
+    }
     if (x.uselocreq > 0) {
         getnam();
         freenam();
@@ -10406,16 +10446,16 @@ void do_s_object(char *s_)
     }
     if (*x.usealias != '\0') {
         mprintf(", use=\"%s\"", x.usealias);
-        if (x.reqalias)
+        if (x.reqalias) {
             mprintf(" (required)");
+        }
     }
 
     putchar('\n');
 }
 
 
-void do_s_details(void)
-{
+void do_s_details(void) {
     int i;
     boolean one = false;
 
@@ -10429,21 +10469,20 @@ void do_s_details(void)
             mprintf("    %s\n", here.detail[i]);
         }
     }
-    if (!one)
+    if (!one) {
         mprintf("There are no details of this room that you can inspect.\n");
+    }
 }
 
 
-void do_s_help(void)
-{
+void do_s_help(void) {
     mprintf("\nExits             Lists exits you can inspect here\n");
     mprintf("Object            Show internals of an object\n");
     mprintf("Details           Show details you can look at in this room\n\n");
 }
 
 
-void s_show(int n, char *s)
-{
+void s_show(int n, char *s) {
     switch (n) {
 
         case s_exits:
@@ -10465,42 +10504,42 @@ void s_show(int n, char *s)
 }
 
 
-void do_y_altmsg(void)
-{
+void do_y_altmsg(void) {
     int newdsc;
 
-    if (!is_owner(0, false))
+    if (!is_owner(0, false)) {
         return;
+    }
     gethere(0);
     newdsc = here.xmsg2;
     mprintf("[ Editing the alternate mystery message for this room ]\n");
-    if (!edit_desc(&newdsc))
+    if (!edit_desc(&newdsc)) {
         return;
+    }
     getroom(0);
     here.xmsg2 = newdsc;
     putroom();
 }
 
 
-void do_y_help(void)
-{
+void do_y_help(void) {
     mprintf("\nAltmsg        Set the alternate mystery message block\n\n");
 }
 
 
-void do_group1(void)
-{
+void do_group1(void) {
     string grpnam;
     int loc;
     string tmp;
     char STR1[256];
 
-    if (!is_owner(0, false))
+    if (!is_owner(0, false)) {
         return;
+    }
     gethere(0);
-    if (here.grploc1 == 0)
+    if (here.grploc1 == 0) {
         mprintf("No primary group location set\n");
-    else {
+    } else {
         getnam();
         freenam();
         mprintf("The primary group location is %s.\n",
@@ -10528,7 +10567,7 @@ void do_group1(void)
             "Example:  Monster Manager is [descriptive string, instead of \"here.\"]\n\n");
     grab_line("Enter string? ", tmp, true);
     if (strlen(tmp) > shortlen) {
-        mprintf("Your string was truncated to %ld characters.\n", (long)shortlen);
+        mprintf("Your string was truncated to %ld characters.\n", (long) shortlen);
         sprintf(tmp, "%.*s", shortlen, strcpy(STR1, tmp));
     }
     getroom(0);
@@ -10538,20 +10577,19 @@ void do_group1(void)
 }
 
 
-
-void do_group2(void)
-{
+void do_group2(void) {
     string grpnam;
     int loc;
     string tmp;
     char STR1[256];
 
-    if (!is_owner(0, false))
+    if (!is_owner(0, false)) {
         return;
+    }
     gethere(0);
-    if (here.grploc2 == 0)
+    if (here.grploc2 == 0) {
         mprintf("No secondary group location set\n");
-    else {
+    } else {
         getnam();
         freenam();
         mprintf("The secondary group location is %s.\n",
@@ -10579,7 +10617,7 @@ void do_group2(void)
             "Example:  Monster Manager is [descriptive string, instead of \"here.\"]\n\n");
     grab_line("Enter string? ", tmp, true);
     if (strlen(tmp) > shortlen) {
-        mprintf("Your string was truncated to %ld characters.\n", (long)shortlen);
+        mprintf("Your string was truncated to %ld characters.\n", (long) shortlen);
         sprintf(tmp, "%.*s", shortlen, strcpy(STR1, tmp));
     }
     getroom(0);
@@ -10589,8 +10627,7 @@ void do_group2(void)
 }
 
 
-void s_set(int n, char *s)
-{
+void s_set(int n, char *s) {
     switch (n) {
 
         case y_quest:
@@ -10612,48 +10649,51 @@ void s_set(int n, char *s)
 }
 
 
-void do_show(char *s_)
-{
+void do_show(char *s_) {
     string s;
     int n;
     string cmd;
 
     strcpy(s, s_);
     bite(cmd, s);
-    if (*cmd == '\0')
+    if (*cmd == '\0') {
         grab_line("Show what attribute? (type ? for a list) ", cmd, true);
+    }
 
-    if (*cmd == '\0')
+    if (*cmd == '\0') {
         return;
-    if (lookup_show(&n, cmd))
+    }
+    if (lookup_show(&n, cmd)) {
         s_show(n, s);
-    else
+    } else {
         mprintf("Invalid show option, type SHOW ? for a list.\n");
+    }
 }
 
 
-void do_set(char *s_)
-{
+void do_set(char *s_) {
     string s;
     int n;
     string cmd;
 
     strcpy(s, s_);
     bite(cmd, s);
-    if (*cmd == '\0')
+    if (*cmd == '\0') {
         grab_line("Set what attribute? (type ? for a list) ", cmd, true);
+    }
 
-    if (*cmd == '\0')
+    if (*cmd == '\0') {
         return;
-    if (lookup_set(&n, cmd))
+    }
+    if (lookup_set(&n, cmd)) {
         s_set(n, s);
-    else
+    } else {
         mprintf("Invalid set option, type SET ? for a list.\n");
+    }
 }
 
 
-void parser(void)
-{
+void parser(void) {
     string s, cmd;
     int n;
     string STR1;
@@ -10664,13 +10704,14 @@ void parser(void)
         strcpy(s, slead(STR1, s));
     } while (*s == '\0');
 
-    if (!strcmp(s, "."))
+    if (!strcmp(s, ".")) {
         strcpy(s, oldcmd);
-    else
+    } else {
         strcpy(oldcmd, s);
+    }
 
     if (s[0] == '\'' && strlen(s) > 1) {
-        sprintf(STR2, "%.*s", (int)(strlen(s) - 1), s + 1);
+        sprintf(STR2, "%.*s", (int) (strlen(s) - 1), s + 1);
         do_say(STR2);
         return;
     }
@@ -10679,10 +10720,11 @@ void parser(void)
 
         /* try exit alias */
         case error:
-            if (lookup_alias(&n, cmd) || lookup_dir(&n, cmd))
+            if (lookup_alias(&n, cmd) || lookup_dir(&n, cmd)) {
                 do_go(cmd, true);
-            else
+            } else {
                 mprintf("Bad command, type ? for a list.\n");
+            }
             break;
 
         case setnam:
@@ -10893,10 +10935,11 @@ void parser(void)
 
         case dbg:
             debug = !debug;
-            if (debug)
+            if (debug) {
                 mprintf("Debugging is on.\n");
-            else
+            } else {
                 mprintf("Debugging is off.\n");
+            }
             break;
 
         default:
@@ -10907,9 +10950,7 @@ void parser(void)
 }
 
 
-
-void init(void)
-{
+void init(void) {
     char STR1[40];
     string STR2;
     char STR3[42];
@@ -10941,78 +10982,78 @@ void init(void)
 
     numcmds = 66;
 
-    strcpy(show[s_exits-1], "exits");
-    strcpy(show[s_object-1], "object");
-    strcpy(show[s_quest-1], "?");
-    strcpy(show[s_details-1], "details");
+    strcpy(show[s_exits - 1], "exits");
+    strcpy(show[s_object - 1], "object");
+    strcpy(show[s_quest - 1], "?");
+    strcpy(show[s_details - 1], "details");
     numshow = 4;
 
-    strcpy(setkey[y_quest-1], "?");
-    strcpy(setkey[y_altmsg-1], "altmsg");
-    strcpy(setkey[y_group1-1], "group1");
-    strcpy(setkey[y_group2-1], "group2");
+    strcpy(setkey[y_quest - 1], "?");
+    strcpy(setkey[y_altmsg - 1], "altmsg");
+    strcpy(setkey[y_group1 - 1], "group1");
+    strcpy(setkey[y_group2 - 1], "group2");
     numset = 4;
 
     numspells = 0;
 
     sprintf(STR1, "%s/rooms.mon", root);
-    roomfile = open(STR1, O_RDWR|O_CREAT, MONSTER_FILE);
+    roomfile = open(STR1, O_RDWR | O_CREAT, MONSTER_FILE);
     if (roomfile < 0) {
         perror("can't open roomfile");
         exit(0);
     }
 
     sprintf(STR1, "%s/nams.mon", root);
-    namfile = open(STR1, O_RDWR|O_CREAT, MONSTER_FILE);
+    namfile = open(STR1, O_RDWR | O_CREAT, MONSTER_FILE);
     if (namfile < 0) {
         perror("can't open namfile");
         exit(0);
     }
 
     sprintf(STR3, "%s/events.mon", root);
-    eventfile = open(STR3, O_RDWR|O_CREAT, MONSTER_FILE);
+    eventfile = open(STR3, O_RDWR | O_CREAT, MONSTER_FILE);
     if (eventfile < 0) {
         perror("can't open eventfile");
         exit(0);
     }
 
     sprintf(STR1, "%s/desc.mon", root);
-    descfile = open(STR1, O_RDWR|O_CREAT, MONSTER_FILE);
+    descfile = open(STR1, O_RDWR | O_CREAT, MONSTER_FILE);
     if (descfile < 0) {
         perror("can't open descfile");
         exit(0);
     }
 
     sprintf(STR1, "%s/index.mon", root);
-    indexfile = open(STR1, O_RDWR|O_CREAT, MONSTER_FILE);
+    indexfile = open(STR1, O_RDWR | O_CREAT, MONSTER_FILE);
     if (indexfile < 0) {
         perror("can't open indexfile");
         exit(0);
     }
 
     sprintf(STR1, "%s/line.mon", root);
-    linefile = open(STR1, O_RDWR|O_CREAT, MONSTER_FILE);
+    linefile = open(STR1, O_RDWR | O_CREAT, MONSTER_FILE);
     if (linefile < 0) {
         perror("can't open linefile");
         exit(0);
     }
 
     sprintf(STR3, "%s/intfile.mon", root);
-    intfile = open(STR3, O_RDWR|O_CREAT, MONSTER_FILE);
+    intfile = open(STR3, O_RDWR | O_CREAT, MONSTER_FILE);
     if (intfile < 0) {
         perror("can't open intfile");
         exit(0);
     }
 
     sprintf(STR3, "%s/objects.mon", root);
-    objfile = open(STR3, O_RDWR|O_CREAT, MONSTER_FILE);
+    objfile = open(STR3, O_RDWR | O_CREAT, MONSTER_FILE);
     if (objfile < 0) {
         perror("can't open objfile");
         exit(0);
     }
 
     sprintf(STR3, "%s/spells.mon", root);
-    spellfile = open(STR3, O_RDWR|O_CREAT, MONSTER_FILE);
+    spellfile = open(STR3, O_RDWR | O_CREAT, MONSTER_FILE);
     if (spellfile < 0) {
         perror("can't open spellfile");
         exit(0);
@@ -11026,24 +11067,24 @@ void init(void)
 }
 
 
-void prestart(void)
-{
+void prestart(void) {
     string s, STR1;
     char *TEMP;
 
     mprintf("Welcome to Monster!  Hit return to start: ");
     fgets(s, 81, stdin);
     TEMP = strchr(s, '\n');
-    if (TEMP != NULL)
+    if (TEMP != NULL) {
         *TEMP = 0;
+    }
     mprintf("\n\n");
-    if (*s != '\0')
+    if (*s != '\0') {
         special(lowcase(STR1, s));
+    }
 }
 
 
-void welcome_back(int *mylog)
-{
+void welcome_back(int *mylog) {
     string tmp;
     shortstring sdate, stime;
 
@@ -11051,42 +11092,46 @@ void welcome_back(int *mylog)
     freedate();
 
     mprintf("Welcome back, %s.", myname);
-    if (strlen(myname) > 18)
+    if (strlen(myname) > 18) {
         putchar('\n');
+    }
 
     mprintf("  Your last play was on");
 
-    if (strlen(adate.idents[*mylog - 1]) < 11)
+    if (strlen(adate.idents[*mylog - 1]) < 11) {
         mprintf(" ???\n");
-    else {
+    } else {
         sprintf(sdate, "%.11s", adate.idents[*mylog - 1]);
         /* extract the date */
-        if (strlen(adate.idents[*mylog - 1]) == 19)
+        if (strlen(adate.idents[*mylog - 1]) == 19) {
             sprintf(stime, "%.7s", adate.idents[*mylog - 1] + 12);
-        else
+        } else
 #if 0
             strcpy(stime, "???");
 #else
+        {
             sprintf(stime, "%s", adate.idents[*mylog - 1] + 12);
+        }
 #endif
 
-        if (sdate[0] == ' ')
+        if (sdate[0] == ' ') {
             strcpy(tmp, sdate);
-        else
+        } else {
             sprintf(tmp, " %s", sdate);
+        }
 
-        if (stime[0] == ' ')
+        if (stime[0] == ' ') {
             sprintf(tmp + strlen(tmp), " at%s", stime);
-        else
+        } else {
             sprintf(tmp + strlen(tmp), " at %s", stime);
+        }
         mprintf("%s.\n", tmp);
     }
     putchar('\n');
 }
 
 
-boolean loc_ping(void)
-{
+boolean loc_ping(void) {
     int i = 1;
     boolean found = false;
 
@@ -11096,10 +11141,11 @@ boolean loc_ping(void)
 
     /* first get the slot that the supposed "zombie" is in */
     while (!found && i <= maxpeople) {
-        if (!strcmp(here.people[i-1].name, myname))
+        if (!strcmp(here.people[i - 1].name, myname)) {
             found = true;
-        else
+        } else {
             i++;
+        }
     }
 
     myslot = 0;   /* setup for ping_player */
@@ -11116,12 +11162,10 @@ boolean loc_ping(void)
 }
 
 
-
 /* attempt to fix the player using loc_ping if the database incorrectly
    shows someone playing who isn' playing */
 
-boolean fix_player(void)
-{
+boolean fix_player(void) {
     mprintf("There may have been some trouble the last time you played.\n");
     mprintf("Trying to fix it . . .\n");
     if (loc_ping()) {
@@ -11136,8 +11180,7 @@ boolean fix_player(void)
 }
 
 
-boolean revive_player(int *mylog)
-{
+boolean revive_player(int *mylog) {
     boolean ok;
     int i;
     string STR2, STR3;
@@ -11175,8 +11218,9 @@ boolean revive_player(int *mylog)
             ok = fix_player();
         }
 
-        if (ok)
+        if (ok) {
             welcome_back(mylog);
+        }
 
     } else {
         if (alloc_log(mylog)) {
@@ -11212,16 +11256,16 @@ boolean revive_player(int *mylog)
 
             lseek(spellfile, (*mylog - 1L) * sizeof(spellrec), 0);
             bzero(&spellfile_hat, sizeof(spellfile_hat));
-            for (i = 0; i < maxspells; i++)
+            for (i = 0; i < maxspells; i++) {
                 spellfile_hat.level[i] = 0;
+            }
             spellfile_hat.recnum = *mylog;
             write(spellfile, &spellfile_hat, sizeof(spellfile_hat));
 
             ok = true;
-        }
-
-        else
+        } else {
             ok = false;
+        }
     }
     /* must allocate a log block for the player */
 
@@ -11243,8 +11287,7 @@ boolean revive_player(int *mylog)
 }
 
 
-boolean enter_universe(void)
-{
+boolean enter_universe(void) {
     boolean Result = true;
     string orignam;
     int dummy;
@@ -11266,14 +11309,13 @@ boolean enter_universe(void)
         /**** Should this use exact_pers instead?  Is this a copy of exact_pers code? */
 
         if (lookup_pers(&dummy, myname)) {
-            if (!strcmp(lowcase(STR1, pers.idents[dummy-1]), lowcase(STR2, myname))) {
+            if (!strcmp(lowcase(STR1, pers.idents[dummy - 1]), lowcase(STR2, myname))) {
                 ok = false;
                 i++;
                 sprintf(myname, "%s_%d", orignam, i);
             }
         }
     } while (!ok);
-
 
 
     if (!revive_player(&mylog)) {
@@ -11285,7 +11327,7 @@ boolean enter_universe(void)
         return false;
     }
     getpers();
-    strcpy(pers.idents[mylog-1], myname);
+    strcpy(pers.idents[mylog - 1], myname);
     putpers();
 
     log_begin(location);
@@ -11295,8 +11337,7 @@ boolean enter_universe(void)
 }
 
 
-void leave_universe(void)
-{
+void leave_universe(void) {
     boolean diddrop;
 
     diddrop = drop_everything(0);
@@ -11305,8 +11346,9 @@ void leave_universe(void)
     do_endplay(mylog, false);
 
     mprintf("You vanish in a brilliant burst of multicolored light.\n");
-    if (diddrop)
+    if (diddrop) {
         mprintf("All of your belongings drop to the ground.\n");
+    }
 }
 
 
