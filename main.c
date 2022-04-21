@@ -62,6 +62,7 @@
 #include <pwd.h>
 #include <termio.h>
 
+#include "monster.h"
 
 /* p2c definitions */
 
@@ -1061,29 +1062,6 @@ char *get_userid(char *Result)
     myentry = getpwuid(getuid());
     strcpy(Result, myentry->pw_name);
 }
-
-
-extern char *trim();
-
-/* Input routine.   Gets a line of text from user which checking
-   for async events */
-extern void grab_line(void);
-
-extern void putchars(void);
-
-void xpoof(void);
-
-void do_exit(void);
-
-boolean put_token(void);
-
-void take_token(void);
-
-void maybe_drop(void);
-
-void do_program(void);
-
-boolean drop_everything(void);
 
 
 void collision_wait(void)
