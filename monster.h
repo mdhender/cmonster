@@ -251,7 +251,7 @@ void log_quit(int room_, boolean dropped);
 void make_line(int *n, char *prompt, int limit);
 void maybe_drop(void);
 void move_asleep(void);
-void mprintf(char *fmt, ...);
+void mprintf(const char *fmt, ...);
 void nice_say(char *s);
 void nicedate(char *timestr, char *newstr);
 void niceprint(int *len, char *s);
