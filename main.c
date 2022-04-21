@@ -11354,60 +11354,69 @@ void leave_universe(void)
 }
 
 
-main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 
-setbuf(stdout, 0);
-setbuf(stderr, 0);
-srandom(time(0));
-bzero(locked, sizeof(locked));
-*old_prompt = '\0';
+    setbuf(stdout, 0);
+    setbuf(stderr, 0);
+    srandom(time(0));
+    bzero(locked, sizeof(locked));
+    *old_prompt = '\0';
 
-spellfile = -1;
-objfile = -1;
-intfile = -1;
-indexfile = -1;
-linefile = -1;
-descfile = -1;
-namfile = -1;
-eventfile = -1;
-roomfile = -1;
-done = false;
-init();
-prestart();
-setup_guts();
-if (!done) {
-if (enter_universe()) {
-do {
-parser();
-doawait(LONG_WAIT);
-} while (!done);
-leave_universe();
-doawait(LONG_WAIT);
-} else
-mprintf(
-"You attempt to enter the Monster universe, but a strange force repels you.\n");
-}
-finish_guts();
-if (roomfile >= 0)
-close(roomfile);
-if (eventfile >= 0)
-close(eventfile);
-if (namfile >= 0)
-close(namfile);
-if (descfile >= 0)
-close(descfile);
-if (linefile >= 0)
-close(linefile);
-if (indexfile >= 0)
-close(indexfile);
-if (intfile >= 0)
-close(intfile);
-if (objfile >= 0)
-close(objfile);
-if (spellfile >= 0)
-close(spellfile);
-exit(0);
+    spellfile = -1;
+    objfile = -1;
+    intfile = -1;
+    indexfile = -1;
+    linefile = -1;
+    descfile = -1;
+    namfile = -1;
+    eventfile = -1;
+    roomfile = -1;
+    done = false;
+    init();
+    prestart();
+    setup_guts();
+    if (!done) {
+        if (enter_universe()) {
+            do {
+                parser();
+                doawait(LONG_WAIT);
+            } while (!done);
+            leave_universe();
+            doawait(LONG_WAIT);
+        } else {
+            mprintf(
+                    "You attempt to enter the Monster universe, but a strange force repels you.\n");
+        }
+    }
+    finish_guts();
+    if (roomfile >= 0) {
+        close(roomfile);
+    }
+    if (eventfile >= 0) {
+        close(eventfile);
+    }
+    if (namfile >= 0) {
+        close(namfile);
+    }
+    if (descfile >= 0) {
+        close(descfile);
+    }
+    if (linefile >= 0) {
+        close(linefile);
+    }
+    if (indexfile >= 0) {
+        close(indexfile);
+    }
+    if (intfile >= 0) {
+        close(intfile);
+    }
+    if (objfile >= 0) {
+        close(objfile);
+    }
+    if (spellfile >= 0) {
+        close(spellfile);
+    }
+    exit(0);
 }
 
 
