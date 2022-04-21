@@ -776,41 +776,10 @@ double mrandom(void) {
 }
 
 
-#if defined(BSD)
-
-#define		TCGETA	TIOCGETP
-#define		TCSETAW	TIOCSETP
-struct		sgttyb	raw_tty, original_tty;
-
-#else
-
-struct		termio raw_tty, original_tty;
-#endif
-
-void setup_guts(void)
-{
-
-    ioctl(0, TCGETA, &original_tty);
-    ioctl(0, TCGETA, &raw_tty);
-
-#if defined(BSD)
-    raw_tty.sg_flags &= ~(ECHO | CRMOD);	/* echo off */
-	  raw_tty.sg_flags |= CBREAK;	/* raw on    */
-#else
-    raw_tty.c_lflag &= ~(ICANON | ECHO);	/* noecho raw mode        */
-
-    raw_tty.c_cc[VMIN] = '\01';	/* minimum # of chars to queue    */
-    raw_tty.c_cc[VTIME] = '\0';	/* minimum time to wait for input */
-
-#endif
-
-    ioctl(0, TCSETAW, &raw_tty);
+void setup_guts(void) {
 }
 
-void finish_guts(void)
-{
-
-    ioctl(0, TCSETAW, &original_tty);
+void finish_guts(void) {
 }
 
 
@@ -859,36 +828,27 @@ void mprintf(const char *fmt, ...)
     putchars(buf);
 }
 
-char keyget(void)
-{
-    fd_set ibits, obits, xbits;
-    int hifd = 0;
-    int ret;
-    struct timeval tv = { 0, 200000};
-
-    FD_ZERO(&ibits);
-    FD_ZERO(&obits);
-    FD_ZERO(&xbits);
-
-    FD_SET(0, &ibits);
-    hifd = 1;
-
-    ret = select(hifd, &ibits, &obits, &xbits, &tv);
-
-    if (ret < 0)
-        perror("select");
-
-    if (FD_ISSET(0, &ibits)) {
-        unsigned char c;
-        int nread;
-
-        nread = read(0, &c, 1);
-
-        if (nread <= 0)
-            return 0;
-
-        return c;
-    }
+char keyget(void) {
+    //fd_set ibits, obits, xbits;
+    //int hifd = 0;
+    //int ret;
+    //struct timeval tv = { 0, 200000};
+    //FD_ZERO(&ibits);
+    //FD_ZERO(&obits);
+    //FD_ZERO(&xbits);
+    //FD_SET(0, &ibits);
+    //hifd = 1;
+    //ret = select(hifd, &ibits, &obits, &xbits, &tv);
+    //if (ret < 0)
+    //    perror("select");
+    //if (FD_ISSET(0, &ibits)) {
+    //    unsigned char c;
+    //    int nread;
+    //    nread = read(0, &c, 1);
+    //    if (nread <= 0)
+    //        return 0;
+    //    return c;
+    //}
 
     checkevents(false);
 
