@@ -2912,7 +2912,7 @@ char *nice_time(void)
     char *timestr;
     char the_date[17];
     char the_time[8];
-    long time_now;
+    time_t time_now;
     static char buf[25];
 
     time(&time_now);
