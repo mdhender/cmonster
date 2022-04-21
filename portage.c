@@ -41,6 +41,7 @@ int flock(int fd, int operation) {
 }
 
 
+// prngContext is the default random value seed.
 static prngContext _randomSeed;
 
 // drandom returns the next value from the PRNG as a double in the range [0..1)
