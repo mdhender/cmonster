@@ -335,4 +335,18 @@ extern char *trim(void);
    for async events */
 extern void grab_line(char *prompt, char *s, boolean echo);
 
+/* p2c definitions */
+
+#ifndef true
+# define true    1
+# define false   0
+#endif
+
+#ifndef TRUE
+# define TRUE    1
+# define FALSE   0
+#endif
+
+
+
 #endif //MONSTER_MONSTER_H

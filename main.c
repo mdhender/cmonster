@@ -65,22 +65,6 @@
 
 #include "monster.h"
 
-/* p2c definitions */
-
-typedef unsigned char boolean;
-typedef unsigned char uchar;
-
-#ifndef true
-# define true    1
-# define false   0
-#endif
-
-#ifndef TRUE
-# define TRUE    1
-# define FALSE   0
-#endif
-
-
 /* These are PRIVILEDGED users.  The Monster Manager has the most power;
    this should be the game administrator.  The Monster Vice Manager can help
    the MM in his adminstrative duties.  Faust is another person who can do
