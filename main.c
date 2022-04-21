@@ -1044,12 +1044,14 @@ void unlock(int fdes)
 /* necessary to prevent ZOMBIES in the world */
 
 
-char *get_userid(char *Result)
-{
-    struct passwd *myentry;
-
-    myentry = getpwuid(getuid());
-    strcpy(Result, myentry->pw_name);
+char *get_userid(char *Result) {
+    //struct passwd *myentry;
+    //myentry = getpwuid(getuid());
+    //strcpy(Result, myentry->pw_name);
+    const char *me = getenv("MONSTER_USER_NAME");
+    assert(me && *me && strlen(me) < veryshortlen);
+    strncpy(Result, me, veryshortlen + 1);
+    Result[veryshortlen] = 0;
 }
 
 
