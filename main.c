@@ -814,8 +814,6 @@ void finish_guts(void)
 }
 
 
-extern void checkevents(boolean);
-
 #define SHORT_WAIT      0.1
 #define LONG_WAIT       0.2
 
