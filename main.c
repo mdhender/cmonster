@@ -63,7 +63,10 @@
 #include <pwd.h>
 #include <termio.h>
 
+#include "portage.h"
+
 #include "monster.h"
+
 
 /* These are PRIVILEDGED users.  The Monster Manager has the most power;
    this should be the game administrator.  The Monster Vice Manager can help
