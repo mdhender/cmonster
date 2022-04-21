@@ -6247,7 +6247,8 @@ void rebuild_system(void)
 }
 
 
-void tests(void) {
+void tests(void)
+{
     string s;
 
     mprintf("Running tests...\n");
