@@ -771,10 +771,9 @@ linerec oneliner;   /* a line record */
 descrec heredsc;
 
 
-
-double mrandom(void)
-{
-    return random() / RAND_MAX;
+// mrandom returns a random value as a double.
+double mrandom(void) {
+    return drandom(); // was return random() / RAND_MAX;
 }
 
 

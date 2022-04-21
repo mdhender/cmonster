@@ -25,8 +25,20 @@
 
 // helpers for portability?
 
+#include <stdint.h>
+
+#include "prng.h"
 
 void bzero(void *s, size_t n);
 
+
+// drandom returns the next value from the PRNG as a double in the range [0..1)
+double drandom(void);
+
+// random returns the next value from the PRNG as an integer.
+long int random(void);
+
+// srandom initializes the seed for the PRNG.
+void srandom(unsigned int seed);
 
 #endif //MONSTER_PORTAGE_H

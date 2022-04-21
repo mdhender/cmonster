@@ -20,34 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// PRNG: sourced from Far Horizons.
 
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
+#ifndef MONSTER_PRNG_H
+#define MONSTER_PRNG_H
 
-#include "portage.h"
-#include "prng.h"
-
-
-// bzero overwrites a buffer with zeroes.
-void bzero(void *s, size_t n) {
-    memset(s, 0, n);
-}
+#include <stdint.h>
 
 
-static prngContext _randomSeed;
+typedef struct prngContext {
+    uint64_t a;
+    uint64_t b;
+    uint64_t c;
+    uint64_t d;
+} prngContext;
 
-// drandom returns the next value from the PRNG as a double in the range [0..1)
-double drandom(void) {
-    return ((double) (prng(&_randomSeed) % RAND_MAX)) / ((double) RAND_MAX);
-}
 
-// random returns the next value from the PRNG as an integer.
-long int random(void) {
-    return (long int) prng(&_randomSeed) % RAND_MAX;
-}
+// prng returns a random 64-bit integer based on the given context.
+uint64_t prng(prngContext *x);
 
-// srandom initializes the seed for the PRNG.
-void srandom(unsigned int seed) {
-    prngInit(&_randomSeed, seed);
-}
+// prngInit initializes a context using the seed.
+void prngInit(prngContext *x, uint64_t seed);
+
+#endif //MONSTER_PRNG_H

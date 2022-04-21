@@ -21,33 +21,31 @@
 // SOFTWARE.
 
 
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
+// PRNG: sourced from https://burtleburtle.net/bob/rand/smallprng.html.
 
-#include "portage.h"
+
+#include <stdint.h>
+
 #include "prng.h"
 
 
-// bzero overwrites a buffer with zeroes.
-void bzero(void *s, size_t n) {
-    memset(s, 0, n);
+#define rot(x, k) (((x)<<(k))|((x)>>(32-(k))))
+
+
+// prng returns a random 64-bit integer based on the given context.
+uint64_t prng(prngContext *x) {
+    uint64_t e = x->a - rot(x->b, 27);
+    x->a = x->b ^ rot(x->c, 17);
+    x->b = x->c + x->d;
+    x->c = x->d + e;
+    x->d = e + x->a;
+    return x->d;
 }
 
-
-static prngContext _randomSeed;
-
-// drandom returns the next value from the PRNG as a double in the range [0..1)
-double drandom(void) {
-    return ((double) (prng(&_randomSeed) % RAND_MAX)) / ((double) RAND_MAX);
-}
-
-// random returns the next value from the PRNG as an integer.
-long int random(void) {
-    return (long int) prng(&_randomSeed) % RAND_MAX;
-}
-
-// srandom initializes the seed for the PRNG.
-void srandom(unsigned int seed) {
-    prngInit(&_randomSeed, seed);
+// prngInit initializes a context using the seed.
+void prngInit(prngContext *x, uint64_t seed) {
+    x->a = 0xf1ea5eed, x->b = x->c = x->d = seed;
+    for (uint64_t i = 0; i < 20; ++i) {
+        (void) prng(x);
+    }
 }
