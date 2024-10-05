@@ -2,7 +2,7 @@
 This is `monster`, a multiuser adventure game system where the players create the universe.
 Originally written by Rich Skrenta at Northwestern University, 1988.
 
-The original code has no license file, but it has a note in the [readme.txt](http://www.skrenta.com/monster/readme.txt) file:
+The original code has no license file, but it has a note in the [readme.txt](https://web.archive.org/web/20160212080519/http://www.skrenta.com/monster/readme.txt) file:
 
     You may freely copy, distribute and change Monster as you wish.
 
@@ -10,7 +10,7 @@ My changes are released under the [MIT License](https://opensource.org/licenses/
 
 # Original Source
 
-This code was pulled from the [VMS Monster to C port](http://www.skrenta.com/monster/monster.c).
+This code was pulled from the [VMS Monster to C port](https://web.archive.org/web/20160212080519/http://www.skrenta.com/monster/monster.c).
 
     Author: Rich Skrenta <skrenta@rt.com>
     Port Version: Sat Dec 22 20:05:25 PST 2001
@@ -51,7 +51,7 @@ November, 1988.
 
 VMS Monster was originally written in VMS Pascal.
 It ran on Northwestern University's VAX in 1988.
-See Rick Skrenta's Monster [repository](http://www.skrenta.com/monster/) for more information.
+See Rick Skrenta's Monster [repository](https://web.archive.org/web/20160212080519/http://www.skrenta.com/monster/) for more information.
 
 This is a more-or-less straight port of the VMS program, and as such uses shared files for IPC between monster clients.
 Users must have an account on the local machine.
